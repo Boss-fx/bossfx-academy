@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentorship | BossFX Academy</title>
+    <meta name="description" content="BossFX Academy mentorship programs — 1-on-1, group, and VIP trading mentorship with experienced forex traders.">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-hero {
+            padding: 160px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .page-hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+        }
+        .page-hero p { font-size: 1.15rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+        /* Steps */
+        .steps-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 0;
+        }
+        .step-card {
+            text-align: center;
+            padding: 40px 28px;
+            position: relative;
+        }
+        .step-num {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--green-600), var(--green-500));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 auto 20px;
+        }
+        .step-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .step-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+        .step-connector {
+            display: none;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+        .price-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px 32px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .price-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+        }
+        .price-card.featured {
+            border-color: var(--green-500);
+            background: linear-gradient(145deg, var(--bg-card), rgba(16, 185, 129, 0.06));
+        }
+        .price-card.featured::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green-600), var(--green-400));
+            border-radius: 20px 20px 0 0;
+        }
+        .price-badge {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--green-600), var(--green-500));
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 6px 18px;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+        .price-icon {
+            width: 52px;
+            height: 52px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--green-400);
+            margin-bottom: 20px;
+        }
+        .price-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .price-card > p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .price-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .price-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .price-features li .check {
+            color: var(--green-500);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .price-card .btn { width: 100%; justify-content: center; }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .skill-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 28px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        .skill-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+        }
+        .skill-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--green-400);
+            flex-shrink: 0;
+        }
+        .skill-card strong { font-size: 0.95rem; display: block; margin-bottom: 3px; }
+        .skill-card span { font-size: 0.82rem; color: var(--text-secondary); }
+
+        /* Testimonial */
+        .testimonial-block {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 48px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+        }
+        .testimonial-block .tc-stars { color: #F59E0B; font-size: 1.2rem; margin-bottom: 20px; letter-spacing: 2px; }
+        .testimonial-block blockquote {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-style: italic;
+            margin-bottom: 24px;
+        }
+        .testimonial-block .author { font-weight: 600; }
+        .testimonial-block .role { color: var(--text-muted); font-size: 0.9rem; }
+
+        @media (max-width: 1024px) {
+            .skills-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .page-hero h1 { font-size: 2.4rem; }
+            .steps-row, .pricing-grid, .skills-grid { grid-template-columns: 1fr; }
+            .price-card.featured { order: -1; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="BossFX Academy Logo"></a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="about.html">About</a></li>
+                <li><a href="courses.html">Courses</a></li>
+                <li><a href="mentorship.html" style="color: var(--green-400);">Mentorship</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="courses.html" class="btn btn-primary">Get Started</a>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag">Mentorship Programs</span>
+            <h1>Learn Directly from<br><span class="text-gradient">Experienced Traders</span></h1>
+            <p>Get personalized guidance, live trade reviews, and direct access to mentors who trade the markets daily.</p>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">How It Works</span>
+                <h2 class="section-title">Three Simple<br><span class="text-gradient">Steps</span></h2>
+            </div>
+            <div class="steps-row">
+                <div class="step-card">
+                    <div class="step-num">1</div>
+                    <h3>Apply</h3>
+                    <p>Choose your mentorship tier and fill out a short application so we understand your goals and level.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">2</div>
+                    <h3>Get Matched</h3>
+                    <p>We pair you with a mentor who fits your trading style, goals, and schedule for the best experience.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">3</div>
+                    <h3>Start Trading</h3>
+                    <p>Begin your structured mentorship journey with live sessions, trade reviews, and ongoing support.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Tiers -->
+    <section class="section section-dark">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">Choose Your Path</span>
+                <h2 class="section-title">Mentorship<br><span class="text-gradient">Programs</span></h2>
+            </div>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <div class="price-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <h3>1-on-1 Mentorship</h3>
+                    <p>Personalized sessions tailored to your level, goals, and trading style with direct mentor access.</p>
+                    <ul class="price-features">
+                        <li><span class="check">&#10003;</span> Weekly private sessions</li>
+                        <li><span class="check">&#10003;</span> Personalized trading plan</li>
+                        <li><span class="check">&#10003;</span> Direct mentor access</li>
+                        <li><span class="check">&#10003;</span> Trade journal reviews</li>
+                        <li><span class="check">&#10003;</span> Priority support</li>
+                    </ul>
+                    <a href="contact.html" class="btn btn-outline">Apply Now</a>
+                </div>
+                <div class="price-card featured">
+                    <span class="price-badge">Most Popular</span>
+                    <div class="price-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3>Group Mentorship</h3>
+                    <p>Learn alongside a cohort of traders in a collaborative environment with live market analysis.</p>
+                    <ul class="price-features">
+                        <li><span class="check">&#10003;</span> Live group sessions</li>
+                        <li><span class="check">&#10003;</span> Real-time market analysis</li>
+                        <li><span class="check">&#10003;</span> Peer accountability</li>
+                        <li><span class="check">&#10003;</span> Community challenges</li>
+                        <li><span class="check">&#10003;</span> Weekly homework & reviews</li>
+                    </ul>
+                    <a href="contact.html" class="btn btn-primary">Apply Now</a>
+                </div>
+                <div class="price-card">
+                    <div class="price-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <h3>VIP Program</h3>
+                    <p>All-access pass to every BossFX resource with premium support and exclusive content.</p>
+                    <ul class="price-features">
+                        <li><span class="check">&#10003;</span> All courses included</li>
+                        <li><span class="check">&#10003;</span> Priority 1-on-1 access</li>
+                        <li><span class="check">&#10003;</span> Exclusive market insights</li>
+                        <li><span class="check">&#10003;</span> Lifetime community access</li>
+                        <li><span class="check">&#10003;</span> Early access to new content</li>
+                    </ul>
+                    <a href="contact.html" class="btn btn-outline">Apply Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What You'll Learn -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">Skills You'll Build</span>
+                <h2 class="section-title">What You'll<br><span class="text-gradient">Master</span></h2>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                    <div><strong>Chart Reading</strong><span>Read any chart with confidence</span></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                    <div><strong>Risk Management</strong><span>Protect capital on every trade</span></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    <div><strong>Entry & Exit Strategy</strong><span>Time your trades precisely</span></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+                    <div><strong>Trading Psychology</strong><span>Master emotions and discipline</span></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+                    <div><strong>Position Sizing</strong><span>Calculate lots like a pro</span></div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+                    <div><strong>Trade Journaling</strong><span>Track, review, and improve</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial -->
+    <section class="section section-dark">
+        <div class="container">
+            <div class="testimonial-block">
+                <div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <blockquote>"The mentorship completely changed my trading. I went from blowing accounts to consistently following a plan. My mentor helped me see what I was doing wrong and build real discipline."</blockquote>
+                <div class="author">Chioma O.</div>
+                <div class="role">Mentorship Graduate</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <img src="assets/logo.png" alt="BossFX Academy" class="footer-logo">
+                    <p>Professional forex trading education. From zero to structured trader.</p>
+                    <div class="social-links">
+                        <a href="https://youtube.com/@bossfx-tradingcommunity?si=9cDfBjWkpJWsgLCe" target="_blank" rel="noopener" aria-label="YouTube"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                        <a href="https://www.instagram.com/bossfx_academy" target="_blank" rel="noopener" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+                        <a href="https://www.tiktok.com/@bossfx1" target="_blank" rel="noopener" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.84a4.84 4.84 0 0 1-1-.15z"/></svg></a>
+                        <a href="https://x.com/teebossx" target="_blank" rel="noopener" aria-label="Twitter / X"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                        <a href="mailto:bossfx.official@gmail.com" aria-label="Email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col"><h4>Academy</h4><a href="courses.html">Forex 101</a><a href="mentorship.html">Mentorship</a><a href="community.html">Community</a><a href="contact.html">Contact</a></div>
+                    <div class="footer-col"><h4>Company</h4><a href="about.html">About Us</a><a href="contact.html">Contact</a><a href="#">Terms of Service</a><a href="#">Privacy Policy</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 BossFX Academy. All rights reserved.</p>
+                <p class="footer-disclaimer">Trading forex involves significant risk. Past performance is not indicative of future results. BossFX Academy provides education only — not financial advice.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

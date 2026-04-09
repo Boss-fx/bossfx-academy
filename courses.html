@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses | BossFX Academy</title>
+    <meta name="description" content="Explore BossFX Academy courses — from Forex 101: The Trader's Bible to advanced trading programs. Structured education for every level.">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-hero {
+            padding: 160px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .page-hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+        }
+        .page-hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Flagship Course */
+        .flagship {
+            background: linear-gradient(145deg, var(--bg-card), rgba(16, 185, 129, 0.03));
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        .flagship::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green-600), var(--green-400), var(--green-600));
+        }
+        .flagship-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .flagship-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--green-400);
+            text-transform: uppercase;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 8px 20px;
+            border-radius: 100px;
+            margin-bottom: 20px;
+        }
+        .flagship-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .flagship-header .tagline {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+        .flagship-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin: 32px 0 48px;
+            padding: 28px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .fs-item .fs-num {
+            display: block;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--green-400);
+        }
+        .fs-item .fs-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Module Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        .module-item {
+            background: rgba(16, 185, 129, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            transition: all 0.2s;
+        }
+        .module-item:hover {
+            border-color: var(--border-light);
+            background: rgba(16, 185, 129, 0.06);
+        }
+        .mod-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--green-500);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 5px 9px;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        .mod-info strong {
+            display: block;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+        .mod-info span {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+        .flagship-cta {
+            text-align: center;
+        }
+
+        /* Coming Soon */
+        .coming-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .coming-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 36px 28px;
+            text-align: center;
+            position: relative;
+            opacity: 0.7;
+        }
+        .coming-card .lock-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: var(--text-muted);
+        }
+        .coming-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+        .coming-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .coming-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            border-radius: 100px;
+            margin-top: 16px;
+        }
+
+        /* FAQ */
+        .faq-list {
+            max-width: 760px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .faq-item.open {
+            border-color: var(--border-light);
+        }
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            user-select: none;
+        }
+        .faq-question:hover {
+            color: var(--green-400);
+        }
+        .faq-arrow {
+            transition: transform 0.3s;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .faq-item.open .faq-arrow {
+            transform: rotate(180deg);
+            color: var(--green-400);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 200px;
+        }
+        .faq-answer-inner {
+            padding: 0 24px 20px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 1024px) {
+            .modules-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .page-hero h1 { font-size: 2.4rem; }
+            .flagship { padding: 36px 24px; }
+            .flagship-header h2 { font-size: 2rem; }
+            .flagship-stats { gap: 24px; flex-wrap: wrap; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .coming-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="BossFX Academy Logo"></a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="about.html">About</a></li>
+                <li><a href="courses.html" style="color: var(--green-400);">Courses</a></li>
+                <li><a href="mentorship.html">Mentorship</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="courses.html" class="btn btn-primary">Get Started</a>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag">Our Courses</span>
+            <h1>Transform Your<br><span class="text-gradient">Trading Journey</span></h1>
+            <p>Structured, professional forex education designed to take you from complete beginner to confident, disciplined trader.</p>
+        </div>
+    </section>
+
+    <!-- Flagship Course -->
+    <section class="section">
+        <div class="container">
+            <div class="flagship">
+                <div class="flagship-header">
+                    <span class="flagship-badge">Beginner Foundation Series</span>
+                    <h2>Forex 101: <span class="text-gradient">The Trader's Bible</span></h2>
+                    <p class="tagline">The complete beginner's foundation for professional forex trading</p>
+                    <div class="flagship-stats">
+                        <div class="fs-item"><span class="fs-num">12</span><span class="fs-label">Modules</span></div>
+                        <div class="fs-item"><span class="fs-num">60+</span><span class="fs-label">Exercises</span></div>
+                        <div class="fs-item"><span class="fs-num">0</span><span class="fs-label">Prerequisites</span></div>
+                    </div>
+                </div>
+                <div class="modules-grid">
+                    <div class="module-item"><span class="mod-num">01</span><div class="mod-info"><strong>Introduction to Forex</strong><span>What forex is, how it works, and why it matters</span></div></div>
+                    <div class="module-item"><span class="mod-num">02</span><div class="mod-info"><strong>Currency Pairs & Quotes</strong><span>Understanding majors, minors, and exotics</span></div></div>
+                    <div class="module-item"><span class="mod-num">03</span><div class="mod-info"><strong>Market Structure 101</strong><span>How price moves and market phases</span></div></div>
+                    <div class="module-item"><span class="mod-num">04</span><div class="mod-info"><strong>Market Sessions & Volatility</strong><span>Trading the right sessions at the right time</span></div></div>
+                    <div class="module-item"><span class="mod-num">05</span><div class="mod-info"><strong>Risk Management</strong><span>Protect your capital — the #1 rule</span></div></div>
+                    <div class="module-item"><span class="mod-num">06</span><div class="mod-info"><strong>Trading Psychology</strong><span>Master your mindset and emotions</span></div></div>
+                    <div class="module-item"><span class="mod-num">07</span><div class="mod-info"><strong>Technical Analysis Foundations</strong><span>Reading charts like a professional</span></div></div>
+                    <div class="module-item"><span class="mod-num">08</span><div class="mod-info"><strong>Candlestick Patterns</strong><span>Price action and pattern recognition</span></div></div>
+                    <div class="module-item"><span class="mod-num">09</span><div class="mod-info"><strong>Support & Resistance</strong><span>Key levels and zones that matter</span></div></div>
+                    <div class="module-item"><span class="mod-num">10</span><div class="mod-info"><strong>Trading Strategies</strong><span>Fibonacci, moving averages, and intraday setups</span></div></div>
+                    <div class="module-item"><span class="mod-num">11</span><div class="mod-info"><strong>Building Your Trading Plan</strong><span>Your personal roadmap to execution</span></div></div>
+                    <div class="module-item"><span class="mod-num">12</span><div class="mod-info"><strong>Live Trading & Journaling</strong><span>Execute, track, and improve every trade</span></div></div>
+                </div>
+                <div class="flagship-cta">
+                    <a href="contact.html" class="btn btn-primary btn-lg">
+                        Enroll in Forex 101
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coming Soon -->
+    <section class="section section-dark">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">Coming Soon</span>
+                <h2 class="section-title">More Courses<br><span class="text-gradient">On the Way</span></h2>
+                <p class="section-subtitle">We're building more advanced programs for traders ready for the next level.</p>
+            </div>
+            <div class="coming-grid">
+                <div class="coming-card">
+                    <div class="lock-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <h3>Advanced Price Action</h3>
+                    <p>Deep dive into institutional order flow, liquidity zones, and advanced chart reading.</p>
+                    <span class="coming-badge">Coming 2026</span>
+                </div>
+                <div class="coming-card">
+                    <div class="lock-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <h3>Smart Money Concepts</h3>
+                    <p>Understand how institutional traders move the market and learn to trade alongside them.</p>
+                    <span class="coming-badge">Coming 2026</span>
+                </div>
+                <div class="coming-card">
+                    <div class="lock-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <h3>Trading Psychology Deep Dive</h3>
+                    <p>Master the mental game — discipline, emotional control, and the mindset of elite traders.</p>
+                    <span class="coming-badge">Coming 2027</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">FAQ</span>
+                <h2 class="section-title">Frequently Asked<br><span class="text-gradient">Questions</span></h2>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">Do I need any trading experience? <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer"><div class="faq-answer-inner">Not at all. Forex 101 is built from the ground up for complete beginners. We start with the absolute basics — what forex is, how currencies work — and build up from there. Zero prior knowledge required.</div></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">What platform do I need? <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer"><div class="faq-answer-inner">We teach using MetaTrader 4/5 and TradingView — both are free to use. The course includes full training on setting up and navigating both platforms so you're ready from day one.</div></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">How long does it take to complete? <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer"><div class="faq-answer-inner">The course is self-paced. Most students complete Forex 101 in 4-6 weeks when dedicating a few hours per week. You get lifetime access, so there's no rush — learn at your own pace.</div></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Do I get community access? <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer"><div class="faq-answer-inner">Yes! Every Forex 101 student gets access to our private trading community. Share your analysis, get feedback, join live sessions, and connect with fellow traders on the same journey.</div></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Is there a money-back guarantee? <svg class="faq-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="faq-answer"><div class="faq-answer-inner">We stand behind our education. If you're not satisfied within the first 7 days, contact us and we'll work with you. Our goal is your success — we want every student to get real value.</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <img src="assets/logo.png" alt="BossFX Academy" class="footer-logo">
+                    <p>Professional forex trading education. From zero to structured trader.</p>
+                    <div class="social-links">
+                        <a href="https://youtube.com/@bossfx-tradingcommunity?si=9cDfBjWkpJWsgLCe" target="_blank" rel="noopener" aria-label="YouTube"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                        <a href="https://www.instagram.com/bossfx_academy" target="_blank" rel="noopener" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+                        <a href="https://www.tiktok.com/@bossfx1" target="_blank" rel="noopener" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.84a4.84 4.84 0 0 1-1-.15z"/></svg></a>
+                        <a href="https://x.com/teebossx" target="_blank" rel="noopener" aria-label="Twitter / X"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                        <a href="mailto:bossfx.official@gmail.com" aria-label="Email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col"><h4>Academy</h4><a href="courses.html">Forex 101</a><a href="mentorship.html">Mentorship</a><a href="community.html">Community</a><a href="contact.html">Contact</a></div>
+                    <div class="footer-col"><h4>Company</h4><a href="about.html">About Us</a><a href="contact.html">Contact</a><a href="#">Terms of Service</a><a href="#">Privacy Policy</a></div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 BossFX Academy. All rights reserved.</p>
+                <p class="footer-disclaimer">Trading forex involves significant risk. Past performance is not indicative of future results. BossFX Academy provides education only — not financial advice.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+    <script>
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', () => {
+                const item = q.parentElement;
+                document.querySelectorAll('.faq-item').forEach(i => { if (i !== item) i.classList.remove('open'); });
+                item.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>

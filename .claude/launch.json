@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bossfx",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "/Users/macbookpro/bossfx-academy", "-l", "3456"],
+      "port": 3456
+    }
+  ]
+}

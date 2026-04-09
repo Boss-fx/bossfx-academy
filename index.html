@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BossFX Academy | Stop Guessing. Start Trading with Purpose.</title>
+    <meta name="description" content="BossFX Academy — Professional forex trading education. From zero to structured trader with our Forex 101 course, mentorship programs, and trading community.">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/logo.png" alt="BossFX Academy Logo">
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="about.html">About</a></li>
+                <li><a href="courses.html">Courses</a></li>
+                <li><a href="mentorship.html">Mentorship</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="courses.html" class="btn btn-primary">Get Started</a>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg-grid"></div>
+        <div class="hero-glow"></div>
+        <div class="container hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    Now Available — Forex 101
+                </div>
+                <h1 class="hero-title">
+                    Stop Guessing.<br>
+                    Start Trading<br>
+                    <span class="text-gradient">with Purpose.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    BossFX Academy is the complete beginner's foundation for professional forex trading.
+                    12 structured modules. 60+ practical exercises. Zero experience required.
+                </p>
+                <div class="hero-cta">
+                    <a href="#courses" class="btn btn-primary btn-lg">
+                        Start Forex 101
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <a href="#about" class="btn btn-ghost btn-lg">
+                        Learn More
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">Structured Modules</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-number">60+</span>
+                        <span class="stat-label">Practical Exercises</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Experience Required</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span class="chart-pair">EUR/USD</span>
+                        <span class="chart-change positive">+1.24%</span>
+                    </div>
+                    <div class="chart-canvas">
+                        <svg viewBox="0 0 400 200" class="chart-line">
+                            <defs>
+                                <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#10B981" stop-opacity="0.3"/>
+                                    <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M0,150 Q50,140 80,120 T160,100 T240,60 T320,80 T400,40" fill="none" stroke="#10B981" stroke-width="2.5"/>
+                            <path d="M0,150 Q50,140 80,120 T160,100 T240,60 T320,80 T400,40 L400,200 L0,200 Z" fill="url(#chartGradient)"/>
+                        </svg>
+                    </div>
+                    <div class="chart-footer">
+                        <div class="candlesticks">
+                            <div class="candle green" style="--height: 45px; --wick-top: 8px; --wick-bottom: 12px;"></div>
+                            <div class="candle red" style="--height: 30px; --wick-top: 15px; --wick-bottom: 6px;"></div>
+                            <div class="candle green" style="--height: 55px; --wick-top: 5px; --wick-bottom: 10px;"></div>
+                            <div class="candle green" style="--height: 35px; --wick-top: 12px; --wick-bottom: 8px;"></div>
+                            <div class="candle red" style="--height: 25px; --wick-top: 10px; --wick-bottom: 15px;"></div>
+                            <div class="candle green" style="--height: 50px; --wick-top: 6px; --wick-bottom: 7px;"></div>
+                            <div class="candle green" style="--height: 40px; --wick-top: 10px; --wick-bottom: 5px;"></div>
+                            <div class="candle red" style="--height: 20px; --wick-top: 18px; --wick-bottom: 10px;"></div>
+                            <div class="candle green" style="--height: 60px; --wick-top: 4px; --wick-bottom: 8px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Floating elements -->
+                <div class="float-card float-card-1">
+                    <div class="float-icon green">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    </div>
+                    <div>
+                        <span class="float-label">Win Rate</span>
+                        <span class="float-value">Strategy Based</span>
+                    </div>
+                </div>
+                <div class="float-card float-card-2">
+                    <div class="float-icon amber">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div>
+                        <span class="float-label">Risk Management</span>
+                        <span class="float-value">Built In</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">About BossFX Academy</span>
+                <h2 class="section-title">Built for Traders Who<br><span class="text-gradient">Want Real Results</span></h2>
+                <p class="section-subtitle">
+                    Most traders fail because they skip the foundation. BossFX Academy gives you the framework,
+                    the language, and the professional mindset required to operate in the world's largest financial market.
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    </div>
+                    <h3>Structured Curriculum</h3>
+                    <p>12 professional modules taking you from complete beginner to confident, structured trader. No fluff — just what works.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                    </div>
+                    <h3>Learn by Doing</h3>
+                    <p>60+ practical exercises and real chart analysis. Every lesson connects theory to execution so you trade with confidence.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3>Community Driven</h3>
+                    <p>Join a network of serious traders across West Africa and beyond. Share ideas, get feedback, and grow together.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3>Risk First Approach</h3>
+                    <p>We teach you to protect your capital before chasing profits. Strategy, mindset, and execution — in that order.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <h3>Platform Mastery</h3>
+                    <p>Full training on MetaTrader and TradingView. Set up your workspace like a professional from day one.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <h3>Market Psychology</h3>
+                    <p>Understand why markets move. Master the psychology of trading so emotions never control your decisions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Section -->
+    <section class="section section-dark" id="courses">
+        <div class="container">
+            <div class="course-layout">
+                <div class="course-info">
+                    <span class="section-tag">Flagship Course</span>
+                    <h2 class="section-title">
+                        Forex 101:<br>
+                        <span class="text-gradient">The Trader's Bible</span>
+                    </h2>
+                    <p class="course-description">
+                        The complete beginner's foundation for professional forex trading in the world's largest market.
+                        Built for complete beginners across West Africa and beyond.
+                    </p>
+                    <ul class="course-modules">
+                        <li>
+                            <span class="module-number">01</span>
+                            <div>
+                                <strong>Introduction to Forex</strong>
+                                <span>What forex is, how it works, and why it matters</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="module-number">02</span>
+                            <div>
+                                <strong>Currency Pairs & Quotes</strong>
+                                <span>Understanding majors, minors, and exotics</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="module-number">03</span>
+                            <div>
+                                <strong>Market Structure 101</strong>
+                                <span>Sessions, volatility, and price behavior</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="module-number">04</span>
+                            <div>
+                                <strong>Risk Management</strong>
+                                <span>Protect your capital — the #1 rule</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="module-number">05</span>
+                            <div>
+                                <strong>Trading Psychology</strong>
+                                <span>Master your mindset and emotions</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="module-number">06</span>
+                            <div>
+                                <strong>Technical Analysis & Strategy</strong>
+                                <span>Fibonacci, moving averages, and intraday setups</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <p class="course-note">+ 6 more advanced modules covering execution, journaling, and live trading plans</p>
+                    <a href="contact.html" class="btn btn-primary btn-lg">
+                        Enroll in Forex 101
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                </div>
+                <div class="course-visual">
+                    <div class="course-card-main">
+                        <div class="course-card-badge">BEGINNER FOUNDATION SERIES</div>
+                        <img src="assets/logo.png" alt="BossFX Academy" class="course-logo">
+                        <h3>FOREX 101</h3>
+                        <p class="course-card-tagline">The Trader's Bible</p>
+                        <div class="course-card-stats">
+                            <div>
+                                <span class="ccs-number">12</span>
+                                <span class="ccs-label">Modules</span>
+                            </div>
+                            <div>
+                                <span class="ccs-number">60+</span>
+                                <span class="ccs-label">Exercises</span>
+                            </div>
+                            <div>
+                                <span class="ccs-number">0</span>
+                                <span class="ccs-label">Prerequisites</span>
+                            </div>
+                        </div>
+                        <div class="course-card-features">
+                            <div class="ccf-item"><span class="ccf-check">&#10003;</span> Strategy, mindset & execution</div>
+                            <div class="ccf-item"><span class="ccf-check">&#10003;</span> Built for West African traders</div>
+                            <div class="ccf-item"><span class="ccf-check">&#10003;</span> Zero experience required</div>
+                            <div class="ccf-item"><span class="ccf-check">&#10003;</span> Private community access</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mentorship Section -->
+    <section class="section" id="mentorship">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">Mentorship Program</span>
+                <h2 class="section-title">Learn Directly from<br><span class="text-gradient">Experienced Traders</span></h2>
+                <p class="section-subtitle">
+                    Get personalized guidance, live trade reviews, and direct access to mentors who trade the markets daily.
+                </p>
+            </div>
+            <div class="mentorship-grid">
+                <div class="mentorship-card">
+                    <div class="mc-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <h3>1-on-1 Mentorship</h3>
+                    <p>Personalized sessions tailored to your level, goals, and trading style. Get direct feedback on your trades.</p>
+                    <ul class="mc-features">
+                        <li>Weekly private sessions</li>
+                        <li>Personalized trading plan</li>
+                        <li>Direct mentor access</li>
+                        <li>Trade journal reviews</li>
+                    </ul>
+                </div>
+                <div class="mentorship-card featured">
+                    <div class="mc-badge">Most Popular</div>
+                    <div class="mc-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h3>Group Mentorship</h3>
+                    <p>Learn alongside a cohort of traders. Collaborative environment with live market analysis sessions.</p>
+                    <ul class="mc-features">
+                        <li>Live group sessions</li>
+                        <li>Real-time market analysis</li>
+                        <li>Peer accountability</li>
+                        <li>Community challenges</li>
+                    </ul>
+                </div>
+                <div class="mentorship-card">
+                    <div class="mc-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <h3>VIP Program</h3>
+                    <p>All-access pass to every BossFX resource. Premium support, exclusive content, and priority access to new courses.</p>
+                    <ul class="mc-features">
+                        <li>All courses included</li>
+                        <li>Priority 1-on-1 access</li>
+                        <li>Exclusive market insights</li>
+                        <li>Lifetime community access</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="section section-dark" id="community">
+        <div class="container">
+            <div class="community-layout">
+                <div class="community-content">
+                    <span class="section-tag">Trading Community</span>
+                    <h2 class="section-title">Trade Together.<br><span class="text-gradient">Grow Together.</span></h2>
+                    <p>
+                        Join a private community of focused, serious traders. Share analysis,
+                        get feedback, and stay accountable. Trading doesn't have to be lonely.
+                    </p>
+                    <div class="community-features">
+                        <div class="cf-item">
+                            <div class="cf-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            </div>
+                            <div>
+                                <strong>Daily Market Discussion</strong>
+                                <span>Active channels for every major pair and session</span>
+                            </div>
+                        </div>
+                        <div class="cf-item">
+                            <div class="cf-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                            </div>
+                            <div>
+                                <strong>Live Sessions</strong>
+                                <span>Weekly live streams on YouTube and in the community</span>
+                            </div>
+                        </div>
+                        <div class="cf-item">
+                            <div class="cf-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            </div>
+                            <div>
+                                <strong>Trade Reviews</strong>
+                                <span>Post your setups and get constructive feedback</span>
+                            </div>
+                        </div>
+                        <div class="cf-item">
+                            <div class="cf-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <div>
+                                <strong>Accountability Groups</strong>
+                                <span>Stay disciplined with like-minded traders</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+                        Join the Community
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                </div>
+                <div class="community-visual">
+                    <div class="community-card">
+                        <div class="community-avatars">
+                            <div class="avatar" style="background: #10B981;">B</div>
+                            <div class="avatar" style="background: #059669;">F</div>
+                            <div class="avatar" style="background: #047857;">X</div>
+                            <div class="avatar" style="background: #065F46;">A</div>
+                            <div class="avatar-count">+500</div>
+                        </div>
+                        <p class="community-card-text">Traders learning & growing together</p>
+                        <div class="community-stats-row">
+                            <div class="cs-item">
+                                <span class="cs-number">500+</span>
+                                <span class="cs-label">Members</span>
+                            </div>
+                            <div class="cs-item">
+                                <span class="cs-number">24/7</span>
+                                <span class="cs-label">Active</span>
+                            </div>
+                            <div class="cs-item">
+                                <span class="cs-number">Free</span>
+                                <span class="cs-label">To Join</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials / Social Proof -->
+    <section class="section" id="testimonials">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">Student Results</span>
+                <h2 class="section-title">From Beginners to<br><span class="text-gradient">Confident Traders</span></h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p>"I had zero knowledge about forex. BossFX Academy broke everything down in a way I could actually understand. Now I trade with a real plan."</p>
+                    <div class="tc-author">
+                        <div class="tc-avatar" style="background: #10B981;">A</div>
+                        <div>
+                            <strong>Adebayo K.</strong>
+                            <span>Forex 101 Student</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p>"The mentorship changed my entire approach. I stopped gambling and started trading. My risk management is solid now."</p>
+                    <div class="tc-author">
+                        <div class="tc-avatar" style="background: #059669;">C</div>
+                        <div>
+                            <strong>Chioma O.</strong>
+                            <span>Mentorship Graduate</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="tc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p>"The community alone is worth it. Being around other serious traders keeps me accountable and motivated every single day."</p>
+                    <div class="tc-author">
+                        <div class="tc-avatar" style="background: #047857;">T</div>
+                        <div>
+                            <strong>Tunde M.</strong>
+                            <span>Community Member</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section cta-section">
+        <div class="cta-glow"></div>
+        <div class="container">
+            <div class="cta-content">
+                <img src="assets/logo.png" alt="BossFX Academy" class="cta-logo">
+                <h2 class="section-title">Ready to Trade<br><span class="text-gradient">Like a Boss?</span></h2>
+                <p>Join BossFX Academy today and take the first step toward becoming a structured, profitable trader.</p>
+                <div class="cta-buttons">
+                    <a href="contact.html" class="btn btn-primary btn-lg">
+                        Start Forex 101
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                    <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" class="btn btn-outline btn-lg">Join Free Community</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <img src="assets/logo.png" alt="BossFX Academy" class="footer-logo">
+                    <p>Professional forex trading education. From zero to structured trader.</p>
+                    <div class="social-links">
+                        <a href="https://youtube.com/@bossfx-tradingcommunity?si=9cDfBjWkpJWsgLCe" target="_blank" rel="noopener" aria-label="YouTube">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </a>
+                        <a href="https://www.instagram.com/bossfx_academy" target="_blank" rel="noopener" aria-label="Instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                        </a>
+                        <a href="https://www.tiktok.com/@bossfx1" target="_blank" rel="noopener" aria-label="TikTok">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.84a4.84 4.84 0 0 1-1-.15z"/></svg>
+                        </a>
+                        <a href="https://x.com/teebossx" target="_blank" rel="noopener" aria-label="Twitter / X">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href="mailto:bossfx.official@gmail.com" aria-label="Email">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>Academy</h4>
+                        <a href="#courses">Forex 101</a>
+                        <a href="#mentorship">Mentorship</a>
+                        <a href="#community">Community</a>
+                        <a href="contact.html">Contact</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <a href="about.html">About Us</a>
+                        <a href="contact.html">Contact</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Privacy Policy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 BossFX Academy. All rights reserved.</p>
+                <p class="footer-disclaimer">Trading forex involves significant risk. Past performance is not indicative of future results. BossFX Academy provides education only — not financial advice.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
