@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact | BossFX Academy</title>
-    <meta name="description" content="Get in touch with BossFX Academy — inquiries about courses, mentorship, partnerships, and more.">
+    <title>Apply | BossFX Academy</title>
+    <meta name="description" content="Apply to BossFX Academy — Start your forex trading journey with structured education, mentorship, and a serious trading community.">
     <link rel="icon" type="image/png" href="assets/logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
         .page-hero {
-            padding: 160px 0 80px;
+            padding: 160px 0 60px;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -34,43 +34,81 @@
             letter-spacing: -1.5px;
             margin-bottom: 20px;
         }
-        .page-hero p { font-size: 1.15rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+        .page-hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
 
-        /* Contact Layout */
-        .contact-layout {
+        /* Ticker */
+        .bfx-ticker {
+            background: var(--green-500);
+            padding: 8px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            z-index: 10;
+        }
+        .bfx-ticker-inner {
+            display: inline-block;
+            animation: tick 24s linear infinite;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            color: #050505;
+            font-weight: 500;
+        }
+        @keyframes tick { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* Application Layout */
+        .apply-layout {
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 60px;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 48px;
             align-items: start;
         }
 
-        /* Form */
-        .contact-form {
+        /* Form Card */
+        .apply-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            padding: 40px;
+            padding: 44px 40px;
+            position: relative;
+            overflow: hidden;
         }
-        .contact-form h2 {
+        .apply-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green-600), var(--green-400), var(--green-600));
+        }
+        .apply-card h2 {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.5rem;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
-        .contact-form > p {
+        .apply-card > p {
             color: var(--text-secondary);
             font-size: 0.9rem;
             margin-bottom: 32px;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
+
+        /* Form Fields */
+        .form-group { margin-bottom: 22px; }
         .form-group label {
             display: block;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
             color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
         }
+        .form-group label .req { color: #EF4444; margin-left: 2px; }
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -78,7 +116,7 @@
             padding: 14px 16px;
             background: var(--bg-primary);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 8px;
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             font-size: 0.95rem;
@@ -92,63 +130,160 @@
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
         }
         .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: var(--text-muted);
-        }
+        .form-group textarea::placeholder { color: #4B5563; }
         .form-group select {
             cursor: pointer;
             -webkit-appearance: none;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%2310B981' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 16px center;
-            padding-right: 40px;
+            padding-right: 44px;
         }
-        .form-group select option {
-            background: var(--bg-primary);
-            color: var(--text-primary);
+        .form-group select option { background: var(--bg-primary); color: var(--text-primary); }
+        .form-group textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        /* Program Cards */
+        .program-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .program-card { position: relative; cursor: pointer; }
+        .program-card input[type=radio] { position: absolute; opacity: 0; width: 0; height: 0; }
+        .program-box {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s;
+            background: rgba(16, 185, 129, 0.02);
         }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
+        .program-card input:checked ~ .program-box {
+            border-color: var(--green-500);
+            background: rgba(16, 185, 129, 0.08);
         }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
+        .program-card:hover .program-box { border-color: var(--border-light); }
+        .program-icon { font-size: 20px; }
+        .program-name { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+        .program-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.55; }
+        .program-tag {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--green-400);
+            font-weight: 500;
+            margin-top: 4px;
+            letter-spacing: 0.05em;
         }
-        .form-submit {
+
+        /* Experience Level */
+        .exp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .exp-card { position: relative; cursor: pointer; }
+        .exp-card input[type=radio] { position: absolute; opacity: 0; width: 0; height: 0; }
+        .exp-box {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px 10px;
+            text-align: center;
+            transition: all 0.2s;
+            background: rgba(16, 185, 129, 0.02);
+        }
+        .exp-card input:checked ~ .exp-box {
+            border-color: var(--green-500);
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .exp-card:hover .exp-box { border-color: var(--border-light); }
+        .exp-dot { width: 10px; height: 10px; border-radius: 50%; margin: 0 auto 8px; }
+        .exp-dot-new { background: #94A3B8; }
+        .exp-dot-some { background: #10B981; }
+        .exp-dot-exp { background: #EF4444; }
+        .exp-name { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.04em; }
+
+        /* Error states */
+        .field-error { border-color: #EF4444 !important; }
+
+        /* Submit */
+        .apply-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--green-600), var(--green-500));
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            border: none;
+            border-radius: 12px;
+            padding: 18px 0;
+            cursor: pointer;
+            transition: all 0.3s;
             margin-top: 8px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
         }
-        .form-submit .btn { width: 100%; justify-content: center; }
-        .form-success {
+        .apply-submit:hover {
+            background: linear-gradient(135deg, var(--green-500), var(--green-400));
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* Google Form Banner */
+        .gform-banner {
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .gform-banner p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+        .gform-banner p strong { color: var(--text-primary); font-weight: 600; }
+        .gform-btn {
+            background: var(--green-500);
+            color: #050505;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .gform-btn:hover { background: var(--green-400); }
+
+        /* Success state */
+        .apply-success {
             display: none;
             text-align: center;
-            padding: 32px;
+            padding: 60px 32px;
         }
-        .form-success.show {
-            display: block;
-        }
-        .form-success .check-circle {
-            width: 64px;
-            height: 64px;
+        .apply-success.show { display: block; }
+        .success-icon {
+            width: 72px; height: 72px;
             background: rgba(16, 185, 129, 0.15);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 16px;
+            margin: 0 auto 20px;
             color: var(--green-400);
         }
-        .form-success h3 { font-family: 'Space Grotesk', sans-serif; margin-bottom: 8px; }
-        .form-success p { color: var(--text-secondary); font-size: 0.95rem; }
-
-        /* Contact Info */
-        .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
+        .apply-success h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            color: var(--green-400);
+            margin-bottom: 12px;
+            letter-spacing: 0.04em;
         }
+        .apply-success p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; }
+        .apply-success p strong { color: var(--green-400); }
+
+        /* Sidebar Info */
+        .apply-sidebar { display: flex; flex-direction: column; gap: 24px; }
         .info-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -169,8 +304,7 @@
         }
         .info-item:last-child { border-bottom: none; }
         .info-icon {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             background: rgba(16, 185, 129, 0.1);
             border-radius: 10px;
             display: flex;
@@ -184,15 +318,9 @@
         .info-item a { color: var(--green-400); font-size: 0.85rem; }
         .info-item a:hover { text-decoration: underline; }
 
-        /* Social box */
-        .social-box {
-            display: flex;
-            gap: 12px;
-            margin-top: 8px;
-        }
+        .social-box { display: flex; gap: 12px; margin-top: 8px; }
         .social-box a {
-            width: 44px;
-            height: 44px;
+            width: 44px; height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -208,30 +336,25 @@
             background: rgba(16, 185, 129, 0.1);
         }
 
-        /* Mini FAQ */
-        .mini-faq {
+        /* What you get card */
+        .whats-included li {
             display: flex;
-            flex-direction: column;
-            gap: 16px;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
         }
-        .mfaq-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 24px;
-        }
-        .mfaq-item h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1rem;
-            margin-bottom: 8px;
-        }
-        .mfaq-item p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+        .whats-included li:last-child { border-bottom: none; }
+        .whats-included .check { color: var(--green-500); font-weight: 700; flex-shrink: 0; }
 
         @media (max-width: 768px) {
             .page-hero h1 { font-size: 2.4rem; }
-            .contact-layout { grid-template-columns: 1fr; }
+            .apply-layout { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
-            .contact-form { padding: 28px 20px; }
+            .program-grid { grid-template-columns: 1fr; }
+            .apply-card { padding: 28px 20px; }
         }
     </style>
 </head>
@@ -244,7 +367,7 @@
                 <li><a href="courses.html">Courses</a></li>
                 <li><a href="mentorship.html">Mentorship</a></li>
                 <li><a href="community.html">Community</a></li>
-                <li><a href="contact.html" style="color: var(--green-400);">Contact</a></li>
+                <li><a href="contact.html" style="color: var(--green-400);">Apply</a></li>
             </ul>
             <div class="nav-actions">
                 <a href="courses.html" class="btn btn-primary">Get Started</a>
@@ -253,66 +376,125 @@
         </div>
     </nav>
 
+    <!-- Ticker -->
+    <div class="bfx-ticker" style="margin-top: 80px;">
+        <div class="bfx-ticker-inner">
+            XAU/USD &nbsp;&middot;&nbsp; BOSSFX MENTORSHIP &nbsp;&middot;&nbsp; FOREX 101 COURSE &nbsp;&middot;&nbsp; LIVE ANALYSIS CALLS &nbsp;&middot;&nbsp; STRUCTURED LEARNING &nbsp;&middot;&nbsp; JOIN THE COMMUNITY &nbsp;&middot;&nbsp; LIMITED SPOTS &nbsp;&middot;&nbsp;
+            XAU/USD &nbsp;&middot;&nbsp; BOSSFX MENTORSHIP &nbsp;&middot;&nbsp; FOREX 101 COURSE &nbsp;&middot;&nbsp; LIVE ANALYSIS CALLS &nbsp;&middot;&nbsp; STRUCTURED LEARNING &nbsp;&middot;&nbsp; JOIN THE COMMUNITY &nbsp;&middot;&nbsp; LIMITED SPOTS &nbsp;&middot;&nbsp;
+        </div>
+    </div>
+
     <section class="page-hero">
         <div class="container">
-            <span class="section-tag">Contact Us</span>
-            <h1>Get in<br><span class="text-gradient">Touch</span></h1>
-            <p>Have a question about our courses, mentorship, or partnerships? We'd love to hear from you.</p>
+            <span class="section-tag">Application Form</span>
+            <h1>Start Your<br><span class="text-gradient">Trading Journey</span></h1>
+            <p>Fill in your details below and the BossFX team will reach out within 24 hours. Spots are limited — serious traders only.</p>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section class="section">
+    <!-- Application Section -->
+    <section class="section" style="padding-top: 0;">
         <div class="container">
-            <div class="contact-layout">
+            <div class="apply-layout">
                 <!-- Form -->
-                <div class="contact-form" id="contactForm">
-                    <h2>Send Us a Message</h2>
-                    <p>Fill out the form below and we'll get back to you within 24-48 hours.</p>
-                    <form id="theForm">
+                <div class="apply-card" id="applyCard">
+                    <div id="applyForm">
+                        <h2>Submit Your Application</h2>
+                        <p>All fields marked with <span style="color: #EF4444;">*</span> are required.</p>
+
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="name">Full Name</label>
-                                <input type="text" id="name" name="name" placeholder="Your full name" required>
+                                <label for="f-name">Full Name <span class="req">*</span></label>
+                                <input type="text" id="f-name" placeholder="Your full name" autocomplete="name">
                             </div>
                             <div class="form-group">
-                                <label for="email">Email Address</label>
-                                <input type="email" id="email" name="email" placeholder="you@email.com" required>
+                                <label for="f-email">Email Address <span class="req">*</span></label>
+                                <input type="email" id="f-email" placeholder="you@example.com" autocomplete="email">
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label for="subject">Subject</label>
-                            <select id="subject" name="subject" required>
-                                <option value="" disabled selected>Select a subject...</option>
-                                <option value="general">General Inquiry</option>
-                                <option value="course">Course Information</option>
-                                <option value="mentorship">Mentorship Program</option>
-                                <option value="partnership">Partnership</option>
-                                <option value="other">Other</option>
-                            </select>
+                            <label for="f-phone">WhatsApp / Phone Number <span class="req">*</span></label>
+                            <input type="tel" id="f-phone" placeholder="+234 800 000 0000" autocomplete="tel">
                         </div>
+
                         <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" name="message" placeholder="Tell us how we can help..." required></textarea>
+                            <label>Select Program <span class="req">*</span></label>
+                            <div class="program-grid" id="programGrid">
+                                <label class="program-card">
+                                    <input type="radio" name="program" value="1-on-1 Mentorship">
+                                    <div class="program-box">
+                                        <div class="program-icon">&#128200;</div>
+                                        <div class="program-name">1-on-1 Mentorship</div>
+                                        <div class="program-desc">Personalised coaching, live XAU/USD analysis calls & structured accountability.</div>
+                                        <div class="program-tag">&#9654; PREMIUM PLAN</div>
+                                    </div>
+                                </label>
+                                <label class="program-card">
+                                    <input type="radio" name="program" value="Forex 101 Course">
+                                    <div class="program-box">
+                                        <div class="program-icon">&#128214;</div>
+                                        <div class="program-name">Forex 101 Course</div>
+                                        <div class="program-desc">Full self-paced beginner course — from zero to structured, process-driven trader.</div>
+                                        <div class="program-tag">&#9654; STARTER PLAN</div>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-submit">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                Send Message
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                            </button>
+
+                        <div class="form-group">
+                            <label>Trading Experience Level <span class="req">*</span></label>
+                            <div class="exp-grid" id="expGrid">
+                                <label class="exp-card">
+                                    <input type="radio" name="exp" value="Brand New">
+                                    <div class="exp-box">
+                                        <div class="exp-dot exp-dot-new"></div>
+                                        <div class="exp-name">Brand New</div>
+                                    </div>
+                                </label>
+                                <label class="exp-card">
+                                    <input type="radio" name="exp" value="Some Exposure">
+                                    <div class="exp-box">
+                                        <div class="exp-dot exp-dot-some"></div>
+                                        <div class="exp-name">Some Exposure</div>
+                                    </div>
+                                </label>
+                                <label class="exp-card">
+                                    <input type="radio" name="exp" value="Experienced">
+                                    <div class="exp-box">
+                                        <div class="exp-dot exp-dot-exp"></div>
+                                        <div class="exp-name">Experienced</div>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
-                    </form>
-                    <div class="form-success" id="formSuccess">
-                        <div class="check-circle">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+
+                        <div class="form-group">
+                            <label for="f-msg">Your Goals / Message</label>
+                            <textarea id="f-msg" placeholder="Tell us what you're aiming to achieve. What's your biggest challenge with trading right now?"></textarea>
                         </div>
-                        <h3>Message Sent!</h3>
-                        <p>Thanks for reaching out. We'll get back to you within 24-48 hours.</p>
+
+                        <button class="apply-submit" id="applyBtn" type="button">SUBMIT APPLICATION &#8594;</button>
+
+                        <!-- Google Form alternative -->
+                        <div class="gform-banner">
+                            <p><strong>Prefer Google Forms?</strong><br>Submit via our official Google Form — responses go directly to the BossFX team.</p>
+                            <a class="gform-btn" href="https://forms.gle/Zni3nPTPkAWELHMp8" target="_blank" rel="noopener">OPEN GOOGLE FORM &#8599;</a>
+                        </div>
+                    </div>
+
+                    <!-- Success State -->
+                    <div class="apply-success" id="applySuccess">
+                        <div class="success-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <h3>APPLICATION RECEIVED</h3>
+                        <p>Thanks for reaching out!<br><br>The <strong>BossFX team</strong> will contact you on WhatsApp within <strong>24 hours</strong>.<br><br>Stay disciplined. Your journey starts here.</p>
                     </div>
                 </div>
 
-                <!-- Info -->
-                <div class="contact-info">
+                <!-- Sidebar -->
+                <div class="apply-sidebar">
                     <div class="info-card">
                         <h3>Contact Information</h3>
                         <div class="info-item">
@@ -325,11 +507,11 @@
                         </div>
                         <div class="info-item">
                             <div class="info-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-                            <div><strong>Business Hours</strong><span>Mon - Fri, 9:00 AM - 6:00 PM (WAT)</span></div>
+                            <div><strong>Response Time</strong><span>Within 24 hours via WhatsApp</span></div>
                         </div>
                         <div class="info-item">
                             <div class="info-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></div>
-                            <div><strong>YouTube</strong><a href="https://youtube.com/@bossfx-tradingcommunity?si=9cDfBjWkpJWsgLCe" target="_blank">youtube.com/BossFxAcademy</a></div>
+                            <div><strong>YouTube</strong><a href="https://youtube.com/@bossfx-tradingcommunity?si=9cDfBjWkpJWsgLCe" target="_blank">BossFX Trading Community</a></div>
                         </div>
                     </div>
 
@@ -343,30 +525,18 @@
                             <a href="mailto:bossfx.official@gmail.com" aria-label="Email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Mini FAQ -->
-    <section class="section section-dark">
-        <div class="container">
-            <div class="section-header center">
-                <span class="section-tag">Quick Answers</span>
-                <h2 class="section-title">Common<br><span class="text-gradient">Questions</span></h2>
-            </div>
-            <div class="mini-faq" style="max-width: 700px; margin: 0 auto;">
-                <div class="mfaq-item">
-                    <h3>How quickly do you respond?</h3>
-                    <p>We aim to respond to all inquiries within 24-48 hours during business days. For urgent matters, reach out via phone.</p>
-                </div>
-                <div class="mfaq-item">
-                    <h3>Do you offer partnerships?</h3>
-                    <p>Yes! We're open to partnerships with trading platforms, financial educators, and brands aligned with our mission. Select "Partnership" in the form above.</p>
-                </div>
-                <div class="mfaq-item">
-                    <h3>Can I request a custom course or training?</h3>
-                    <p>Absolutely. If you have a specific group or organization that needs tailored trading education, contact us and we'll discuss options.</p>
+                    <div class="info-card">
+                        <h3>What's Included</h3>
+                        <ul class="whats-included" style="list-style: none; padding: 0; margin: 0;">
+                            <li><span class="check">&#10003;</span> Structured curriculum (12 modules)</li>
+                            <li><span class="check">&#10003;</span> 60+ practical exercises</li>
+                            <li><span class="check">&#10003;</span> Private community access</li>
+                            <li><span class="check">&#10003;</span> Live market analysis sessions</li>
+                            <li><span class="check">&#10003;</span> WhatsApp support within 24hrs</li>
+                            <li><span class="check">&#10003;</span> Strategy, mindset & execution</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -383,12 +553,12 @@
                         <a href="https://youtube.com/@bossfx-tradingcommunity?si=9cDfBjWkpJWsgLCe" target="_blank" rel="noopener" aria-label="YouTube"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
                         <a href="https://www.instagram.com/bossfx_academy" target="_blank" rel="noopener" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
                         <a href="https://www.tiktok.com/@bossfx1" target="_blank" rel="noopener" aria-label="TikTok"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.84a4.84 4.84 0 0 1-1-.15z"/></svg></a>
-                            <a href="https://x.com/teebossx" target="_blank" rel="noopener" aria-label="Twitter / X"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                        <a href="https://x.com/teebossx" target="_blank" rel="noopener" aria-label="Twitter / X"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
                         <a href="mailto:bossfx.official@gmail.com" aria-label="Email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
                     </div>
                 </div>
                 <div class="footer-links">
-                    <div class="footer-col"><h4>Academy</h4><a href="courses.html">Forex 101</a><a href="mentorship.html">Mentorship</a><a href="community.html">Community</a><a href="contact.html">Contact</a></div>
+                    <div class="footer-col"><h4>Academy</h4><a href="courses.html">Forex 101</a><a href="mentorship.html">Mentorship</a><a href="community.html">Community</a><a href="contact.html">Apply</a></div>
                     <div class="footer-col"><h4>Company</h4><a href="about.html">About Us</a><a href="contact.html">Contact</a><a href="#">Terms of Service</a><a href="#">Privacy Policy</a></div>
                 </div>
             </div>
@@ -398,17 +568,42 @@
             </div>
         </div>
     </footer>
+
     <script src="script.js"></script>
     <script>
-        const form = document.getElementById('theForm');
-        const formSuccess = document.getElementById('formSuccess');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            form.style.display = 'none';
-            document.querySelector('.contact-form h2').style.display = 'none';
-            document.querySelector('.contact-form > p').style.display = 'none';
-            formSuccess.classList.add('show');
+    document.getElementById('applyBtn').addEventListener('click', function() {
+        var ok = true;
+        var btn = this;
+        var name = document.getElementById('f-name');
+        var email = document.getElementById('f-email');
+        var phone = document.getElementById('f-phone');
+        var prog = document.querySelector('input[name="program"]:checked');
+        var exp = document.querySelector('input[name="exp"]:checked');
+
+        [name, email, phone].forEach(function(el) {
+            if (!el.value.trim()) { el.classList.add('field-error'); ok = false; }
+            else { el.classList.remove('field-error'); }
         });
+
+        if (!prog) { document.getElementById('programGrid').style.outline = '2px solid #EF4444'; document.getElementById('programGrid').style.outlineOffset = '4px'; document.getElementById('programGrid').style.borderRadius = '12px'; ok = false; }
+        else { document.getElementById('programGrid').style.outline = 'none'; }
+
+        if (!exp) { document.getElementById('expGrid').style.outline = '2px solid #EF4444'; document.getElementById('expGrid').style.outlineOffset = '4px'; document.getElementById('expGrid').style.borderRadius = '10px'; ok = false; }
+        else { document.getElementById('expGrid').style.outline = 'none'; }
+
+        if (!ok) {
+            btn.style.background = '#EF4444';
+            btn.textContent = 'FILL ALL REQUIRED FIELDS \u2715';
+            setTimeout(function() {
+                btn.style.background = '';
+                btn.textContent = 'SUBMIT APPLICATION \u2192';
+            }, 2400);
+            return;
+        }
+
+        document.getElementById('applyForm').style.display = 'none';
+        document.getElementById('applySuccess').classList.add('show');
+    });
     </script>
 </body>
 </html>
