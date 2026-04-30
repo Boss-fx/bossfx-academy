@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BossFX Academy | Stop Guessing. Start Trading with Purpose.</title>
-    <meta name="description" content="BossFX Academy — Professional forex trading education. From zero to structured trader with our Forex 101 course, mentorship programs, and trading community.">
+    <title>BossFx Academy — Forex EAs, Education & Mentorship for African Traders</title>
+    <meta name="description" content="Professional Forex automation tools and structured trading education. Home of the BossFx SMA Pro Trend EA. Validated. Trusted. Built in Africa." />
+    <meta name="keywords" content="forex EA, MQL5, MetaTrader 5, forex Nigeria, forex Africa, trading bot, BossFx, forex course, forex mentorship, SMA strategy, automated trading" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BossFx Academy — Professional Forex Tools & Education" />
+    <meta property="og:description" content="Home of the BossFx SMA Pro Trend EA. Validated. Trusted. Built in Africa." />
+    <meta property="og:image" content="/assets/og-banner.png" />
+    <meta property="og:url" content="https://bossfxacademy.com" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BossFx Academy — Professional Forex Tools & Education" />
+    <meta name="twitter:description" content="Home of the BossFx SMA Pro Trend EA. Validated. Trusted." />
+    <meta name="twitter:image" content="/assets/og-banner.png" />
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
     <link rel="icon" type="image/png" href="assets/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
@@ -17,14 +29,15 @@
                 <img src="assets/logo.png" alt="BossFX Academy Logo">
             </a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="about.html">About</a></li>
+                <li><a href="#tools">Tools</a></li>
                 <li><a href="courses.html">Courses</a></li>
                 <li><a href="mentorship.html">Mentorship</a></li>
                 <li><a href="community.html">Community</a></li>
+                <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <div class="nav-actions">
-                <a href="courses.html" class="btn btn-primary">Get Started</a>
+                <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="btn btn-primary nav-ea-cta">Get the EA →</a>
                 <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
                     <span></span><span></span><span></span>
                 </button>
@@ -32,7 +45,111 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Mobile floating EA CTA -->
+    <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="btn nav-ea-cta-mobile">Get the EA →</a>
+
+    <!-- EA Hero Section (TASK 1) -->
+    <section class="ea-hero">
+        <div class="ea-hero-bg"></div>
+        <div class="ea-hero-glow"></div>
+        <div class="container ea-hero-container">
+            <div class="ea-hero-content">
+                <div class="ea-hero-pretag">
+                    🟢 NOW LIVE on MetaTrader 5 Market
+                </div>
+                <h1 class="ea-hero-title">BossFx SMA<br>Pro Trend EA</h1>
+                <p class="ea-hero-subtitle">Professional Forex Automation. Zero Chaos.</p>
+                <p class="ea-hero-body">
+                    A dual SMA crossover strategy with smart risk management, trailing stop intelligence, and broker-aware execution. Validated by MetaQuotes. Trusted by traders across Africa.
+                </p>
+                <div class="ea-feature-pills">
+                    <span class="ea-pill"><span class="pill-check">✅</span> MetaQuotes Validated</span>
+                    <span class="ea-pill"><span class="pill-check">✅</span> Free Demo Available</span>
+                    <span class="ea-pill"><span class="pill-check">✅</span> 1% Risk Per Trade</span>
+                    <span class="ea-pill"><span class="pill-check">✅</span> Smart Trailing Stop</span>
+                </div>
+                <div class="ea-hero-cta">
+                    <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="btn btn-ea-primary btn-lg">
+                        Get It on MT5 Market →
+                    </a>
+                    <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="btn btn-ea-outline btn-lg">
+                        Try Free Demo
+                    </a>
+                </div>
+                <p class="ea-hero-price">$49.99 USD · Instant download · Lifetime updates</p>
+            </div>
+            <div class="ea-hero-visual">
+                <div class="ea-dashboard-card">
+                    <div class="ea-dashboard-header">
+                        <span class="ea-dashboard-pair">EURUSD · H1</span>
+                        <span class="ea-dashboard-badge">EA ACTIVE</span>
+                    </div>
+                    <div class="ea-chart-area">
+                        <svg viewBox="0 0 400 140" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="eaGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#00B450" stop-opacity="0.2"/>
+                                    <stop offset="100%" stop-color="#00B450" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Price line -->
+                            <path d="M0,100 Q30,95 60,90 T120,70 T180,80 T240,50 T300,55 T360,30 L400,25" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+                            <!-- Fast SMA -->
+                            <path d="M0,105 Q40,98 80,85 T160,75 T240,55 T320,40 L400,28" fill="none" stroke="#00B450" stroke-width="2" stroke-dasharray="none"/>
+                            <!-- Slow SMA -->
+                            <path d="M0,95 Q50,92 100,88 T200,78 T300,60 L400,45" fill="none" stroke="#F02828" stroke-width="2" stroke-dasharray="4,4"/>
+                            <!-- Fill under price -->
+                            <path d="M0,100 Q30,95 60,90 T120,70 T180,80 T240,50 T300,55 T360,30 L400,25 L400,140 L0,140 Z" fill="url(#eaGradient)"/>
+                            <!-- Crossover marker -->
+                            <circle cx="160" cy="75" r="5" fill="none" stroke="#00B450" stroke-width="1.5"/>
+                            <circle cx="160" cy="75" r="2" fill="#00B450"/>
+                        </svg>
+                    </div>
+                    <div class="ea-sma-labels">
+                        <span class="ea-sma-label"><span class="ea-sma-dot fast"></span> SMA Fast (10)</span>
+                        <span class="ea-sma-label"><span class="ea-sma-dot slow"></span> SMA Slow (50)</span>
+                    </div>
+                    <div class="ea-dashboard-stats">
+                        <div class="ea-stat">
+                            <span class="ea-stat-value">1%</span>
+                            <span class="ea-stat-label">Risk/Trade</span>
+                        </div>
+                        <div class="ea-stat">
+                            <span class="ea-stat-value">ON</span>
+                            <span class="ea-stat-label">Trailing</span>
+                        </div>
+                        <div class="ea-stat">
+                            <span class="ea-stat-value">5%</span>
+                            <span class="ea-stat-label">Max Daily</span>
+                        </div>
+                    </div>
+                    <img src="assets/logo.png" alt="" class="ea-dashboard-logo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Bar (TASK 6) -->
+    <div class="social-proof-bar">
+        <div class="container">
+            <div class="sp-item">
+                <span class="sp-icon">👥</span>
+                500+ Members
+            </div>
+            <div class="sp-divider"></div>
+            <div class="sp-item">
+                <span class="sp-icon">⭐</span>
+                MetaQuotes Validated
+            </div>
+            <div class="sp-divider"></div>
+            <div class="sp-item">
+                <span class="sp-icon">🌍</span>
+                Built in Africa
+            </div>
+        </div>
+    </div>
+
+    <!-- Original Hero Section -->
     <section class="hero">
         <div class="hero-bg-grid"></div>
         <div class="hero-glow"></div>
@@ -109,7 +226,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Floating elements -->
                 <div class="float-card float-card-1">
                     <div class="float-icon green">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
@@ -193,8 +309,42 @@
         </div>
     </section>
 
+    <!-- Tools Section (TASK 2) -->
+    <section class="section section-dark" id="tools">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">🤖 Professional Trading Tools</span>
+                <h2 class="section-title">Built by Traders,<br><span class="text-gradient">For Traders</span></h2>
+                <p class="section-subtitle">
+                    Every tool follows the BossFx philosophy: capital protection first, no black boxes, broker-aware execution.
+                </p>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-card live">
+                    <span class="tool-status live">🟢 LIVE</span>
+                    <h3>SMA Pro Trend EA</h3>
+                    <p>Dual Simple Moving Average crossover strategy. Smart trailing stops with broker validation. Risk-based lot sizing. Daily loss protection. Built for EURUSD, XAUUSD, GBPUSD.</p>
+                    <div class="tool-price">$49.99 USD</div>
+                    <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="btn btn-ea-primary">Get on MT5 Market →</a>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-status coming">🟡 COMING Q2 2026</span>
+                    <h3>BossFx Trend Scanner</h3>
+                    <p>Multi-pair, multi-timeframe trend dashboard. Spot the highest-probability setups across all majors at a glance. Built for swing traders and prop firm challenges.</p>
+                    <button class="btn btn-outline notify-btn" data-tool="BossFx Trend Scanner">Notify Me →</button>
+                </div>
+                <div class="tool-card">
+                    <span class="tool-status coming">🟡 COMING Q3 2026</span>
+                    <h3>BossFx Risk Calculator</h3>
+                    <p>Position sizing made simple. Calculate exact lot sizes for any pair, any account size, any risk percentage. Free utility for the BossFx community.</p>
+                    <button class="btn btn-outline notify-btn" data-tool="BossFx Risk Calculator">Notify Me →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Course Section -->
-    <section class="section section-dark" id="courses">
+    <section class="section" id="courses">
         <div class="container">
             <div class="course-layout">
                 <div class="course-info">
@@ -289,8 +439,8 @@
         </div>
     </section>
 
-    <!-- Mentorship Section -->
-    <section class="section" id="mentorship">
+    <!-- Mentorship Section (TASK 5 — pricing added) -->
+    <section class="section section-dark" id="mentorship">
         <div class="container">
             <div class="section-header center">
                 <span class="section-tag">Mentorship Program</span>
@@ -305,6 +455,8 @@
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </div>
                     <h3>1-on-1 Mentorship</h3>
+                    <div class="mc-price">from $199/month</div>
+                    <span class="mc-price-period">Billed monthly</span>
                     <p>Personalized sessions tailored to your level, goals, and trading style. Get direct feedback on your trades.</p>
                     <ul class="mc-features">
                         <li>Weekly private sessions</li>
@@ -319,6 +471,8 @@
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     </div>
                     <h3>Group Mentorship</h3>
+                    <div class="mc-price">from $79/month</div>
+                    <span class="mc-price-period">Billed monthly</span>
                     <p>Learn alongside a cohort of traders. Collaborative environment with live market analysis sessions.</p>
                     <ul class="mc-features">
                         <li>Live group sessions</li>
@@ -332,6 +486,8 @@
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     </div>
                     <h3>VIP Program</h3>
+                    <div class="mc-price">$499</div>
+                    <span class="mc-price-period">One-time payment</span>
                     <p>All-access pass to every BossFX resource. Premium support, exclusive content, and priority access to new courses.</p>
                     <ul class="mc-features">
                         <li>All courses included</li>
@@ -341,11 +497,12 @@
                     </ul>
                 </div>
             </div>
+            <p class="mc-footnote">All prices in USD. Contact us for custom enterprise rates.</p>
         </div>
     </section>
 
     <!-- Community Section -->
-    <section class="section section-dark" id="community">
+    <section class="section" id="community">
         <div class="container">
             <div class="community-layout">
                 <div class="community-content">
@@ -422,6 +579,90 @@
                                 <span class="cs-label">To Join</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lead Magnet Section (TASK 3) -->
+    <section class="section lead-magnet-section" id="starter-pack">
+        <div class="container">
+            <div class="lead-magnet-layout">
+                <div class="lead-magnet-content">
+                    <h2 class="lead-magnet-title">🎁 Get the BossFx Trader<br>Starter Pack — <span class="text-gradient">Free</span></h2>
+                    <p class="lead-magnet-sub">Download the same starter pack 500+ BossFx students use to begin their trading journey.</p>
+                    <div class="lead-magnet-benefits">
+                        <div class="lm-benefit"><span class="lm-check">✅</span> The Forex 101 First Chapter (PDF, 24 pages)</div>
+                        <div class="lm-benefit"><span class="lm-check">✅</span> My Personal SMA Settings Cheatsheet</div>
+                        <div class="lm-benefit"><span class="lm-check">✅</span> The 5 Risk Management Rules I Trade By</div>
+                        <div class="lm-benefit"><span class="lm-check">✅</span> Early access to v2.20 EA updates and BossFx releases</div>
+                    </div>
+                    <form class="lead-magnet-form" id="leadMagnetForm">
+                        <div class="lm-input-row">
+                            <input type="email" id="lmEmail" placeholder="Enter your email address" required>
+                            <button type="submit" class="btn btn-ea-primary">Get Free Access</button>
+                        </div>
+                        <p class="lm-trust">No spam. Unsubscribe anytime. 100% privacy guaranteed.</p>
+                    </form>
+                    <div class="lm-success" id="lmSuccess">✅ Welcome to BossFx! Check your inbox for the Starter Pack.</div>
+                </div>
+                <div class="lead-magnet-visual">
+                    <div class="lm-pack-card">
+                        <div class="lm-pack-icon">📦</div>
+                        <h3>Trader Starter Pack</h3>
+                        <p>Everything you need to begin</p>
+                        <ul class="lm-pack-items">
+                            <li>Forex 101 First Chapter</li>
+                            <li>SMA Settings Cheatsheet</li>
+                            <li>Risk Management Rules</li>
+                            <li>EA Update Early Access</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founder Section (TASK 4) -->
+    <section class="section section-dark" id="founder">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">👤 Meet the Founder</span>
+            </div>
+            <div class="founder-layout">
+                <div class="founder-photo-card">
+                    <!-- TODO: Replace with founder photo -->
+                    <img src="assets/logo.png" alt="" class="watermark">
+                    <div class="founder-photo-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div class="founder-socials">
+                        <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" aria-label="Telegram">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        </a>
+                        <a href="#" aria-label="TikTok">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.18 8.18 0 0 0 4.76 1.52V6.84a4.84 4.84 0 0 1-1-.15z"/></svg>
+                        </a>
+                        <a href="#" aria-label="Instagram">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                        </a>
+                        <a href="#" aria-label="X / Twitter">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="founder-text">
+                    <h2 class="founder-name">Timilehin 'BossFx' Olabode Shobande</h2>
+                    <p class="founder-title-label">Founder, BossFx Academy</p>
+                    <div class="founder-bio">
+                        <p>Computer Science graduate. 4+ years trading the Forex markets. Builder of BossFx SMA Pro Trend EA — now published on MetaTrader 5 Market and validated by MetaQuotes.</p>
+                        <p>I built BossFx Academy because most Forex education in Africa is either too academic or too gimmicky. There was no middle — clean, practical, professional. So I built it.</p>
+                        <p>Every BossFx product follows three non-negotiables: capital protection first, no black boxes, and broker-aware execution. The same rules I trade by myself, every day.</p>
+                    </div>
+                    <div class="founder-ctas">
+                        <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" class="btn btn-primary">Connect on Telegram</a>
+                        <a href="about.html" class="btn btn-outline">Read My Full Story</a>
                     </div>
                 </div>
             </div>
@@ -526,9 +767,9 @@
                         <a href="contact.html">Contact</a>
                     </div>
                     <div class="footer-col">
-                        <h4>Company</h4>
+                        <h4>Tools</h4>
+                        <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener">SMA Pro Trend EA</a>
                         <a href="about.html">About Us</a>
-                        <a href="contact.html">Contact</a>
                         <a href="#">Terms of Service</a>
                         <a href="#">Privacy Policy</a>
                     </div>
@@ -540,6 +781,17 @@
             </div>
         </div>
     </footer>
+
+    <!-- Notify Modal -->
+    <div class="notify-modal-overlay" id="notifyModal">
+        <div class="notify-modal">
+            <h3>Get Notified</h3>
+            <p id="notifyModalText">Be the first to know when this tool launches.</p>
+            <input type="email" id="notifyEmail" placeholder="Enter your email address">
+            <button class="btn btn-ea-primary" id="notifySubmit">Notify Me</button>
+            <button class="notify-modal-close" id="notifyClose">Cancel</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
