@@ -100,7 +100,7 @@ document.querySelectorAll('a[href*="mql5.com/en/market/product"]').forEach(link 
     });
 });
 
-document.querySelectorAll('a[href*="forms.gle"]').forEach(link => {
+document.querySelectorAll('a[href*="contact"]').forEach(link => {
     link.addEventListener('click', () => {
         trackEvent('course_enroll_click');
     });
