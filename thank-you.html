@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to BossFx! | BossFx Academy</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/assets/favicon-192.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+      gtag('event', 'email_signup_complete');
+    </script>
+    <script>
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "XXXXXXXXXX");
+    </script>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/logo.png" alt="BossFX Academy Logo">
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html#tools">Tools</a></li>
+                <li><a href="courses.html">Courses</a></li>
+                <li><a href="mentorship.html">Mentorship</a></li>
+                <li><a href="blog/">Blog</a></li>
+                <li><a href="community.html">Community</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="btn btn-primary nav-ea-cta">Get the EA &rarr;</a>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="thankyou-section">
+        <div class="container">
+            <div class="thankyou-icon">&#10004;&#65039;</div>
+            <h1>You're in! Check your inbox<br>in <span class="text-gradient">5 minutes</span>.</h1>
+            <p>The BossFx Trader Starter Pack is on its way. While you wait, here's what to do next:</p>
+            <div class="thankyou-links">
+                <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="thankyou-link">
+                    <span class="tl-icon">&#129302;</span>
+                    <div>
+                        <strong>SMA Pro Trend EA</strong>
+                        <span>Check out our flagship product on MT5 Market</span>
+                    </div>
+                </a>
+                <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" class="thankyou-link">
+                    <span class="tl-icon">&#128172;</span>
+                    <div>
+                        <strong>Join the Telegram Community</strong>
+                        <span>Connect with 500+ traders today</span>
+                    </div>
+                </a>
+                <a href="blog/" class="thankyou-link">
+                    <span class="tl-icon">&#128218;</span>
+                    <div>
+                        <strong>Read the Blog</strong>
+                        <span>Behind-the-scenes of building BossFx</span>
+                    </div>
+                </a>
+            </div>
+            <p class="thankyou-redirect">Redirecting to homepage in <span id="countdown">30</span> seconds...</p>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        let sec = 30;
+        const el = document.getElementById('countdown');
+        const timer = setInterval(() => {
+            sec--;
+            if (el) el.textContent = sec;
+            if (sec <= 0) {
+                clearInterval(timer);
+                window.location.href = '/';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

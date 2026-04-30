@@ -2128,6 +2128,282 @@ ul {
     color: var(--text-primary);
 }
 
+/* ===== FAQ Accordion ===== */
+.faq-grid {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.faq-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.faq-item:hover {
+    border-color: var(--border-light);
+}
+
+.faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.faq-question:hover {
+    color: #00B450;
+}
+
+.faq-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: transform 0.3s;
+}
+
+.faq-item.open .faq-icon {
+    transform: rotate(45deg);
+    color: #00B450;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faq-item.open .faq-answer {
+    max-height: 300px;
+}
+
+.faq-answer p {
+    padding: 0 24px 20px;
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* ===== Blog Styles ===== */
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.blog-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    border-color: var(--border-light);
+}
+
+.blog-card-body {
+    padding: 28px 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-card-date {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.blog-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.blog-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.blog-card .btn {
+    align-self: flex-start;
+}
+
+/* Blog post page */
+.blog-post-header {
+    padding: 160px 0 40px;
+    text-align: center;
+}
+
+.blog-post-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.blog-post-title {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 12px;
+}
+
+.blog-post-subtitle {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.blog-post-content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+.blog-post-content p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 24px;
+}
+
+.blog-share {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 24px 0;
+    border-top: 1px solid var(--border-color);
+    margin-top: 40px;
+}
+
+.blog-share span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.blog-share a {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.blog-share a:hover {
+    color: #00B450;
+    border-color: rgba(0, 180, 80, 0.4);
+}
+
+/* Thank you page */
+.thankyou-section {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    padding: 160px 0 80px;
+}
+
+.thankyou-icon {
+    font-size: 4rem;
+    margin-bottom: 24px;
+}
+
+.thankyou-section h1 {
+    font-family: var(--font-heading);
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.thankyou-section > .container > p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    max-width: 500px;
+    margin: 0 auto 40px;
+}
+
+.thankyou-links {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 400px;
+    margin: 0 auto 40px;
+}
+
+.thankyou-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.thankyou-link:hover {
+    border-color: var(--border-light);
+    background: var(--bg-card-hover);
+}
+
+.thankyou-link .tl-icon {
+    font-size: 1.2rem;
+}
+
+.thankyou-link strong {
+    font-size: 0.92rem;
+}
+
+.thankyou-link span {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.thankyou-redirect {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
 @media (max-width: 1024px) {
     .ea-hero-container {
         grid-template-columns: 1fr;
@@ -2143,5 +2419,49 @@ ul {
     .lead-magnet-layout {
         grid-template-columns: 1fr;
         gap: 48px;
+    }
+    .blog-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .blog-grid {
+        grid-template-columns: 1fr;
+    }
+    .blog-post-title {
+        font-size: 2rem;
+    }
+    .lm-input-row {
+        flex-direction: column;
+    }
+    .thankyou-section h1 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .blog-post-title {
+        font-size: 1.6rem;
+    }
+    .blog-post-header {
+        padding: 120px 0 24px;
+    }
+    .blog-post-content {
+        padding: 24px 16px 60px;
+    }
+    .faq-question {
+        padding: 16px 18px;
+        font-size: 0.88rem;
+    }
+    .faq-answer p {
+        padding: 0 18px 16px;
+        font-size: 0.88rem;
+    }
+    .thankyou-section h1 {
+        font-size: 1.5rem;
+    }
+    .thankyou-section {
+        padding: 120px 0 60px;
     }
 }

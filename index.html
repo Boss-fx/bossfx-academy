@@ -10,16 +10,36 @@
     <meta property="og:title" content="BossFx Academy — Professional Forex Tools & Education" />
     <meta property="og:description" content="Home of the BossFx SMA Pro Trend EA. Validated. Trusted. Built in Africa." />
     <meta property="og:image" content="/assets/og-banner.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://bossfxacademy.com" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="BossFx Academy — Professional Forex Tools & Education" />
     <meta name="twitter:description" content="Home of the BossFx SMA Pro Trend EA. Validated. Trusted." />
     <meta name="twitter:image" content="/assets/og-banner.png" />
-    <link rel="icon" type="image/png" href="/assets/favicon.png">
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
-    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/assets/favicon-192.png" />
+    <link rel="manifest" href="/assets/site.webmanifest" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- Google Analytics 4 — TODO: Replace G-XXXXXXXXXX with real ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    <!-- Microsoft Clarity — TODO: Replace XXXXXXXXXX with real ID -->
+    <script>
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "XXXXXXXXXX");
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -32,6 +52,7 @@
                 <li><a href="#tools">Tools</a></li>
                 <li><a href="courses.html">Courses</a></li>
                 <li><a href="mentorship.html">Mentorship</a></li>
+                <li><a href="blog/">Blog</a></li>
                 <li><a href="community.html">Community</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
@@ -706,6 +727,74 @@
                             <span>Community Member</span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section section-dark" id="faq">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">Frequently Asked Questions</span>
+                <h2 class="section-title">Got Questions?<br><span class="text-gradient">We've Got Answers</span></h2>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What broker do I need to run the SMA Pro EA?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Any broker that supports MetaTrader 5. We recommend low-spread ECN/STP brokers like FundedNext, FTMO, IC Markets, or Pepperstone.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What's the minimum account size?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>$200 minimum. The EA's risk management automatically scales lot sizes to your balance.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Can I try before I buy?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Yes — a free demo is available directly on MQL5 Market. Test on a demo account for as long as you need.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Which currency pairs work best?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>The SMA Pro EA is optimized for EURUSD, XAUUSD (Gold), and GBPUSD on H1 and H4 timeframes.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Will I get future updates?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Yes — all buyers receive lifetime free updates. v2.20 is already in development.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Do you offer support?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Yes — direct support via Telegram and email. We respond within 12 hours.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Is this guaranteed to make money?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>No EA can guarantee profits. The SMA Pro EA is a tool to execute a proven strategy with discipline, not a money printer. Trading carries risk.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Can I run this on a prop firm challenge?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Yes — many of our students use it for FundedNext and FTMO. Contact us for the recommended config.</p></div>
                 </div>
             </div>
         </div>

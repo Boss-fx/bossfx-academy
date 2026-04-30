@@ -1,37 +1,46 @@
+// ===== Analytics helper =====
+function trackEvent(name, params) {
+    if (typeof gtag === 'function') gtag('event', name, params || {});
+    if (typeof clarity === 'function') clarity('event', name);
+}
+
 // ===== Navbar scroll effect =====
 const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 50);
-});
+if (navbar) {
+    window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
+}
 
 // ===== Mobile menu toggle =====
 const mobileToggle = document.getElementById('mobileToggle');
 const navLinks = document.getElementById('navLinks');
 
-mobileToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-    const spans = mobileToggle.querySelectorAll('span');
-    if (navLinks.classList.contains('active')) {
-        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-        spans[1].style.opacity = '0';
-        spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
-    } else {
-        spans[0].style.transform = '';
-        spans[1].style.opacity = '';
-        spans[2].style.transform = '';
-    }
-});
-
-// Close mobile menu on link click
-navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
+if (mobileToggle && navLinks) {
+    mobileToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
         const spans = mobileToggle.querySelectorAll('span');
-        spans[0].style.transform = '';
-        spans[1].style.opacity = '';
-        spans[2].style.transform = '';
+        if (navLinks.classList.contains('active')) {
+            spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+            spans[1].style.opacity = '0';
+            spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+        } else {
+            spans[0].style.transform = '';
+            spans[1].style.opacity = '';
+            spans[2].style.transform = '';
+        }
     });
-});
+
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            const spans = mobileToggle.querySelectorAll('span');
+            spans[0].style.transform = '';
+            spans[1].style.opacity = '';
+            spans[2].style.transform = '';
+        });
+    });
+}
 
 // ===== Scroll animations (Intersection Observer) =====
 const observerOptions = {
@@ -48,7 +57,7 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-document.querySelectorAll('.feature-card, .mentorship-card, .testimonial-card, .course-modules li, .cf-item, .tool-card, .lm-benefit, .lm-pack-items li').forEach((el, i) => {
+document.querySelectorAll('.feature-card, .mentorship-card, .testimonial-card, .course-modules li, .cf-item, .tool-card, .lm-benefit, .lm-pack-items li, .faq-item').forEach((el, i) => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(24px)';
     el.style.transition = `opacity 0.5s ease ${i % 6 * 0.1}s, transform 0.5s ease ${i % 6 * 0.1}s`;
@@ -79,22 +88,50 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// ===== Lead Magnet Form =====
+// ===== CTA Event Tracking =====
+document.querySelectorAll('a[href*="mql5.com/en/market/product"]').forEach(link => {
+    link.addEventListener('click', () => {
+        const text = link.textContent.trim().toLowerCase();
+        if (text.includes('demo')) {
+            trackEvent('ea_demo_click');
+        } else {
+            trackEvent('ea_buy_click', { value: 49.99 });
+        }
+    });
+});
+
+document.querySelectorAll('a[href*="forms.gle"]').forEach(link => {
+    link.addEventListener('click', () => {
+        trackEvent('course_enroll_click');
+    });
+});
+
+document.querySelectorAll('a[href*="t.me/"]').forEach(link => {
+    link.addEventListener('click', () => {
+        trackEvent('telegram_join');
+    });
+});
+
+// ===== Lead Magnet Form (Formspree) =====
 const leadForm = document.getElementById('leadMagnetForm');
 if (leadForm) {
     leadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('lmEmail').value;
-        // TODO: Connect to MailerLite or ConvertKit API for production
+        // TODO: Sign up at formspree.io, replace YOUR_FORM_ID
         try {
-            await fetch('/api/subscribe', {
+            await fetch('https://formspree.io/f/YOUR_FORM_ID', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
-            }).catch(() => {});
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ email, source: 'bossfx_starter_pack' })
+            });
         } catch (err) {}
+        trackEvent('email_signup');
         leadForm.style.display = 'none';
         document.getElementById('lmSuccess').classList.add('show');
+        setTimeout(() => {
+            window.location.href = '/thank-you.html';
+        }, 2000);
     });
 }
 
@@ -128,16 +165,26 @@ if (notifySubmit) {
     notifySubmit.addEventListener('click', async () => {
         const email = document.getElementById('notifyEmail').value;
         if (!email) return;
-        // TODO: Connect to MailerLite or ConvertKit API for production
         try {
-            await fetch('/api/subscribe', {
+            await fetch('https://formspree.io/f/YOUR_FORM_ID', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, type: 'notify' })
-            }).catch(() => {});
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ email, source: 'tool_notify' })
+            });
         } catch (err) {}
+        trackEvent('tool_notify_signup');
         notifyModal.classList.remove('show');
         document.getElementById('notifyEmail').value = '';
         alert('You\'re on the list! We\'ll notify you when it launches.');
     });
 }
+
+// ===== FAQ Accordion =====
+document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+    });
+});
