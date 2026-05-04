@@ -628,8 +628,48 @@
             return;
         }
 
-        document.getElementById('applyForm').style.display = 'none';
-        document.getElementById('applySuccess').classList.add('show');
+        btn.disabled = true;
+        btn.textContent = 'SENDING...';
+
+        var msg = document.getElementById('f-msg');
+        var data = {
+            name: name.value.trim(),
+            email: email.value.trim(),
+            phone: phone.value.trim(),
+            program: prog.value,
+            experience: exp.value,
+            message: msg ? msg.value.trim() : '',
+            source: 'bossfx_contact_form'
+        };
+
+        // TODO: Replace YOUR_FORM_ID with your Formspree form ID
+        fetch('https://formspree.io/f/YOUR_FORM_ID', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(function(res) {
+            if (res.ok) {
+                document.getElementById('applyForm').style.display = 'none';
+                document.getElementById('applySuccess').classList.add('show');
+                if (typeof trackEvent === 'function') trackEvent('application_submit', { program: data.program });
+            } else {
+                btn.style.background = '#EF4444';
+                btn.textContent = 'SUBMISSION FAILED \u2014 TRY AGAIN';
+                btn.disabled = false;
+                setTimeout(function() {
+                    btn.style.background = '';
+                    btn.textContent = 'SUBMIT APPLICATION \u2192';
+                }, 3000);
+            }
+        }).catch(function() {
+            btn.style.background = '#EF4444';
+            btn.textContent = 'NETWORK ERROR \u2014 TRY AGAIN';
+            btn.disabled = false;
+            setTimeout(function() {
+                btn.style.background = '';
+                btn.textContent = 'SUBMIT APPLICATION \u2192';
+            }, 3000);
+        });
     });
     </script>
 </body>
