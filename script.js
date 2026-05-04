@@ -181,6 +181,7 @@ if (notifySubmit) {
 
 // ===== Paystack Checkout =====
 const PAYSTACK_PUBLIC_KEY = 'pk_test_67e628afd5934dd30993c076afb8cf9313796861';
+const ORDER_BUMP_AMOUNT = 1500000;
 
 const payModal = document.getElementById('payModal');
 const payModalClose = document.getElementById('payModalClose');
@@ -188,11 +189,33 @@ const payModalForm = document.getElementById('payModalForm');
 const payModalTitle = document.getElementById('payModalTitle');
 const payModalProduct = document.getElementById('payModalProduct');
 const payModalAmount = document.getElementById('payModalAmount');
+const orderBumpCheck = document.getElementById('orderBumpCheck');
+const payModalTotal = document.getElementById('payModalTotal');
 
 let currentPayment = {};
 
 function formatNaira(kobo) {
     return '₦' + (kobo / 100).toLocaleString('en-NG');
+}
+
+function getPaymentTotal() {
+    let total = currentPayment.amount;
+    if (orderBumpCheck && orderBumpCheck.checked) total += ORDER_BUMP_AMOUNT;
+    return total;
+}
+
+function updateTotal() {
+    if (!payModalTotal) return;
+    if (orderBumpCheck && orderBumpCheck.checked) {
+        payModalTotal.textContent = 'Total: ' + formatNaira(getPaymentTotal());
+        payModalTotal.classList.add('show');
+    } else {
+        payModalTotal.classList.remove('show');
+    }
+}
+
+if (orderBumpCheck) {
+    orderBumpCheck.addEventListener('change', updateTotal);
 }
 
 document.querySelectorAll('.pay-btn').forEach(btn => {
@@ -205,6 +228,8 @@ document.querySelectorAll('.pay-btn').forEach(btn => {
         };
         if (payModalProduct) payModalProduct.textContent = currentPayment.name;
         if (payModalAmount) payModalAmount.textContent = formatNaira(currentPayment.amount);
+        if (orderBumpCheck) orderBumpCheck.checked = false;
+        updateTotal();
         if (payModal) payModal.classList.add('show');
     });
 });
@@ -224,25 +249,29 @@ if (payModalForm) {
         const email = document.getElementById('payEmail').value;
         const fullName = document.getElementById('payName').value;
         const phone = document.getElementById('payPhone').value;
+        const includesEA = orderBumpCheck && orderBumpCheck.checked;
+        const totalAmount = getPaymentTotal();
+        const productLabel = includesEA ? currentPayment.name + ' + SMA Pro EA' : currentPayment.name;
 
         const handler = PaystackPop.setup({
             key: PAYSTACK_PUBLIC_KEY,
             email: email,
-            amount: currentPayment.amount,
+            amount: totalAmount,
             currency: 'NGN',
             ref: 'BFX-' + currentPayment.product + '-' + Date.now(),
             metadata: {
                 custom_fields: [
                     { display_name: 'Full Name', variable_name: 'full_name', value: fullName },
                     { display_name: 'Phone', variable_name: 'phone', value: phone },
-                    { display_name: 'Product', variable_name: 'product', value: currentPayment.name }
+                    { display_name: 'Product', variable_name: 'product', value: productLabel },
+                    { display_name: 'EA Bundle', variable_name: 'ea_bundle', value: includesEA ? 'Yes' : 'No' }
                 ]
             },
             onClose: function() {
                 trackEvent('payment_cancelled', { product: currentPayment.product });
             },
             callback: function(response) {
-                trackEvent('payment_success', { product: currentPayment.product, reference: response.reference });
+                trackEvent('payment_success', { product: currentPayment.product, reference: response.reference, ea_bundle: includesEA });
                 payModal.classList.remove('show');
                 payModalForm.reset();
                 window.location.href = 'contact.html?paid=' + currentPayment.product + '&ref=' + response.reference;

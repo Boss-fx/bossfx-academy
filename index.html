@@ -460,68 +460,126 @@
         </div>
     </section>
 
-    <!-- Mentorship Section (TASK 5 — pricing added) -->
-    <section class="section section-dark" id="mentorship">
+    <!-- Pricing Section -->
+    <section class="section section-dark" id="pricing">
         <div class="container">
             <div class="section-header center">
-                <span class="section-tag">Mentorship Program</span>
-                <h2 class="section-title">Learn Directly from<br><span class="text-gradient">Experienced Traders</span></h2>
-                <p class="section-subtitle">
-                    Get personalized guidance, live trade reviews, and direct access to mentors who trade the markets daily.
-                </p>
+                <span class="section-tag">Pricing Plans</span>
+                <h2 class="section-title">Choose Your<br><span class="text-gradient">Trading Path</span></h2>
+                <p class="section-subtitle">From beginner foundations to lifetime access — pick the plan that matches your ambition.</p>
             </div>
-            <div class="mentorship-grid">
-                <div class="mentorship-card">
-                    <div class="mc-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <div class="pricing-grid">
+
+                <!-- BASIC -->
+                <div class="pricing-card" data-tier="basic">
+                    <div class="pricing-card-header">
+                        <span class="pricing-tier-label">Starter</span>
+                        <h3 class="pricing-plan-name">Forex 101</h3>
+                        <p class="pricing-desc">Build your foundation in forex trading</p>
                     </div>
-                    <h3>1-on-1 Mentorship</h3>
-                    <div class="mc-price">from $199/month</div>
-                    <span class="mc-price-period">Billed monthly</span>
-                    <p>Personalized sessions tailored to your level, goals, and trading style. Get direct feedback on your trades.</p>
-                    <ul class="mc-features">
-                        <li>Weekly private sessions</li>
-                        <li>Personalized trading plan</li>
-                        <li>Direct mentor access</li>
-                        <li>Trade journal reviews</li>
+                    <div class="pricing-price-block">
+                        <span class="pricing-currency">₦</span>
+                        <span class="pricing-amount">25,000</span>
+                        <span class="pricing-period">one-time</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="pf-check">&#10003;</span> Forex fundamentals</li>
+                        <li><span class="pf-check">&#10003;</span> Market structure basics</li>
+                        <li><span class="pf-check">&#10003;</span> Beginner strategy</li>
+                        <li><span class="pf-check">&#10003;</span> 12 structured modules</li>
+                        <li><span class="pf-check">&#10003;</span> Lifetime course access</li>
                     </ul>
-                    <button class="btn btn-primary btn-lg pay-btn" data-product="mentorship-1on1" data-amount="15000000" data-name="1-on-1 Mentorship (Monthly)">Enroll Now</button>
+                    <button class="btn btn-primary btn-lg pay-btn pricing-cta" data-product="forex-101" data-amount="2500000" data-name="Forex 101: The Trader's Bible">Start Learning</button>
                 </div>
-                <div class="mentorship-card featured">
-                    <div class="mc-badge">Most Popular</div>
-                    <div class="mc-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+
+                <!-- PRO (highlighted) -->
+                <div class="pricing-card pricing-featured" data-tier="pro">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-card-header">
+                        <span class="pricing-tier-label">Pro</span>
+                        <h3 class="pricing-plan-name">Group Mentorship</h3>
+                        <p class="pricing-desc">Structured guidance + community access</p>
                     </div>
-                    <h3>Group Mentorship</h3>
-                    <div class="mc-price">from $79/month</div>
-                    <span class="mc-price-period">Billed monthly</span>
-                    <p>Learn alongside a cohort of traders. Collaborative environment with live market analysis sessions.</p>
-                    <ul class="mc-features">
-                        <li>Live group sessions</li>
-                        <li>Real-time market analysis</li>
-                        <li>Peer accountability</li>
-                        <li>Community challenges</li>
+                    <div class="pricing-price-block">
+                        <span class="pricing-currency">₦</span>
+                        <span class="pricing-amount">60,000</span>
+                        <span class="pricing-period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="pf-check">&#10003;</span> Everything in Basic</li>
+                        <li><span class="pf-check">&#10003;</span> Live trading sessions</li>
+                        <li><span class="pf-check">&#10003;</span> Private community</li>
+                        <li><span class="pf-check">&#10003;</span> Weekly market breakdowns</li>
+                        <li><span class="pf-check">&#10003;</span> Peer accountability group</li>
                     </ul>
-                    <button class="btn btn-primary btn-lg pay-btn" data-product="mentorship-group" data-amount="6000000" data-name="Group Mentorship (Monthly)">Enroll Now</button>
+                    <p class="pricing-scarcity">Limited slots available this month</p>
+                    <button class="btn btn-primary btn-lg pay-btn pricing-cta" data-product="mentorship-group" data-amount="6000000" data-name="Group Mentorship (Monthly)">Join Mentorship</button>
                 </div>
-                <div class="mentorship-card">
-                    <div class="mc-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+
+                <!-- ELITE -->
+                <div class="pricing-card" data-tier="elite">
+                    <div class="pricing-card-header">
+                        <span class="pricing-tier-label">Advanced</span>
+                        <h3 class="pricing-plan-name">1-on-1 Mentorship</h3>
+                        <p class="pricing-desc">Personalized strategy and direct mentorship</p>
                     </div>
-                    <h3>VIP Program</h3>
-                    <div class="mc-price">$499</div>
-                    <span class="mc-price-period">One-time payment</span>
-                    <p>All-access pass to every BossFX resource. Premium support, exclusive content, and priority access to new courses.</p>
-                    <ul class="mc-features">
-                        <li>All courses included</li>
-                        <li>Priority 1-on-1 access</li>
-                        <li>Exclusive market insights</li>
-                        <li>Lifetime community access</li>
+                    <div class="pricing-price-block">
+                        <span class="pricing-currency">₦</span>
+                        <span class="pricing-amount">150,000</span>
+                        <span class="pricing-period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="pf-check">&#10003;</span> Everything in Pro</li>
+                        <li><span class="pf-check">&#10003;</span> Weekly 1-on-1 sessions</li>
+                        <li><span class="pf-check">&#10003;</span> Personalized trade reviews</li>
+                        <li><span class="pf-check">&#10003;</span> Direct access to mentor</li>
+                        <li><span class="pf-check">&#10003;</span> Custom trading plan</li>
                     </ul>
-                    <button class="btn btn-primary btn-lg pay-btn" data-product="vip" data-amount="35000000" data-name="VIP Program (Lifetime)">Get VIP Access</button>
+                    <button class="btn btn-primary btn-lg pay-btn pricing-cta" data-product="mentorship-1on1" data-amount="15000000" data-name="1-on-1 Mentorship (Monthly)">Apply for 1-on-1</button>
+                </div>
+
+                <!-- VIP -->
+                <div class="pricing-card pricing-vip" data-tier="vip">
+                    <div class="pricing-badge pricing-badge-vip">Best Value</div>
+                    <div class="pricing-card-header">
+                        <span class="pricing-tier-label pricing-tier-vip">All Access</span>
+                        <h3 class="pricing-plan-name">VIP Program</h3>
+                        <p class="pricing-desc">Everything BossFx — lifetime access + priority support</p>
+                    </div>
+                    <div class="pricing-price-block">
+                        <span class="pricing-currency">₦</span>
+                        <span class="pricing-amount">350,000</span>
+                        <span class="pricing-period">one-time</span>
+                    </div>
+                    <p class="pricing-anchor">Save over ₦500,000 in long-term value</p>
+                    <ul class="pricing-features">
+                        <li><span class="pf-check">&#10003;</span> Everything in Elite</li>
+                        <li><span class="pf-check">&#10003;</span> Lifetime access</li>
+                        <li><span class="pf-check">&#10003;</span> SMA Pro Trend EA included</li>
+                        <li><span class="pf-check">&#10003;</span> Priority support</li>
+                        <li><span class="pf-check">&#10003;</span> All future updates included</li>
+                    </ul>
+                    <p class="pricing-scarcity">Limited slots available this month</p>
+                    <button class="btn btn-primary btn-lg pay-btn pricing-cta" data-product="vip" data-amount="35000000" data-name="VIP Program (Lifetime)">Get Full Access</button>
+                </div>
+
+            </div>
+
+            <!-- Trust Elements -->
+            <div class="pricing-trust">
+                <div class="pricing-trust-item">
+                    <span class="pricing-trust-icon">&#128274;</span>
+                    <span>Secure Payment via Paystack</span>
+                </div>
+                <div class="pricing-trust-item">
+                    <span class="pricing-trust-icon">&#9889;</span>
+                    <span>Instant Access After Payment</span>
+                </div>
+                <div class="pricing-trust-item">
+                    <span class="pricing-trust-icon">&#128242;</span>
+                    <span>Active Trading Community</span>
                 </div>
             </div>
-            <p class="mc-footnote">All prices in USD. Contact us for custom enterprise rates.</p>
         </div>
     </section>
 
@@ -905,7 +963,7 @@
                     <div class="footer-col">
                         <h4>Academy</h4>
                         <a href="#courses">Forex 101</a>
-                        <a href="#mentorship">Mentorship</a>
+                        <a href="#pricing">Pricing</a>
                         <a href="#community">Community</a>
                         <a href="contact.html">Contact</a>
                     </div>
@@ -958,6 +1016,15 @@
                 <input type="text" id="payName" placeholder="Full name" required>
                 <input type="email" id="payEmail" placeholder="Email address" required>
                 <input type="tel" id="payPhone" placeholder="Phone number (optional)">
+                <label class="order-bump" id="orderBump">
+                    <input type="checkbox" id="orderBumpCheck">
+                    <div class="order-bump-content">
+                        <span class="order-bump-tag">SPECIAL OFFER</span>
+                        <strong>Add SMA Pro Trend EA for ₦15,000</strong>
+                        <span class="order-bump-note">Exclusive bundle price (normally ₦49,000)</span>
+                    </div>
+                </label>
+                <div class="pay-modal-total" id="payModalTotal"></div>
                 <button type="submit" class="btn btn-primary btn-lg pay-modal-submit">Pay with Paystack</button>
             </form>
             <p class="pay-modal-secure">Secured by Paystack. Your card details are never stored on our servers.</p>
