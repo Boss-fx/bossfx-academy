@@ -179,6 +179,79 @@ if (notifySubmit) {
     });
 }
 
+// ===== Paystack Checkout =====
+const PAYSTACK_PUBLIC_KEY = 'pk_test_67e628afd5934dd30993c076afb8cf9313796861';
+
+const payModal = document.getElementById('payModal');
+const payModalClose = document.getElementById('payModalClose');
+const payModalForm = document.getElementById('payModalForm');
+const payModalTitle = document.getElementById('payModalTitle');
+const payModalProduct = document.getElementById('payModalProduct');
+const payModalAmount = document.getElementById('payModalAmount');
+
+let currentPayment = {};
+
+function formatNaira(kobo) {
+    return '₦' + (kobo / 100).toLocaleString('en-NG');
+}
+
+document.querySelectorAll('.pay-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentPayment = {
+            product: btn.dataset.product,
+            amount: parseInt(btn.dataset.amount),
+            name: btn.dataset.name
+        };
+        if (payModalProduct) payModalProduct.textContent = currentPayment.name;
+        if (payModalAmount) payModalAmount.textContent = formatNaira(currentPayment.amount);
+        if (payModal) payModal.classList.add('show');
+    });
+});
+
+if (payModalClose) {
+    payModalClose.addEventListener('click', () => payModal.classList.remove('show'));
+}
+if (payModal) {
+    payModal.addEventListener('click', (e) => {
+        if (e.target === payModal) payModal.classList.remove('show');
+    });
+}
+
+if (payModalForm) {
+    payModalForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('payEmail').value;
+        const fullName = document.getElementById('payName').value;
+        const phone = document.getElementById('payPhone').value;
+
+        const handler = PaystackPop.setup({
+            key: PAYSTACK_PUBLIC_KEY,
+            email: email,
+            amount: currentPayment.amount,
+            currency: 'NGN',
+            ref: 'BFX-' + currentPayment.product + '-' + Date.now(),
+            metadata: {
+                custom_fields: [
+                    { display_name: 'Full Name', variable_name: 'full_name', value: fullName },
+                    { display_name: 'Phone', variable_name: 'phone', value: phone },
+                    { display_name: 'Product', variable_name: 'product', value: currentPayment.name }
+                ]
+            },
+            onClose: function() {
+                trackEvent('payment_cancelled', { product: currentPayment.product });
+            },
+            callback: function(response) {
+                trackEvent('payment_success', { product: currentPayment.product, reference: response.reference });
+                payModal.classList.remove('show');
+                payModalForm.reset();
+                window.location.href = 'contact.html?paid=' + currentPayment.product + '&ref=' + response.reference;
+            }
+        });
+        handler.openIframe();
+    });
+}
+
 // ===== FAQ Accordion =====
 document.querySelectorAll('.faq-question').forEach(btn => {
     btn.addEventListener('click', () => {

@@ -190,10 +190,10 @@
                     12 structured modules. 60+ practical exercises. Zero experience required.
                 </p>
                 <div class="hero-cta">
-                    <a href="contact.html" class="btn btn-primary btn-lg course-btn">
+                    <button class="btn btn-primary btn-lg pay-btn course-btn" data-product="forex-101" data-amount="2500000" data-name="Forex 101: The Trader's Bible">
                         Start Forex 101
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
+                    </button>
                     <a href="#about" class="btn btn-ghost btn-lg">
                         Explore Academy
                     </a>
@@ -423,10 +423,10 @@
                         </li>
                     </ul>
                     <p class="course-note">+ 6 more advanced modules covering execution, journaling, and live trading plans</p>
-                    <a href="contact.html" class="btn btn-primary btn-lg course-btn">
+                    <button class="btn btn-primary btn-lg pay-btn course-btn" data-product="forex-101" data-amount="2500000" data-name="Forex 101: The Trader's Bible">
                         Enroll in Forex 101
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
+                    </button>
                 </div>
                 <div class="course-visual">
                     <div class="course-card-main">
@@ -485,6 +485,7 @@
                         <li>Direct mentor access</li>
                         <li>Trade journal reviews</li>
                     </ul>
+                    <button class="btn btn-primary btn-lg pay-btn" data-product="mentorship-1on1" data-amount="15000000" data-name="1-on-1 Mentorship (Monthly)">Enroll Now</button>
                 </div>
                 <div class="mentorship-card featured">
                     <div class="mc-badge">Most Popular</div>
@@ -501,6 +502,7 @@
                         <li>Peer accountability</li>
                         <li>Community challenges</li>
                     </ul>
+                    <button class="btn btn-primary btn-lg pay-btn" data-product="mentorship-group" data-amount="6000000" data-name="Group Mentorship (Monthly)">Enroll Now</button>
                 </div>
                 <div class="mentorship-card">
                     <div class="mc-icon">
@@ -516,6 +518,7 @@
                         <li>Exclusive market insights</li>
                         <li>Lifetime community access</li>
                     </ul>
+                    <button class="btn btn-primary btn-lg pay-btn" data-product="vip" data-amount="35000000" data-name="VIP Program (Lifetime)">Get VIP Access</button>
                 </div>
             </div>
             <p class="mc-footnote">All prices in USD. Contact us for custom enterprise rates.</p>
@@ -863,10 +866,10 @@
                 <h2 class="section-title">Ready to Trade<br><span class="text-gradient">Like a Boss?</span></h2>
                 <p>Join BossFX Academy today and take the first step toward becoming a structured, disciplined trader.</p>
                 <div class="cta-buttons">
-                    <a href="contact.html" class="btn btn-primary btn-lg course-btn">
+                    <button class="btn btn-primary btn-lg pay-btn course-btn" data-product="forex-101" data-amount="2500000" data-name="Forex 101: The Trader's Bible">
                         Start Forex 101
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
+                    </button>
                     <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" class="btn btn-outline btn-lg">Join Free Community</a>
                 </div>
             </div>
@@ -944,6 +947,24 @@
         </div>
     </div>
 
+    <!-- Payment Modal -->
+    <div class="pay-modal-overlay" id="payModal">
+        <div class="pay-modal">
+            <button class="pay-modal-close" id="payModalClose">&times;</button>
+            <h3 id="payModalTitle">Complete Your Purchase</h3>
+            <p id="payModalProduct">Product name</p>
+            <p id="payModalAmount" class="pay-modal-price"></p>
+            <form id="payModalForm">
+                <input type="text" id="payName" placeholder="Full name" required>
+                <input type="email" id="payEmail" placeholder="Email address" required>
+                <input type="tel" id="payPhone" placeholder="Phone number (optional)">
+                <button type="submit" class="btn btn-primary btn-lg pay-modal-submit">Pay with Paystack</button>
+            </form>
+            <p class="pay-modal-secure">Secured by Paystack. Your card details are never stored on our servers.</p>
+        </div>
+    </div>
+
+    <script src="https://js.paystack.co/v2/inline.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

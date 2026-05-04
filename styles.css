@@ -2693,3 +2693,104 @@ ul {
         font-size: 0.78rem;
     }
 }
+
+/* ===== Payment Modal ===== */
+.pay-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+.pay-modal-overlay.show {
+    display: flex;
+}
+.pay-modal {
+    background: #111;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 440px;
+    width: 90%;
+    position: relative;
+    animation: modalSlideUp 0.3s ease;
+}
+@keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.pay-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+.pay-modal-close:hover {
+    color: #fff;
+}
+.pay-modal h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+.pay-modal-price {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.75rem;
+    color: #10B981;
+    font-weight: 700;
+    margin: 0.75rem 0 1.5rem;
+}
+#payModalProduct {
+    color: #aaa;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
+#payModalForm input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.75rem;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+}
+#payModalForm input:focus {
+    border-color: #10B981;
+}
+#payModalForm input::placeholder {
+    color: #666;
+}
+.pay-modal-submit {
+    width: 100%;
+    margin-top: 0.5rem;
+    font-size: 1.05rem;
+}
+.pay-modal-secure {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 1rem;
+    margin-bottom: 0;
+}
+.mentorship-card .pay-btn {
+    margin-top: 1.25rem;
+    width: 100%;
+}
+@media (max-width: 480px) {
+    .pay-modal {
+        padding: 1.75rem;
+    }
+}
