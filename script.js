@@ -118,9 +118,9 @@ if (leadForm) {
     leadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('lmEmail').value;
-        // TODO: Sign up at formspree.io, replace YOUR_FORM_ID
+        
         try {
-            await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+            await fetch('https://formspree.io/f/xykoeneg', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({ email, source: 'bossfx_starter_pack' })
@@ -166,7 +166,7 @@ if (notifySubmit) {
         const email = document.getElementById('notifyEmail').value;
         if (!email) return;
         try {
-            await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+            await fetch('https://formspree.io/f/xykoeneg', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({ email, source: 'tool_notify' })
