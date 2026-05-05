@@ -31,10 +31,10 @@
         <div class="container nav-container">
             <a href="../index.html" class="nav-logo"><img src="../assets/logo.png" alt="BossFX Academy Logo"></a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#ea">Tools</a></li>
                 <li><a href="../courses.html">Courses</a></li>
                 <li><a href="../mentorship.html">Mentorship</a></li>
-                <li><a href="./" style="color: var(--green-400);">Blog</a></li>
                 <li><a href="../community.html">Community</a></li>
                 <li><a href="../about.html">About</a></li>
                 <li><a href="../contact.html">Contact</a></li>
@@ -71,7 +71,37 @@
 
         <p>What followed was months of MQL5 development, 21 MetaQuotes validation errors (that's another story), and eventually — a published product on the MT5 Market that trades exactly the way I designed it to, every single time.</p>
         <p>This post covers the why. Why automation. Why SMA. Why I chose to publish it publicly instead of keeping it private.</p>
-        <p><em>[Full article coming soon — this is a placeholder.]</em></p>
+        <h2>The Frustration With Manual Trading</h2>
+        <p>If you have traded manually for any length of time, you know the feeling. You stare at a chart, your setup forms perfectly, and then you hesitate. Maybe the last trade was a loss. Maybe you second-guess the signal. Maybe you tell yourself you will wait for "one more confirmation" that never comes.</p>
+        <p>I was profitable in demo. My journal showed consistent results over six months. But the moment real money was on the line, I became a different trader. I moved stop losses to avoid taking small losses, which turned them into large losses. I closed winners early because I was afraid they would reverse. I skipped perfectly valid setups because my gut told me "not this one."</p>
+        <p>The strategy was not the problem. I was the problem. And the only real solution was to remove myself from the execution entirely.</p>
+
+        <h2>Why SMA Crossover Specifically</h2>
+        <p>When I decided to automate, I needed a strategy that met three criteria: it had to be simple enough to code without ambiguity, backtestable with clear rules, and mechanical enough that no discretion was required.</p>
+        <p>The dual SMA crossover checked every box. When the fast moving average crosses above the slow moving average, you go long. When it crosses below, you go short. There is no room for interpretation. No "does this candle look bullish enough?" No subjective pattern recognition. Just math.</p>
+        <p>SMA crossover strategies are not glamorous. They will never be the strategy some influencer flexes on social media. But they work in trending markets, they are easy to validate, and they have decades of documented performance across multiple asset classes. For automation, simplicity is a feature, not a weakness.</p>
+
+        <h2>The MQL5 Development Journey</h2>
+        <p>I had zero MQL5 experience when I started. I knew basic programming concepts from working with Python, but MQL5 is its own world. The syntax is C-like, the documentation is extensive but often unclear, and the MetaTrader platform has quirks you only discover through trial and error.</p>
+        <p>The first version took about three weeks to build. It could place trades based on SMA crossovers, but it was fragile. It did not handle spread spikes. It did not check whether the broker allowed trading at that moment. It did not manage existing positions properly if the EA was restarted.</p>
+        <p>The second version took another month. This is where I added proper error handling, lot size calculation based on account balance and risk percentage, and logic to handle every edge case I could think of. The third version was the one that eventually passed MetaQuotes validation, but not before 21 errors forced me to rebuild significant portions of the code.</p>
+
+        <h2>Why Publish Publicly</h2>
+        <p>I could have kept this EA private. Many traders do. They build their system, run it on their own accounts, and never share it. There is nothing wrong with that approach.</p>
+        <p>But I chose to publish for several reasons. First, accountability. When your EA is public and people are using it, you are forced to maintain it, document it, and stand behind it. You cannot cut corners.</p>
+        <p>Second, I wanted to help other traders who were in the same position I was — people who had a working strategy but could not execute it consistently because of emotions. Not everyone can code their own EA. Making mine available gives those traders access to a tool they would not otherwise have.</p>
+        <p>Third, trust. The forex space is full of scams and empty promises. Publishing on the MQL5 Market, passing their validation, and being transparent about what the EA does and does not do is how you build genuine credibility. I would rather have a small audience that trusts me than a large audience that I have misled.</p>
+
+        <h2>What the EA Actually Does</h2>
+        <p>The BossFx SMA Pro Trend EA uses a dual SMA crossover system. You configure a fast SMA period and a slow SMA period. When the fast SMA crosses above the slow SMA, the EA opens a buy position. When the fast SMA crosses below the slow SMA, it opens a sell position.</p>
+        <p>But the crossover signal is just the entry logic. The real value is in the risk management layer built around it. The EA calculates lot size automatically based on your account balance and a risk percentage you define. It sets a stop loss on every trade — no exceptions. It respects a maximum daily loss limit so that a string of bad trades cannot blow your account in a single session.</p>
+        <p>It also handles the operational details that manual traders often overlook: checking spread conditions before entry, verifying that the broker allows trading, managing positions correctly across platform restarts, and logging every decision so you can review what happened and why.</p>
+
+        <h2>Lessons Learned From Building It</h2>
+        <p>The biggest lesson was that building an EA is not primarily a coding challenge — it is a risk management challenge. Anyone can write code that opens a trade on a crossover. The hard part is handling every scenario where things go wrong: slippage, spread spikes, broker disconnections, margin calls, and platform restarts.</p>
+        <p>The second lesson was that simplicity wins. Every time I was tempted to add another indicator or filter, I reminded myself that complexity creates fragility. The more conditions you add, the more things can break, and the harder it becomes to diagnose problems when they appear.</p>
+        <p>The third lesson was that validation is a gift, not a burden. When MetaQuotes sent back 21 errors, my first reaction was frustration. But every error they caught was a real problem that would have affected users in production. The validation process forced me to build something production-grade rather than something that merely worked on my machine.</p>
+        <p>If you are a trader considering automation, my advice is simple: start with a strategy you already trust, keep it mechanical, and respect the engineering required to make it robust. The code is the easy part. The discipline to keep it simple and the patience to handle every edge case — that is what separates a hobby project from a published product.</p>
 
         <div class="blog-cta-end">
             <h3>Start Your Trading Journey</h3>

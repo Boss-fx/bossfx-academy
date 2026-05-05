@@ -31,10 +31,10 @@
         <div class="container nav-container">
             <a href="../index.html" class="nav-logo"><img src="../assets/logo.png" alt="BossFX Academy Logo"></a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#ea">Tools</a></li>
                 <li><a href="../courses.html">Courses</a></li>
                 <li><a href="../mentorship.html">Mentorship</a></li>
-                <li><a href="./" style="color: var(--green-400);">Blog</a></li>
                 <li><a href="../community.html">Community</a></li>
                 <li><a href="../about.html">About</a></li>
                 <li><a href="../contact.html">Contact</a></li>
@@ -71,7 +71,44 @@
 
         <p>Some were obvious — uninitialized variables, missing error checks on trade operations. But others were things I never would have caught on my own: handling brokers that don't support certain order types, dealing with different tick sizes across pairs, managing the gap between SYMBOL_TRADE_STOPS_LEVEL and my stop loss placement.</p>
         <p>Each error forced me to build a more robust, production-grade EA. In hindsight, every single one made the product better.</p>
-        <p><em>[Full article coming soon — this is a placeholder.]</em></p>
+        <h2>What Is MetaQuotes Validation and Why Does It Matter</h2>
+        <p>MetaQuotes is the company behind MetaTrader 5. When you want to sell an Expert Advisor on the MQL5 Market, you cannot simply upload your code and start selling. Every EA goes through an automated validation process that tests your code against hundreds of scenarios, broker configurations, and edge cases.</p>
+        <p>The validator simulates different broker environments, checks for memory leaks, verifies that your EA handles errors gracefully, and ensures it follows platform rules. Think of it as a strict code review performed by a machine that has seen every possible way an EA can fail in production.</p>
+        <p>This matters because the MQL5 Market serves traders using brokers all over the world, each with different rules, spreads, stop levels, and order types. Your EA needs to work correctly on all of them — not just the one broker you tested on during development.</p>
+
+        <h2>The Errors: Broker Rules</h2>
+        <p>About a third of my 21 errors fell into the broker rules category. These were situations where my EA assumed all brokers worked the same way — and they do not.</p>
+        <p><strong>SYMBOL_TRADE_STOPS_LEVEL violations.</strong> Different brokers set different minimum distances between the current price and where you can place a stop loss or take profit. My EA was placing stops at a fixed pip distance without checking whether the broker allowed stops that close to the market price. The fix was to query SYMBOL_TRADE_STOPS_LEVEL before every trade and adjust the stop distance accordingly.</p>
+        <p><strong>Order type restrictions.</strong> Some brokers do not support all order types. My original code used pending orders in certain conditions without verifying that the broker accepted them. The solution was to check SYMBOL_ORDER_MODE and fall back to market orders when pending orders were unavailable.</p>
+        <p><strong>Volume step and minimum lot.</strong> I was calculating lot sizes to several decimal places, but many brokers only accept lots in specific increments (0.01, 0.1, etc.). The validator caught this immediately. I had to round the calculated lot size to the nearest valid increment using SYMBOL_VOLUME_STEP.</p>
+
+        <h2>The Errors: Error Handling</h2>
+        <p>The second category was insufficient error handling. In development, trades usually execute successfully. In production, they fail constantly — and your EA needs to handle every failure mode.</p>
+        <p><strong>Unchecked return values on OrderSend.</strong> My early code fired off trade requests without properly checking whether they succeeded. If OrderSend returned false, I was not reading the error code or taking appropriate action. The fix was wrapping every trade operation in proper error-handling logic that reads the result structure and responds accordingly.</p>
+        <p><strong>No retry logic for requotes.</strong> When the market moves between the time you request a trade and the time the server processes it, you get a requote. My EA treated this as a permanent failure. The fix was implementing a retry mechanism with a small delay and a maximum attempt count.</p>
+        <p><strong>Missing checks for trading permissions.</strong> Before placing any trade, you need to verify that algorithmic trading is enabled, that the symbol is tradeable at that moment, and that the account has sufficient margin. I was skipping some of these checks, and the validator flagged every missing one.</p>
+
+        <h2>The Errors: Trade Management</h2>
+        <p>The third group related to how the EA managed open positions and interacted with the trading environment.</p>
+        <p><strong>Position handling on EA restart.</strong> If the EA is removed and reattached to a chart, or if MetaTrader restarts, the EA needs to recognize and manage any positions it previously opened. My original version started fresh every time, which could lead to duplicate positions or orphaned trades with no management.</p>
+        <p><strong>Spread filter logic.</strong> I was checking the spread at the moment of signal generation but not at the moment of trade execution. In fast markets, the spread can widen significantly between those two points. The fix was to verify spread conditions immediately before calling OrderSend.</p>
+        <p><strong>Daily loss limit enforcement.</strong> My daily loss cap was calculated based on closed trades only. The validator expected it to account for floating (unrealized) losses as well. This meant querying open position profit in addition to closed trade history when calculating whether the daily limit had been reached.</p>
+
+        <h2>The Errors: UI and Logging</h2>
+        <p>The final category was about how the EA communicates with the user and logs its activity.</p>
+        <p><strong>Excessive Print statements.</strong> During development, I used Print() liberally for debugging. The validator flagged this because excessive logging can slow down the terminal and fill the journal with noise. I had to implement a proper logging level system — verbose output only when a debug flag is enabled.</p>
+        <p><strong>Comment field misuse.</strong> I was writing long strings to the order comment field, which has a character limit that varies by broker. Exceeding it silently truncates the data. The fix was keeping comments short and standardized.</p>
+        <p><strong>Chart object cleanup.</strong> If your EA draws on the chart (indicators, labels, buttons), it needs to clean them up when removed. I had leftover chart objects that persisted after the EA was detached.</p>
+
+        <h2>Key Lessons From the Validation Process</h2>
+        <p><strong>Test on multiple brokers.</strong> What works on your primary broker might fail on another. The validator simulates conditions you will never encounter in your own testing environment. If possible, open demo accounts with three or four different brokers and test your EA on each one before submitting.</p>
+        <p><strong>Handle every edge case.</strong> If there is a scenario where a function can return an error, handle it. If there is a broker setting that could restrict your EA's behavior, check for it. Assume nothing about the trading environment — query everything at runtime.</p>
+        <p><strong>Respect platform rules.</strong> MetaTrader has conventions about logging, resource management, and user communication. Following these conventions is not optional for Market products. Read the MQL5 documentation on Market requirements before you write a single line of code.</p>
+
+        <h2>Why Validation Makes EAs Better</h2>
+        <p>After fixing all 21 errors, my EA was fundamentally different from what I had submitted. It was not just "passing the test" — it was genuinely more robust, more portable, and more professional.</p>
+        <p>Every error the validator caught was a real failure mode that would have affected a user eventually. A broker with tight stop levels. A network hiccup causing a requote. A platform restart losing track of positions. These are not theoretical problems — they happen every week in live trading.</p>
+        <p>The validation process forced me to think like a platform engineer rather than a solo trader running code on his own machine. It transformed a working prototype into a production-grade product. If you are building an EA with the intention of publishing it, treat the validator not as an obstacle but as your most thorough code reviewer. It will make your product better than you could make it alone.</p>
 
         <div class="blog-cta-end">
             <h3>Start Your Trading Journey</h3>
