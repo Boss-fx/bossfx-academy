@@ -308,11 +308,11 @@ document.querySelectorAll('.pricing-timer').forEach(timer => {
 
 // ===== Live Activity Popup =====
 (function() {
-    const popup = document.getElementById('livePopup');
-    const popupText = document.getElementById('livePopupText');
-    if (!popup || !popupText) return;
+    var lpPopup = document.getElementById('livePopup');
+    var lpText = document.getElementById('livePopupText');
+    if (!lpPopup || !lpText) return;
 
-    const messages = [
+    var lpMessages = [
         'Someone just joined Group Mentorship',
         'New EA purchase completed',
         'A trader from Lagos just started Forex 101',
@@ -322,18 +322,18 @@ document.querySelectorAll('.pricing-timer').forEach(timer => {
         'Forex 101 enrollment from Abuja'
     ];
 
-    let index = 0;
-    function showPopup() {
-        popupText.textContent = messages[index];
-        popup.classList.add('show');
-        setTimeout(() => {
-            popup.classList.remove('show');
-        }, 4000);
-        index = (index + 1) % messages.length;
+    var lpIndex = 0;
+    function lpShow() {
+        lpText.textContent = lpMessages[lpIndex];
+        lpPopup.classList.add('show');
+        lpIndex = (lpIndex + 1) % lpMessages.length;
+        setTimeout(function() {
+            lpPopup.classList.remove('show');
+            setTimeout(lpShow, 3000);
+        }, 5000);
     }
 
-    setTimeout(showPopup, 5000);
-    setInterval(showPopup, 8000);
+    setTimeout(lpShow, 4000);
 })();
 
 // ===== FAQ Accordion =====
