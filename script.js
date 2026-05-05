@@ -281,6 +281,61 @@ if (payModalForm) {
     });
 }
 
+// ===== Countdown Timers =====
+document.querySelectorAll('.pricing-timer').forEach(timer => {
+    const hours = parseInt(timer.dataset.countdown) || 48;
+    const storageKey = 'bfx_countdown_' + hours;
+    let endTime = localStorage.getItem(storageKey);
+    if (!endTime || parseInt(endTime) < Date.now()) {
+        endTime = Date.now() + hours * 60 * 60 * 1000;
+        localStorage.setItem(storageKey, endTime);
+    }
+    const display = timer.querySelector('.countdown-display');
+    function tick() {
+        const remaining = parseInt(endTime) - Date.now();
+        if (remaining <= 0) {
+            display.textContent = '00:00:00';
+            return;
+        }
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+        const s = Math.floor((remaining % 60000) / 1000);
+        display.textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+    tick();
+    setInterval(tick, 1000);
+});
+
+// ===== Live Activity Popup =====
+(function() {
+    const popup = document.getElementById('livePopup');
+    const popupText = document.getElementById('livePopupText');
+    if (!popup || !popupText) return;
+
+    const messages = [
+        'Someone just joined Group Mentorship',
+        'New EA purchase completed',
+        'A trader from Lagos just started Forex 101',
+        'VIP enrollment confirmed',
+        'A new member joined the trading community',
+        'Mentorship session booked',
+        'Forex 101 enrollment from Abuja'
+    ];
+
+    let index = 0;
+    function showPopup() {
+        popupText.textContent = messages[index];
+        popup.classList.add('show');
+        setTimeout(() => {
+            popup.classList.remove('show');
+        }, 4000);
+        index = (index + 1) % messages.length;
+    }
+
+    setTimeout(showPopup, 5000);
+    setInterval(showPopup, 8000);
+})();
+
 // ===== FAQ Accordion =====
 document.querySelectorAll('.faq-question').forEach(btn => {
     btn.addEventListener('click', () => {
