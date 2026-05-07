@@ -302,6 +302,16 @@
     </style>
 </head>
 <body>
+    <!-- Lead Capture Bar -->
+    <div class="lead-bar" id="leadBar">
+        <form class="lead-bar-form" id="leadBarForm">
+            <span class="lead-bar-text">🎯 Free Forex Starter Pack — Get yours now</span>
+            <input type="email" class="lead-bar-input" placeholder="Enter your email" required>
+            <button type="submit" class="lead-bar-btn">Get Free Access</button>
+        </form>
+        <button class="lead-bar-close" id="leadBarClose">&times;</button>
+    </div>
+
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
             <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="BossFX Academy Logo"></a>
@@ -359,10 +369,15 @@
                     <div class="module-item"><span class="mod-num">12</span><div class="mod-info"><strong>Live Trading & Journaling</strong><span>Execute, track, and improve every trade</span></div></div>
                 </div>
                 <div class="flagship-cta">
-                    <a href="index.html#pricing" class="btn btn-primary btn-lg course-btn">
+                    <div class="urgency-banner" style="margin-bottom: 20px;">
+                        <span class="urgency-icon">🔥</span>
+                        <span class="urgency-text"><strong>Limited Offer:</strong> Enroll this week and get free access to the trading community + live sessions</span>
+                    </div>
+                    <a href="index.html#pricing" class="btn btn-primary btn-lg btn-pulse course-btn">
                         Enroll in Forex 101
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </a>
+                    <p style="margin-top: 12px; font-size: 0.82rem; color: var(--text-muted);">✓ Lifetime access &nbsp;·&nbsp; ✓ Community included &nbsp;·&nbsp; ✓ 7-day guarantee</p>
                 </div>
             </div>
         </div>
@@ -437,6 +452,55 @@
         </div>
     </section>
 
+    <!-- Newsletter & Lead Magnets -->
+    <section class="section newsletter-section">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">📩 Free Resources</span>
+                <h2 class="section-title">Level Up Your<br><span class="text-gradient">Trading Game</span></h2>
+                <p class="section-subtitle">Download free guides, checklists, and templates used by BossFx traders.</p>
+            </div>
+            <div class="magnet-grid">
+                <div class="magnet-card">
+                    <div class="magnet-icon">📘</div>
+                    <h4>Forex Starter Pack</h4>
+                    <p>Essential guide for complete beginners. Covers basics, terminology, and first steps.</p>
+                    <form class="newsletter-form" data-magnet="starter-pack">
+                        <input type="email" placeholder="Your email" required>
+                        <button type="submit" class="btn btn-primary">Download Free</button>
+                    </form>
+                </div>
+                <div class="magnet-card">
+                    <div class="magnet-icon">📊</div>
+                    <h4>Risk Calculator</h4>
+                    <p>Never over-leverage again. Calculate position size, stop loss, and risk per trade.</p>
+                    <form class="newsletter-form" data-magnet="risk-calculator">
+                        <input type="email" placeholder="Your email" required>
+                        <button type="submit" class="btn btn-primary">Download Free</button>
+                    </form>
+                </div>
+                <div class="magnet-card">
+                    <div class="magnet-icon">📋</div>
+                    <h4>Trading Plan Template</h4>
+                    <p>The exact template BossFx mentors use. Customize it for your strategy and goals.</p>
+                    <form class="newsletter-form" data-magnet="trading-plan">
+                        <input type="email" placeholder="Your email" required>
+                        <button type="submit" class="btn btn-primary">Download Free</button>
+                    </form>
+                </div>
+                <div class="magnet-card">
+                    <div class="magnet-icon">📝</div>
+                    <h4>Trade Journal Sheet</h4>
+                    <p>Track every trade, review your performance, and improve consistently over time.</p>
+                    <form class="newsletter-form" data-magnet="trade-journal">
+                        <input type="email" placeholder="Your email" required>
+                        <button type="submit" class="btn btn-primary">Download Free</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -479,6 +543,11 @@
             <span class="tg-float-text">Join Community</span>
             <span class="tg-float-count">5,200+ traders</span>
         </a>
+    </div>
+
+    <!-- Mobile Sticky CTA -->
+    <div class="mobile-sticky-cta" id="mobileCta">
+        <a href="contact.html" class="btn btn-primary btn-glow">Start Free Today</a>
     </div>
 </body>
 </html>
