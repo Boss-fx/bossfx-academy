@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30-Day Trading Discipline Tracker — BossFx Academy</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#050a07;color:#e2e8f0;font-family:'Inter','Segoe UI',sans-serif;line-height:1.8}
+@media print{body{background:#fff;color:#111}.day-cell{border-color:#ccc!important}.day-cell .num{color:#333!important}}
+.container{max-width:800px;margin:0 auto;padding:48px 32px}
+.header{text-align:center;padding:60px 32px 40px;border-bottom:2px solid #10b981;margin-bottom:48px}
+.logo{font-size:1.6rem;font-weight:800;color:#10b981;letter-spacing:2px;margin-bottom:8px}
+.header h1{font-size:2.2rem;font-weight:800;color:#fff;margin:16px 0 8px;line-height:1.2}
+.header p{color:#94a3b8;font-size:0.95rem}
+.badge{display:inline-block;padding:6px 18px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:50px;font-size:0.75rem;font-weight:700;color:#34d399;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)}
+h2 .num{color:#10b981;margin-right:8px}
+h3{font-size:1.1rem;font-weight:600;color:#34d399;margin:24px 0 12px}
+p{margin-bottom:16px;color:#cbd5e1;font-size:0.92rem}
+ul,ol{margin:12px 0 20px 24px;color:#cbd5e1;font-size:0.92rem}
+li{margin-bottom:8px}li strong{color:#fff}
+.tip-box{background:rgba(16,185,129,0.08);border-left:3px solid #10b981;border-radius:0 12px 12px 0;padding:20px 24px;margin:24px 0}
+.tip-box strong{color:#10b981;display:block;margin-bottom:6px;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px}
+.danger-box{background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;border-radius:0 12px 12px 0;padding:20px 24px;margin:24px 0}
+.danger-box strong{color:#ef4444;display:block;margin-bottom:6px;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:24px 0}
+.day-label{text-align:center;font-size:0.72rem;font-weight:700;color:#10b981;text-transform:uppercase;padding:8px 0}
+.day-cell{border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 8px;min-height:80px;background:rgba(255,255,255,0.02)}
+.day-cell .num{font-size:0.82rem;font-weight:700;color:#94a3b8;margin-bottom:6px}
+.day-cell .checks{font-size:0.65rem;color:#64748b;line-height:1.5}
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+@media(max-width:600px){.rules-grid{grid-template-columns:1fr}.calendar-grid{grid-template-columns:repeat(5,1fr)}}
+.rule-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px}
+.rule-card .rule-num{display:inline-block;width:24px;height:24px;background:#10b981;color:#050a07;border-radius:50%;text-align:center;line-height:24px;font-weight:800;font-size:0.75rem;margin-right:8px}
+.rule-card strong{color:#fff;font-size:0.88rem}
+.rule-card p{color:#94a3b8;font-size:0.8rem;margin-top:4px;margin-bottom:0}
+.score-section{background:rgba(16,185,129,0.04);border:1px solid rgba(16,185,129,0.12);border-radius:16px;padding:28px;margin:28px 0}
+.score-section h3{margin-top:0}
+.score-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,0.08);font-size:0.9rem}
+.score-row:last-child{border-bottom:none}
+.score-row .label{color:#94a3b8}
+.score-row .val{color:#10b981;font-weight:700}
+.cta-box{background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.04));border:1px solid rgba(16,185,129,0.2);border-radius:16px;padding:32px;text-align:center;margin:32px 0}
+.cta-box h3{color:#fff;margin-bottom:8px;font-size:1.2rem}
+.cta-box p{color:#94a3b8;font-size:0.88rem;margin-bottom:16px}
+.cta-btn{display:inline-block;padding:12px 28px;background:#10b981;color:#050a07;font-weight:700;border-radius:10px;text-decoration:none;font-size:0.9rem}
+.footer-section{margin-top:60px;padding-top:32px;border-top:2px solid #10b981;text-align:center}
+.socials{display:flex;justify-content:center;gap:20px;margin:20px 0;flex-wrap:wrap}
+.socials a{color:#94a3b8;text-decoration:none;font-size:0.82rem}
+.disclaimer{font-size:0.72rem;color:#64748b;margin-top:24px;line-height:1.6;max-width:600px;margin-left:auto;margin-right:auto}
+.print-btn{position:fixed;bottom:24px;right:24px;padding:12px 24px;background:#10b981;color:#050a07;border:none;border-radius:10px;font-weight:700;font-size:0.85rem;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.3);z-index:100}
+@media print{.print-btn{display:none}}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">📥 Save as PDF</button>
+<div class="container">
+<div class="header">
+    <div class="logo">BOSSFX ACADEMY</div>
+    <span class="badge">Free Resource</span>
+    <h1>30-Day Trading Discipline Tracker</h1>
+    <p>Build unbreakable trading habits in 30 days. Track your discipline, not just your profits.</p>
+</div>
+
+<h2><span class="num">01</span> The Challenge</h2>
+<p>For the next 30 trading days, your only goal is discipline. Not profits, not pips, not win rate — pure process discipline. Follow 6 simple rules every trading day and track your score.</p>
+<p>Research shows it takes 21-30 days to form a habit. By the end of this challenge, disciplined trading will be your default mode.</p>
+
+<h2><span class="num">02</span> The 6 Daily Rules</h2>
+<div class="rules-grid">
+    <div class="rule-card"><span class="rule-num">1</span><strong>Pre-trade checklist completed</strong><p>Go through your full checklist before any trade</p></div>
+    <div class="rule-card"><span class="rule-num">2</span><strong>Risk ≤ 1% per trade</strong><p>Position size calculated correctly for every entry</p></div>
+    <div class="rule-card"><span class="rule-num">3</span><strong>Stop loss set before entry</strong><p>SL placed at the same time as your entry order</p></div>
+    <div class="rule-card"><span class="rule-num">4</span><strong>R:R ≥ 1:2 on all trades</strong><p>No trades where the target is less than 2x the risk</p></div>
+    <div class="rule-card"><span class="rule-num">5</span><strong>All trades journaled</strong><p>Every trade logged with entry, exit, and notes</p></div>
+    <div class="rule-card"><span class="rule-num">6</span><strong>No revenge or impulse trades</strong><p>Every trade came from your strategy, not emotion</p></div>
+</div>
+<p>Each rule is worth 1 point per day. A perfect day = 6/6. If you didn't trade that day (because there was no setup), you get a full 6/6 — sitting out IS discipline.</p>
+
+<h2><span class="num">03</span> 30-Day Calendar</h2>
+<p>Print this and mark each day. Write your score (0-6) and circle any rules you broke.</p>
+<div class="calendar-grid">
+    <div class="day-label">Mon</div><div class="day-label">Tue</div><div class="day-label">Wed</div><div class="day-label">Thu</div><div class="day-label">Fri</div><div class="day-label">Sat</div><div class="day-label">Sun</div>
+    <div class="day-cell"><div class="num">1</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">2</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">3</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">4</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">5</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">6</div><div class="checks">—</div></div>
+    <div class="day-cell"><div class="num">7</div><div class="checks">—</div></div>
+    <div class="day-cell"><div class="num">8</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">9</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">10</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">11</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">12</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">13</div><div class="checks">—</div></div>
+    <div class="day-cell"><div class="num">14</div><div class="checks">—</div></div>
+    <div class="day-cell"><div class="num">15</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">16</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">17</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">18</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">19</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">20</div><div class="checks">—</div></div>
+    <div class="day-cell"><div class="num">21</div><div class="checks">—</div></div>
+    <div class="day-cell"><div class="num">22</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">23</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">24</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">25</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">26</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">27</div><div class="checks">—</div></div>
+    <div class="day-cell"><div class="num">28</div><div class="checks">—</div></div>
+    <div class="day-cell"><div class="num">29</div><div class="checks">__/6</div></div>
+    <div class="day-cell"><div class="num">30</div><div class="checks">__/6</div></div>
+</div>
+
+<h2><span class="num">04</span> Scoring &amp; Milestones</h2>
+<div class="score-section">
+    <h3>Your Final Score</h3>
+    <div class="score-row"><span class="label">Total Trading Days</span><span class="val">____ / 20</span></div>
+    <div class="score-row"><span class="label">Total Points Earned</span><span class="val">____ / 120</span></div>
+    <div class="score-row"><span class="label">Perfect Days (6/6)</span><span class="val">____</span></div>
+    <div class="score-row"><span class="label">Discipline Score</span><span class="val">____%</span></div>
+</div>
+<div class="table-wrap">
+<table>
+<tr><th>Score Range</th><th>Level</th><th>What It Means</th></tr>
+<tr><td>90-100%</td><td>Elite Discipline</td><td>You're ready for funded accounts. Your process is locked in.</td></tr>
+<tr><td>75-89%</td><td>Strong Foundation</td><td>Good habits forming. Identify the rules you break most and target them.</td></tr>
+<tr><td>60-74%</td><td>Work in Progress</td><td>Discipline is inconsistent. Stay on demo until you hit 80%+.</td></tr>
+<tr><td>Below 60%</td><td>Reset Required</td><td>Restart the 30-day challenge. Focus on rules 1-3 first before adding 4-6.</td></tr>
+</table>
+</div>
+
+<h2><span class="num">05</span> Weekly Reflection</h2>
+<p>At the end of each week, answer these honestly:</p>
+<ol>
+    <li><strong>Which rule did I break most often?</strong> Why?</li>
+    <li><strong>What triggered my worst trading decisions?</strong></li>
+    <li><strong>Did I trade when I should have sat out?</strong></li>
+    <li><strong>What's one specific thing I'll improve next week?</strong></li>
+</ol>
+
+<div class="tip-box"><strong>BossFx Challenge</strong>Share your 30-day tracker results in the BossFx Telegram group. Traders who complete the full 30 days with 80%+ discipline scores earn the "Disciplined Trader" badge in the community.</div>
+
+<div class="danger-box"><strong>The Hard Truth</strong>If you can't score 80%+ on discipline for 30 days on a demo account, you are not ready for live trading. Period. The market will still be there when your habits are strong enough.</div>
+
+<div class="cta-box">
+    <h3>Join the BossFx 30-Day Challenge</h3>
+    <p>Post your daily scores in Telegram for accountability. 5,200+ traders are doing it with you.</p>
+    <a href="https://t.me/qD_fBeaziqE5YzU8" class="cta-btn">Join Telegram — Free →</a>
+</div>
+
+<div class="footer-section">
+    <div class="logo">BOSSFX ACADEMY</div>
+    <div class="socials">
+        <a href="https://t.me/qD_fBeaziqE5YzU8">Telegram</a>
+        <a href="https://www.instagram.com/bossfx_academy">Instagram</a>
+        <a href="https://youtube.com/@bossfx-tradingcommunity">YouTube</a>
+        <a href="https://x.com/teebossx">X / Twitter</a>
+    </div>
+    <p class="disclaimer"><strong>Risk Disclaimer:</strong> Trading forex involves substantial risk. BossFX Academy provides educational content only — nothing in this document constitutes financial advice.</p>
+    <p style="font-size:0.72rem;color:#64748b;margin-top:12px;">&copy; 2026 BossFX Academy. bossfxcademy.com</p>
+</div>
+</div>
+</body>
+</html>

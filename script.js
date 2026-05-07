@@ -1285,3 +1285,289 @@ BFX.animCounters = (function() {
     }, { threshold: 0.3 });
     counters.forEach(function(c) { observer.observe(c); });
 })();
+
+// ================================================================
+// REFINEMENT LAYER
+// Resource Carousel, Calendar CTAs, Social Gate, Analytics
+// ================================================================
+
+// ----- Task 1: Resource Floating Carousel -----
+BFX.resourceCarousel = (function() {
+    var grid = document.querySelector('#resources .magnet-grid');
+    if (!grid) return {};
+    var cards = grid.querySelectorAll('.magnet-card');
+    if (!cards.length) return {};
+
+    var wrap = document.createElement('div');
+    wrap.className = 'resource-carousel-wrap';
+    var track = document.createElement('div');
+    track.className = 'resource-carousel-track';
+
+    cards.forEach(function(card) { track.appendChild(card.cloneNode(true)); });
+    cards.forEach(function(card) { track.appendChild(card.cloneNode(true)); });
+
+    wrap.appendChild(track);
+    grid.parentNode.replaceChild(wrap, grid);
+
+    track.querySelectorAll('.magnet-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var magnet = btn.dataset.magnet || 'unknown';
+            BFX.analytics.track('lead_magnet_click', { magnet: magnet });
+            BFX.socialGate.open(btn.dataset.magnet, btn.dataset.magnetTitle);
+        });
+    });
+
+    var touchStartX = 0;
+    var scrollLeft = 0;
+    wrap.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].pageX;
+        track.style.animationPlayState = 'paused';
+    }, { passive: true });
+    wrap.addEventListener('touchend', function() {
+        track.style.animationPlayState = '';
+    }, { passive: true });
+
+    return {};
+})();
+
+// ----- Task 2: Calendar CTA Functionality -----
+BFX.calendarLinks = (function() {
+    var webinars = {
+        'sunday-prep': {
+            title: 'BossFx Sunday Market Preparation',
+            description: 'Weekly analysis of key levels, bias, and setups for the week ahead. Hosted by Timilehin Shobande.\\n\\nJoin: https://t.me/qD_fBeaziqE5YzU8',
+            day: 0, hour: 19, min: 0, duration: 60, location: 'BossFx Telegram Community'
+        },
+        'beginner-bootcamp': {
+            title: 'BossFx Beginner Bootcamp',
+            description: 'Interactive crash course for absolute beginners. Charts, candles, setups. Hosted by Timilehin Shobande.\\n\\nJoin: https://t.me/qD_fBeaziqE5YzU8',
+            day: 3, hour: 20, min: 0, duration: 45, location: 'BossFx Telegram Community'
+        },
+        'ea-workshop': {
+            title: 'BossFx EA Automation Workshop',
+            description: 'Deep dive into automated trading with the BossFx SMA Pro Trend EA. Hosted by Timilehin Shobande.\\n\\nJoin: https://t.me/qD_fBeaziqE5YzU8',
+            day: 6, hour: 18, min: 0, duration: 90, location: 'BossFx Telegram Community'
+        }
+    };
+
+    function getNextDate(targetDay, hour, min) {
+        var now = new Date();
+        var d = new Date(now);
+        var diff = (targetDay - d.getDay() + 7) % 7;
+        if (diff === 0 && (d.getHours() > hour || (d.getHours() === hour && d.getMinutes() >= min))) diff = 7;
+        d.setDate(d.getDate() + diff);
+        d.setHours(hour, min, 0, 0);
+        return d;
+    }
+
+    function toGoogleDate(d) {
+        return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    }
+
+    function makeGoogleUrl(w) {
+        var start = getNextDate(w.day, w.hour, w.min);
+        var end = new Date(start.getTime() + w.duration * 60000);
+        return 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+            '&text=' + encodeURIComponent(w.title) +
+            '&dates=' + toGoogleDate(start) + '/' + toGoogleDate(end) +
+            '&details=' + encodeURIComponent(w.description) +
+            '&location=' + encodeURIComponent(w.location) +
+            '&recur=RRULE:FREQ=WEEKLY';
+    }
+
+    function makeICS(w) {
+        var start = getNextDate(w.day, w.hour, w.min);
+        var end = new Date(start.getTime() + w.duration * 60000);
+        var ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//BossFx Academy//EN\r\nBEGIN:VEVENT\r\n' +
+            'DTSTART:' + toGoogleDate(start) + '\r\n' +
+            'DTEND:' + toGoogleDate(end) + '\r\n' +
+            'RRULE:FREQ=WEEKLY\r\n' +
+            'SUMMARY:' + w.title + '\r\n' +
+            'DESCRIPTION:' + w.description.replace(/\\n/g, '\\n') + '\r\n' +
+            'LOCATION:' + w.location + '\r\n' +
+            'END:VEVENT\r\nEND:VCALENDAR';
+        return ics;
+    }
+
+    function downloadICS(w) {
+        var blob = new Blob([makeICS(w)], { type: 'text/calendar;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = w.title.replace(/\s+/g, '_') + '.ics';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    document.querySelectorAll('.webinar-cal-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var card = btn.closest('.webinar-card');
+            var regBtn = card ? card.querySelector('.webinar-register-btn') : null;
+            var webinarKey = regBtn ? regBtn.dataset.webinar : 'sunday-prep';
+            var w = webinars[webinarKey] || webinars['sunday-prep'];
+            var calType = btn.dataset.cal;
+
+            BFX.analytics.track('calendar_add_click', { webinar: webinarKey, type: calType });
+
+            if (calType === 'google') {
+                window.open(makeGoogleUrl(w), '_blank');
+            } else {
+                downloadICS(w);
+            }
+        });
+    });
+
+    return {};
+})();
+
+// ----- Task 5: Social Follow Gate -----
+BFX.socialGate = (function() {
+    var overlay = null;
+    var currentMagnet = '';
+    var currentTitle = '';
+    var completedItems = {};
+
+    var SOCIALS = [
+        { id: 'telegram', icon: '💬', name: 'Join Telegram Community', desc: '5,200+ traders', url: 'https://t.me/qD_fBeaziqE5YzU8' },
+        { id: 'instagram', icon: '📸', name: 'Follow on Instagram', desc: '@bossfx_academy', url: 'https://www.instagram.com/bossfx_academy' },
+        { id: 'youtube', icon: '▶️', name: 'Subscribe on YouTube', desc: 'BossFx Trading Community', url: 'https://youtube.com/@bossfx-tradingcommunity?si=9cDfBjWkpJWsgLCe' },
+        { id: 'x', icon: '𝕏', name: 'Follow on X', desc: '@teebossx', url: 'https://x.com/teebossx' }
+    ];
+
+    var RESOURCE_URLS = {
+        'starter-pack': 'resources/beginner/forex-starter-pack.html',
+        'checklist': 'resources/beginner/pre-trade-checklist.html',
+        'risk-blueprint': 'resources/risk-management/risk-management-blueprint.html',
+        'prop-guide': 'resources/prop-firm/prop-firm-survival-guide.html',
+        'risk-calculator': 'resources/risk-management/risk-calculator.html',
+        'trading-plan': 'resources/templates/trading-plan-template.html',
+        'trade-journal': 'resources/journals/trade-journal-sheet.html',
+        'discipline-tracker': 'resources/challenges/trading-discipline-tracker.html'
+    };
+
+    function loadCompleted() {
+        try { completedItems = JSON.parse(localStorage.getItem('bfx_social_gate') || '{}'); } catch(e) { completedItems = {}; }
+    }
+
+    function saveCompleted() {
+        localStorage.setItem('bfx_social_gate', JSON.stringify(completedItems));
+    }
+
+    function getCompletedCount() {
+        return Object.keys(completedItems).length;
+    }
+
+    function createModal() {
+        overlay = document.createElement('div');
+        overlay.className = 'social-gate-overlay';
+        overlay.innerHTML =
+            '<div class="social-gate">' +
+                '<button class="social-gate-close">&times;</button>' +
+                '<div class="social-gate-header">' +
+                    '<div class="social-gate-icon">🔓</div>' +
+                    '<h3>Unlock Your Free Resource</h3>' +
+                    '<p class="social-gate-subtitle">Join the BossFx ecosystem to access your download</p>' +
+                '</div>' +
+                '<div class="social-gate-progress"><div class="social-gate-progress-fill"></div></div>' +
+                '<div class="social-gate-checklist"></div>' +
+                '<a class="social-gate-download locked" id="gateDownloadBtn">🔒 Complete at least 2 steps to unlock</a>' +
+                '<button class="social-gate-skip">Skip — I\'ll download without following</button>' +
+            '</div>';
+        document.body.appendChild(overlay);
+
+        overlay.querySelector('.social-gate-close').addEventListener('click', close);
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+        overlay.querySelector('.social-gate-skip').addEventListener('click', function() {
+            BFX.analytics.track('social_gate_skipped', { magnet: currentMagnet });
+            triggerDownload();
+        });
+
+        renderChecklist();
+    }
+
+    function renderChecklist() {
+        var list = overlay.querySelector('.social-gate-checklist');
+        list.innerHTML = SOCIALS.map(function(s) {
+            var done = completedItems[s.id];
+            return '<a href="' + s.url + '" target="_blank" rel="noopener" class="social-gate-item' + (done ? ' completed' : '') + '" data-social="' + s.id + '">' +
+                '<div class="social-gate-check">' + (done ? '✓' : '') + '</div>' +
+                '<div class="social-gate-item-icon">' + s.icon + '</div>' +
+                '<div class="social-gate-item-info"><strong>' + s.name + '</strong><span>' + s.desc + '</span></div>' +
+            '</a>';
+        }).join('');
+
+        list.querySelectorAll('.social-gate-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var socialId = item.dataset.social;
+                setTimeout(function() {
+                    completedItems[socialId] = true;
+                    saveCompleted();
+                    item.classList.add('completed');
+                    item.querySelector('.social-gate-check').textContent = '✓';
+                    BFX.analytics.track('social_gate_follow', { platform: socialId, magnet: currentMagnet });
+                    updateProgress();
+                }, 500);
+            });
+        });
+
+        updateProgress();
+    }
+
+    function updateProgress() {
+        var count = getCompletedCount();
+        var pct = Math.min((count / 2) * 100, 100);
+        var fill = overlay.querySelector('.social-gate-progress-fill');
+        if (fill) fill.style.width = pct + '%';
+
+        var btn = document.getElementById('gateDownloadBtn');
+        if (count >= 2) {
+            btn.className = 'social-gate-download unlocked';
+            btn.textContent = '🎁 Download ' + (currentTitle || 'Resource') + ' — Free';
+            btn.onclick = function(e) {
+                e.preventDefault();
+                BFX.analytics.track('social_gate_complete', { magnet: currentMagnet, follows: count });
+                triggerDownload();
+            };
+        } else {
+            btn.className = 'social-gate-download locked';
+            btn.textContent = '🔒 Complete at least 2 steps to unlock';
+            btn.onclick = null;
+        }
+    }
+
+    function triggerDownload() {
+        var url = RESOURCE_URLS[currentMagnet] || RESOURCE_URLS['starter-pack'];
+        BFX.analytics.track('resource_download_click', { magnet: currentMagnet });
+        BFX.retention.earnBadge('starter_pack', 'Starter Pack');
+        window.open(url, '_blank');
+        close();
+    }
+
+    function open(magnet, title) {
+        currentMagnet = magnet || 'starter-pack';
+        currentTitle = title || 'Free Resource';
+        loadCompleted();
+        if (!overlay) createModal();
+        else renderChecklist();
+        overlay.querySelector('.social-gate-subtitle').textContent = 'Join the BossFx ecosystem to access: ' + currentTitle;
+        overlay.classList.add('active');
+    }
+
+    function close() {
+        if (overlay) overlay.classList.remove('active');
+    }
+
+    document.querySelectorAll('.magnet-btn').forEach(function(btn) {
+        btn.removeEventListener('click', function(){});
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            open(btn.dataset.magnet, btn.dataset.magnetTitle);
+        });
+    });
+
+    return { open: open, close: close };
+})();

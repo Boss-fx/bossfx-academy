@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trade Journal Sheet — BossFx Academy</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#050a07;color:#e2e8f0;font-family:'Inter','Segoe UI',sans-serif;line-height:1.8}
+@media print{body{background:#fff;color:#111}table{font-size:0.75rem}th{background:#eee!important;color:#111!important}td{color:#111!important;border-color:#ccc!important}.journal-row td{min-height:36px}}
+.container{max-width:900px;margin:0 auto;padding:48px 32px}
+.header{text-align:center;padding:60px 32px 40px;border-bottom:2px solid #10b981;margin-bottom:48px}
+.logo{font-size:1.6rem;font-weight:800;color:#10b981;letter-spacing:2px;margin-bottom:8px}
+.header h1{font-size:2.2rem;font-weight:800;color:#fff;margin:16px 0 8px;line-height:1.2}
+.header p{color:#94a3b8;font-size:0.95rem}
+.badge{display:inline-block;padding:6px 18px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:50px;font-size:0.75rem;font-weight:700;color:#34d399;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)}
+h2 .num{color:#10b981;margin-right:8px}
+h3{font-size:1.1rem;font-weight:600;color:#34d399;margin:24px 0 12px}
+p{margin-bottom:16px;color:#cbd5e1;font-size:0.92rem}
+ul,ol{margin:12px 0 20px 24px;color:#cbd5e1;font-size:0.92rem}
+li{margin-bottom:8px}li strong{color:#fff}
+.tip-box{background:rgba(16,185,129,0.08);border-left:3px solid #10b981;border-radius:0 12px 12px 0;padding:20px 24px;margin:24px 0}
+.tip-box strong{color:#10b981;display:block;margin-bottom:6px;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px}
+.table-wrap{overflow-x:auto;margin:20px 0}
+table{width:100%;border-collapse:collapse;font-size:0.85rem}
+th{background:rgba(16,185,129,0.12);color:#10b981;padding:10px 12px;text-align:left;font-weight:700;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.06);color:#cbd5e1;min-width:70px}
+.journal-row td{height:40px;vertical-align:top}
+.week-header{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.12);border-radius:12px;padding:20px 24px;margin:32px 0 16px}
+.week-header strong{color:#10b981;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px}
+.fill-line{border-bottom:1px dashed rgba(255,255,255,0.15);padding:10px 0;color:#94a3b8;font-size:0.88rem}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin:20px 0}
+.stat-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;text-align:center}
+.stat-card .label{font-size:0.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.stat-card .value{font-size:1.4rem;font-weight:800;color:#10b981}
+.cta-box{background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.04));border:1px solid rgba(16,185,129,0.2);border-radius:16px;padding:32px;text-align:center;margin:32px 0}
+.cta-box h3{color:#fff;margin-bottom:8px;font-size:1.2rem}
+.cta-box p{color:#94a3b8;font-size:0.88rem;margin-bottom:16px}
+.cta-btn{display:inline-block;padding:12px 28px;background:#10b981;color:#050a07;font-weight:700;border-radius:10px;text-decoration:none;font-size:0.9rem}
+.footer-section{margin-top:60px;padding-top:32px;border-top:2px solid #10b981;text-align:center}
+.socials{display:flex;justify-content:center;gap:20px;margin:20px 0;flex-wrap:wrap}
+.socials a{color:#94a3b8;text-decoration:none;font-size:0.82rem}
+.disclaimer{font-size:0.72rem;color:#64748b;margin-top:24px;line-height:1.6;max-width:600px;margin-left:auto;margin-right:auto}
+.print-btn{position:fixed;bottom:24px;right:24px;padding:12px 24px;background:#10b981;color:#050a07;border:none;border-radius:10px;font-weight:700;font-size:0.85rem;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.3);z-index:100}
+@media print{.print-btn{display:none}}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">📥 Save as PDF</button>
+<div class="container">
+<div class="header">
+    <div class="logo">BOSSFX ACADEMY</div>
+    <span class="badge">Free Resource</span>
+    <h1>Trade Journal Sheet</h1>
+    <p>Track every trade. Review every week. Improve every month. The journal is your real edge.</p>
+</div>
+
+<h2><span class="num">01</span> Why Journaling Wins</h2>
+<p>Your journal is the most powerful tool you own. It reveals patterns in your behavior — which setups you actually profit from, what time of day you overtrade, and when emotion takes over. Without a journal, you're guessing. With one, you're using data.</p>
+<ul>
+    <li><strong>Identify your best setups</strong> — Know which strategies actually make you money</li>
+    <li><strong>Spot emotional patterns</strong> — See when revenge trading or FOMO costs you</li>
+    <li><strong>Track your real win rate</strong> — Not what you think it is, what it actually is</li>
+    <li><strong>Measure improvement</strong> — Compare this month to last month with hard numbers</li>
+</ul>
+
+<h2><span class="num">02</span> Daily Trade Log</h2>
+<p>Print multiple copies. Fill in one row per trade. Be honest — this journal is for you.</p>
+<div class="table-wrap">
+<table>
+<tr>
+    <th>#</th>
+    <th>Date</th>
+    <th>Pair</th>
+    <th>Direction</th>
+    <th>Entry</th>
+    <th>SL</th>
+    <th>TP</th>
+    <th>Lot Size</th>
+    <th>Result (R)</th>
+    <th>P/L ($)</th>
+</tr>
+<tr class="journal-row"><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>3</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>4</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>5</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>6</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>9</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+</div>
+
+<h2><span class="num">03</span> Trade Notes</h2>
+<p>For each trade, answer these questions. Be specific — "it looked good" is not a note.</p>
+<div class="table-wrap">
+<table>
+<tr><th>#</th><th>Why did I enter?</th><th>What was my emotional state?</th><th>Did I follow my plan?</th><th>What would I do differently?</th></tr>
+<tr class="journal-row"><td>1</td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>2</td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>3</td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>4</td><td></td><td></td><td></td><td></td></tr>
+<tr class="journal-row"><td>5</td><td></td><td></td><td></td><td></td></tr>
+</table>
+</div>
+
+<h2><span class="num">04</span> Weekly Review</h2>
+<div class="week-header"><strong>Week of: __________________ to __________________</strong></div>
+<div class="stats-grid">
+    <div class="stat-card"><div class="label">Total Trades</div><div class="value">___</div></div>
+    <div class="stat-card"><div class="label">Wins</div><div class="value">___</div></div>
+    <div class="stat-card"><div class="label">Losses</div><div class="value">___</div></div>
+    <div class="stat-card"><div class="label">Win Rate</div><div class="value">___%</div></div>
+    <div class="stat-card"><div class="label">Total P/L</div><div class="value">$___</div></div>
+    <div class="stat-card"><div class="label">Avg R:R</div><div class="value">1:___</div></div>
+</div>
+<div class="fill-line"><strong>Best trade this week &amp; why:</strong></div>
+<div class="fill-line">&nbsp;</div>
+<div class="fill-line"><strong>Worst trade this week &amp; why:</strong></div>
+<div class="fill-line">&nbsp;</div>
+<div class="fill-line"><strong>Rules I broke (if any):</strong></div>
+<div class="fill-line">&nbsp;</div>
+<div class="fill-line"><strong>One thing to improve next week:</strong></div>
+<div class="fill-line">&nbsp;</div>
+
+<div class="tip-box"><strong>BossFx Rule</strong>Spend 30 minutes every Sunday reviewing your journal. This weekly review is where real improvement happens. The best traders treat it like a non-negotiable appointment.</div>
+
+<div class="cta-box">
+    <h3>Level Up Your Journaling</h3>
+    <p>Module 12 of Forex 101 teaches advanced journaling with performance metrics and equity curve tracking.</p>
+    <a href="https://bossfxcademy.com/courses.html" class="cta-btn">Explore Forex 101 →</a>
+</div>
+
+<div class="footer-section">
+    <div class="logo">BOSSFX ACADEMY</div>
+    <div class="socials">
+        <a href="https://t.me/qD_fBeaziqE5YzU8">Telegram</a>
+        <a href="https://www.instagram.com/bossfx_academy">Instagram</a>
+        <a href="https://youtube.com/@bossfx-tradingcommunity">YouTube</a>
+        <a href="https://x.com/teebossx">X / Twitter</a>
+    </div>
+    <p class="disclaimer"><strong>Risk Disclaimer:</strong> Trading forex involves substantial risk. BossFX Academy provides educational content only — nothing in this document constitutes financial advice.</p>
+    <p style="font-size:0.72rem;color:#64748b;margin-top:12px;">&copy; 2026 BossFX Academy. bossfxcademy.com</p>
+</div>
+</div>
+</body>
+</html>

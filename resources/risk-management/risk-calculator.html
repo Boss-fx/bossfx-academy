@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Position Size & Risk Calculator — BossFx Academy</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#050a07;color:#e2e8f0;font-family:'Inter','Segoe UI',sans-serif;line-height:1.8}
+@media print{body{background:#fff;color:#111}.calc-card{border-color:#ddd!important;background:#f9f9f9!important}.calc-card input,.calc-card select{border-color:#ccc!important;background:#fff!important;color:#111!important}}
+.container{max-width:800px;margin:0 auto;padding:48px 32px}
+.header{text-align:center;padding:60px 32px 40px;border-bottom:2px solid #10b981;margin-bottom:48px}
+.logo{font-size:1.6rem;font-weight:800;color:#10b981;letter-spacing:2px;margin-bottom:8px}
+.header h1{font-size:2.2rem;font-weight:800;color:#fff;margin:16px 0 8px;line-height:1.2}
+.header p{color:#94a3b8;font-size:0.95rem}
+.badge{display:inline-block;padding:6px 18px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:50px;font-size:0.75rem;font-weight:700;color:#34d399;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+h2{font-size:1.4rem;font-weight:700;color:#fff;margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)}
+h2 .num{color:#10b981;margin-right:8px}
+h3{font-size:1.1rem;font-weight:600;color:#34d399;margin:24px 0 12px}
+p{margin-bottom:16px;color:#cbd5e1;font-size:0.92rem}
+ul,ol{margin:12px 0 20px 24px;color:#cbd5e1;font-size:0.92rem}
+li{margin-bottom:8px}li strong{color:#fff}
+.tip-box{background:rgba(16,185,129,0.08);border-left:3px solid #10b981;border-radius:0 12px 12px 0;padding:20px 24px;margin:24px 0}
+.tip-box strong{color:#10b981;display:block;margin-bottom:6px;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px}
+.danger-box{background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;border-radius:0 12px 12px 0;padding:20px 24px;margin:24px 0}
+.danger-box strong{color:#ef4444;display:block;margin-bottom:6px;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px}
+.formula{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:24px;text-align:center;margin:24px 0;font-family:'Courier New',monospace}
+.formula .label{font-size:0.78rem;color:#94a3b8;margin-bottom:8px;font-family:'Inter',sans-serif}
+.formula .eq{font-size:1.2rem;color:#10b981;font-weight:700}
+.calc-card{background:rgba(16,185,129,0.04);border:1px solid rgba(16,185,129,0.15);border-radius:16px;padding:32px;margin:24px 0}
+.calc-card label{display:block;font-size:0.82rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:16px}
+.calc-card label:first-child{margin-top:0}
+.calc-card input,.calc-card select{width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:0.95rem;font-family:inherit}
+.calc-card input:focus,.calc-card select:focus{outline:none;border-color:#10b981}
+.calc-btn{display:block;width:100%;padding:14px;background:#10b981;color:#050a07;font-weight:700;border:none;border-radius:10px;font-size:0.95rem;cursor:pointer;margin-top:20px}
+.calc-btn:hover{background:#34d399}
+.calc-result{margin-top:20px;padding:20px;background:rgba(16,185,129,0.1);border-radius:12px;text-align:center;display:none}
+.calc-result .big{font-size:1.8rem;font-weight:800;color:#10b981}
+.calc-result .detail{font-size:0.85rem;color:#94a3b8;margin-top:8px}
+.table-wrap{overflow-x:auto;margin:20px 0}
+table{width:100%;border-collapse:collapse;font-size:0.88rem}
+th{background:rgba(16,185,129,0.12);color:#10b981;padding:12px 16px;text-align:left;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.5px}
+td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);color:#cbd5e1}
+.cta-box{background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(16,185,129,0.04));border:1px solid rgba(16,185,129,0.2);border-radius:16px;padding:32px;text-align:center;margin:32px 0}
+.cta-box h3{color:#fff;margin-bottom:8px;font-size:1.2rem}
+.cta-box p{color:#94a3b8;font-size:0.88rem;margin-bottom:16px}
+.cta-btn{display:inline-block;padding:12px 28px;background:#10b981;color:#050a07;font-weight:700;border-radius:10px;text-decoration:none;font-size:0.9rem}
+.footer-section{margin-top:60px;padding-top:32px;border-top:2px solid #10b981;text-align:center}
+.socials{display:flex;justify-content:center;gap:20px;margin:20px 0;flex-wrap:wrap}
+.socials a{color:#94a3b8;text-decoration:none;font-size:0.82rem}
+.disclaimer{font-size:0.72rem;color:#64748b;margin-top:24px;line-height:1.6;max-width:600px;margin-left:auto;margin-right:auto}
+.print-btn{position:fixed;bottom:24px;right:24px;padding:12px 24px;background:#10b981;color:#050a07;border:none;border-radius:10px;font-weight:700;font-size:0.85rem;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.3);z-index:100}
+@media print{.print-btn{display:none}}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">📥 Save as PDF</button>
+<div class="container">
+<div class="header">
+    <div class="logo">BOSSFX ACADEMY</div>
+    <span class="badge">Free Resource</span>
+    <h1>Position Size &amp; Risk Calculator</h1>
+    <p>Calculate the exact lot size for every trade so you never risk more than you should.</p>
+</div>
+
+<h2><span class="num">01</span> Why Position Sizing Matters</h2>
+<p>Position sizing is the single most important skill in risk management. Two traders can use the same strategy — one blows their account, the other grows it consistently. The difference? Position sizing.</p>
+<p>Getting the lot size right means you survive losing streaks and compound your winners. Getting it wrong means one bad trade can undo weeks of progress.</p>
+
+<h2><span class="num">02</span> The Formula</h2>
+<div class="formula">
+    <div class="label">Position Size Formula</div>
+    <div class="eq">Lot Size = (Account × Risk %) ÷ (SL pips × Pip Value)</div>
+</div>
+<h3>Variable Breakdown</h3>
+<ul>
+    <li><strong>Account Balance</strong> — Your current total equity</li>
+    <li><strong>Risk %</strong> — The percentage you're willing to lose (1-2% recommended)</li>
+    <li><strong>SL in Pips</strong> — Distance from entry to stop loss in pips</li>
+    <li><strong>Pip Value</strong> — Dollar value per pip per lot (varies by pair and lot type)</li>
+</ul>
+
+<h2><span class="num">03</span> Interactive Calculator</h2>
+<div class="calc-card">
+    <label for="rc-balance">Account Balance ($)</label>
+    <input type="number" id="rc-balance" value="1000" min="1" step="1">
+    <label for="rc-risk">Risk Per Trade (%)</label>
+    <input type="number" id="rc-risk" value="1" min="0.1" max="10" step="0.1">
+    <label for="rc-sl">Stop Loss (pips)</label>
+    <input type="number" id="rc-sl" value="30" min="1" step="1">
+    <label for="rc-pip">Pip Value ($) per Standard Lot</label>
+    <select id="rc-pip">
+        <option value="10">EUR/USD — $10/pip</option>
+        <option value="10">GBP/USD — $10/pip</option>
+        <option value="6.7">USD/JPY — ~$6.70/pip</option>
+        <option value="10">AUD/USD — $10/pip</option>
+        <option value="7.2">USD/CAD — ~$7.20/pip</option>
+        <option value="10.8">USD/CHF — ~$10.80/pip</option>
+        <option value="1">XAU/USD — $1/pip (per 0.01 lot)</option>
+    </select>
+    <button class="calc-btn" onclick="calculateLot()">Calculate Position Size</button>
+    <div class="calc-result" id="rc-result">
+        <div class="big" id="rc-lots">—</div>
+        <div class="detail" id="rc-detail"></div>
+    </div>
+</div>
+
+<h2><span class="num">04</span> Pip Value Reference Table</h2>
+<div class="table-wrap">
+<table>
+<tr><th>Pair</th><th>Standard Lot (1.0)</th><th>Mini Lot (0.1)</th><th>Micro Lot (0.01)</th></tr>
+<tr><td>EUR/USD</td><td>$10.00/pip</td><td>$1.00/pip</td><td>$0.10/pip</td></tr>
+<tr><td>GBP/USD</td><td>$10.00/pip</td><td>$1.00/pip</td><td>$0.10/pip</td></tr>
+<tr><td>USD/JPY</td><td>~$6.70/pip</td><td>~$0.67/pip</td><td>~$0.067/pip</td></tr>
+<tr><td>AUD/USD</td><td>$10.00/pip</td><td>$1.00/pip</td><td>$0.10/pip</td></tr>
+<tr><td>USD/CAD</td><td>~$7.20/pip</td><td>~$0.72/pip</td><td>~$0.072/pip</td></tr>
+<tr><td>XAU/USD</td><td>$10.00/pip</td><td>$1.00/pip</td><td>$0.10/pip</td></tr>
+</table>
+</div>
+<div class="tip-box"><strong>BossFx Tip</strong>Pip values for JPY, CAD, and CHF pairs fluctuate with the exchange rate. Always verify with your broker's contract specifications before placing a trade.</div>
+
+<h2><span class="num">05</span> Quick Reference Examples</h2>
+<div class="table-wrap">
+<table>
+<tr><th>Account</th><th>Risk %</th><th>SL (pips)</th><th>Pair</th><th>Lot Size</th></tr>
+<tr><td>$500</td><td>1%</td><td>20</td><td>EUR/USD</td><td>0.025 lots</td></tr>
+<tr><td>$1,000</td><td>1%</td><td>30</td><td>EUR/USD</td><td>0.033 lots</td></tr>
+<tr><td>$5,000</td><td>1%</td><td>50</td><td>GBP/USD</td><td>0.10 lots</td></tr>
+<tr><td>$10,000</td><td>2%</td><td>40</td><td>EUR/USD</td><td>0.50 lots</td></tr>
+<tr><td>$25,000</td><td>1%</td><td>25</td><td>EUR/USD</td><td>1.00 lots</td></tr>
+</table>
+</div>
+
+<div class="danger-box"><strong>Common Mistake</strong>Many beginners set their lot size first, then adjust their stop loss to match. This is backwards. Always determine your stop loss based on the chart, then calculate your lot size from that. The chart dictates the stop — the formula dictates the size.</div>
+
+<div class="cta-box">
+    <h3>Go Deeper in Forex 101</h3>
+    <p>Module 5 covers advanced position sizing, correlation risk, and multi-pair exposure management.</p>
+    <a href="https://bossfxcademy.com/courses.html" class="cta-btn">Explore Forex 101 →</a>
+</div>
+
+<div class="footer-section">
+    <div class="logo">BOSSFX ACADEMY</div>
+    <div class="socials">
+        <a href="https://t.me/qD_fBeaziqE5YzU8">Telegram</a>
+        <a href="https://www.instagram.com/bossfx_academy">Instagram</a>
+        <a href="https://youtube.com/@bossfx-tradingcommunity">YouTube</a>
+        <a href="https://x.com/teebossx">X / Twitter</a>
+    </div>
+    <p class="disclaimer"><strong>Risk Disclaimer:</strong> Trading forex involves substantial risk. BossFX Academy provides educational content only — nothing in this document constitutes financial advice. Past performance is not indicative of future results.</p>
+    <p style="font-size:0.72rem;color:#64748b;margin-top:12px;">&copy; 2026 BossFX Academy. bossfxcademy.com</p>
+</div>
+</div>
+<script>
+function calculateLot(){
+    var b=parseFloat(document.getElementById('rc-balance').value)||0;
+    var r=parseFloat(document.getElementById('rc-risk').value)||0;
+    var sl=parseFloat(document.getElementById('rc-sl').value)||0;
+    var pv=parseFloat(document.getElementById('rc-pip').value)||10;
+    if(!b||!r||!sl){return}
+    var riskAmt=b*(r/100);
+    var lots=riskAmt/(sl*pv);
+    var res=document.getElementById('rc-result');
+    res.style.display='block';
+    document.getElementById('rc-lots').textContent=lots.toFixed(3)+' lots';
+    document.getElementById('rc-detail').textContent='Risk amount: $'+riskAmt.toFixed(2)+' | '+sl+' pip SL | $'+pv+'/pip per standard lot';
+}
+</script>
+</body>
+</html>

@@ -3845,3 +3845,311 @@ ul {
 /* Responsive for success grid */
 @media (max-width: 1024px) { .success-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px) { .success-grid { grid-template-columns: 1fr; } .success-track .success-card { flex: 0 0 280px; } .trust-counter-bar { gap: 24px; } .trust-counter-num { font-size: 1.6rem; } }
+
+/* ================================================================
+   REFINEMENT LAYER
+   Resource Carousel, Social Gate, Calendar CTAs, UX Polish
+   ================================================================ */
+
+/* ============================
+   TASK 1: RESOURCE FLOATING CAROUSEL
+   ============================ */
+.resource-carousel-wrap { position: relative; overflow: hidden; padding: 8px 0; }
+.resource-carousel-wrap::before,
+.resource-carousel-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 80px;
+    z-index: 2;
+    pointer-events: none;
+}
+.resource-carousel-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg-primary), transparent); }
+.resource-carousel-wrap::after { right: 0; background: linear-gradient(270deg, var(--bg-primary), transparent); }
+.resource-carousel-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    animation: resourceFloat 40s linear infinite;
+    will-change: transform;
+}
+.resource-carousel-wrap:hover .resource-carousel-track { animation-play-state: paused; }
+@keyframes resourceFloat {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+.resource-carousel-track .magnet-card {
+    flex: 0 0 320px;
+    min-width: 320px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 28px;
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+}
+.resource-carousel-track .magnet-card:hover {
+    border-color: var(--green-500);
+    transform: scale(1.04) translateY(-4px);
+    box-shadow: 0 16px 48px rgba(16,185,129,0.12), 0 0 20px rgba(16,185,129,0.06);
+}
+@media (max-width: 640px) {
+    .resource-carousel-track .magnet-card { flex: 0 0 280px; min-width: 280px; padding: 22px; }
+    .resource-carousel-wrap::before, .resource-carousel-wrap::after { width: 40px; }
+}
+
+/* ============================
+   TASK 2: CALENDAR CTA REDESIGN
+   ============================ */
+.webinar-cal-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.webinar-cal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(16,185,129,0.06);
+    border: 1px solid rgba(16,185,129,0.15);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.webinar-cal-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(16,185,129,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+.webinar-cal-btn:hover {
+    border-color: var(--green-400);
+    color: var(--green-400);
+    background: rgba(16,185,129,0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(16,185,129,0.1);
+}
+.webinar-cal-btn:hover::before { opacity: 1; }
+.webinar-cal-btn .cal-icon { font-size: 1rem; }
+.cal-schedule-label {
+    display: block;
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+/* ============================
+   TASK 5: SOCIAL FOLLOW GATE MODAL
+   ============================ */
+.social-gate-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 10003;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s, visibility 0.35s;
+    padding: 20px;
+}
+.social-gate-overlay.active { opacity: 1; visibility: visible; }
+.social-gate {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 48px 40px;
+    max-width: 480px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    animation: gateSlideUp 0.4s ease;
+}
+@keyframes gateSlideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.social-gate::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green-600), var(--green-400), var(--green-600));
+}
+.social-gate-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+}
+.social-gate-close:hover { color: var(--text-primary); }
+.social-gate-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+.social-gate-icon {
+    width: 64px; height: 64px;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin: 0 auto 16px;
+}
+.social-gate-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.social-gate-header p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+.social-gate-progress {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    margin-bottom: 28px;
+    overflow: hidden;
+}
+.social-gate-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green-500), var(--green-400));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.social-gate-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+.social-gate-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    color: inherit;
+}
+.social-gate-item:hover {
+    border-color: var(--border-light);
+    background: rgba(16,185,129,0.04);
+}
+.social-gate-item.completed {
+    border-color: rgba(16,185,129,0.3);
+    background: rgba(16,185,129,0.06);
+}
+.social-gate-check {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.35s;
+    font-size: 0.8rem;
+    color: transparent;
+}
+.social-gate-item.completed .social-gate-check {
+    border-color: var(--green-400);
+    background: var(--green-500);
+    color: #fff;
+    animation: checkPop 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+@keyframes checkPop {
+    0% { transform: scale(0.5); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+.social-gate-item-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+.social-gate-item-info { flex: 1; }
+.social-gate-item-info strong { display: block; font-size: 0.9rem; margin-bottom: 2px; }
+.social-gate-item-info span { font-size: 0.78rem; color: var(--text-muted); }
+.social-gate-download {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+.social-gate-download.locked {
+    background: rgba(255,255,255,0.06);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+.social-gate-download.unlocked {
+    background: linear-gradient(135deg, var(--green-600), var(--green-500));
+    color: #fff;
+    box-shadow: 0 0 24px rgba(16,185,129,0.2);
+    animation: glowPulse 2s ease infinite;
+}
+.social-gate-download.unlocked:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(16,185,129,0.3);
+}
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 24px rgba(16,185,129,0.2); }
+    50% { box-shadow: 0 0 36px rgba(16,185,129,0.35); }
+}
+.social-gate-skip {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    transition: color 0.2s;
+}
+.social-gate-skip:hover { color: var(--text-secondary); }
+@media (max-width: 640px) {
+    .social-gate { padding: 32px 24px; }
+    .social-gate-header h3 { font-size: 1.2rem; }
+}
