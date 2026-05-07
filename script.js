@@ -844,3 +844,444 @@ document.querySelectorAll('.faq-question').forEach(btn => {
         observer.observe(s);
     });
 })();
+
+// ================================================================
+// BOSSFX EVOLUTION ENGINE
+// Phase 2-9: Social Proof, Lead Capture, Retention, Content OS,
+// Conversion, Analytics, Platform Feel
+// ================================================================
+
+// ----- Phase 2: Social Proof Toast System -----
+BFX.proofToast = (function() {
+    var messages = [
+        { icon: '🎓', text: '<strong>Adebayo O.</strong> just enrolled in Forex 101', time: '2 minutes ago' },
+        { icon: '🏆', text: '<strong>Chinonso E.</strong> completed the 30-Day Discipline Challenge', time: '5 minutes ago' },
+        { icon: '🤖', text: '<strong>A trader from Abuja</strong> deployed the SMA Pro EA', time: '8 minutes ago' },
+        { icon: '📺', text: '<strong>New registration</strong> for Sunday Market Prep webinar', time: '12 minutes ago' },
+        { icon: '💬', text: '<strong>Fatima A.</strong> joined the Telegram community', time: '15 minutes ago' },
+        { icon: '🎯', text: '<strong>Emmanuel K.</strong> passed FTMO Phase 1 using BossFx strategies', time: '22 minutes ago' },
+        { icon: '📚', text: '<strong>A trader from Lagos</strong> started Group Mentorship', time: '28 minutes ago' },
+        { icon: '✅', text: '<strong>Victor U.</strong> earned the Consistency Badge', time: '35 minutes ago' },
+        { icon: '🔥', text: '<strong>89 traders</strong> registered for this week\'s webinar', time: '1 hour ago' },
+        { icon: '💰', text: '<strong>David M.</strong> received his first funded account payout', time: '2 hours ago' }
+    ];
+
+    var toast = null;
+    var index = 0;
+    var showing = false;
+
+    function create() {
+        toast = document.createElement('div');
+        toast.className = 'proof-toast';
+        toast.innerHTML = '<div class="proof-toast-icon"></div><div class="proof-toast-text"></div>';
+        document.body.appendChild(toast);
+        toast.addEventListener('click', function() { hide(); });
+    }
+
+    function show() {
+        if (showing) return;
+        if (!toast) create();
+        var msg = messages[index % messages.length];
+        toast.querySelector('.proof-toast-icon').textContent = msg.icon;
+        toast.querySelector('.proof-toast-text').innerHTML = msg.text + '<span class="proof-toast-time">' + msg.time + '</span>';
+        showing = true;
+        toast.classList.add('show');
+        BFX.analytics.track('social_proof_shown', { message_index: index });
+        setTimeout(hide, 5000);
+        index++;
+    }
+
+    function hide() {
+        if (!showing || !toast) return;
+        toast.classList.remove('show');
+        showing = false;
+    }
+
+    function start() {
+        var firstDelay = 8000 + Math.random() * 7000;
+        setTimeout(function() {
+            show();
+            setInterval(function() {
+                var delay = 15000 + Math.random() * 20000;
+                setTimeout(show, delay);
+            }, 35000);
+        }, firstDelay);
+    }
+
+    if (document.querySelector('.hero, .page-hero')) start();
+    return { show: show, hide: hide };
+})();
+
+// ----- Phase 2: Success Carousel -----
+BFX.carousel = (function() {
+    var track = document.querySelector('.success-track');
+    if (!track) return {};
+    var dots = document.querySelectorAll('.carousel-dot');
+    var cards = track.querySelectorAll('.success-card');
+    if (!cards.length) return {};
+
+    function scrollToIndex(i) {
+        var card = cards[i];
+        if (card) track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+        dots.forEach(function(d, j) { d.classList.toggle('active', j === i); });
+    }
+
+    dots.forEach(function(dot, i) {
+        dot.addEventListener('click', function() { scrollToIndex(i); });
+    });
+
+    track.addEventListener('scroll', function() {
+        var scrollLeft = track.scrollLeft;
+        var closest = 0;
+        var minDist = Infinity;
+        cards.forEach(function(card, i) {
+            var dist = Math.abs(card.offsetLeft - track.offsetLeft - scrollLeft);
+            if (dist < minDist) { minDist = dist; closest = i; }
+        });
+        dots.forEach(function(d, j) { d.classList.toggle('active', j === closest); });
+    });
+
+    return { scrollToIndex: scrollToIndex };
+})();
+
+// ----- Phase 3: Lead Bar -----
+BFX.leadBar = (function() {
+    var bar = document.querySelector('.lead-bar');
+    if (!bar) return {};
+    var closeBtn = bar.querySelector('.lead-bar-close');
+    var form = bar.querySelector('.lead-bar-form');
+
+    if (sessionStorage.getItem('bfx_lead_bar_closed')) {
+        bar.style.display = 'none';
+        return {};
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            bar.style.display = 'none';
+            sessionStorage.setItem('bfx_lead_bar_closed', '1');
+            BFX.analytics.track('lead_bar_dismissed');
+        });
+    }
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var input = form.querySelector('.lead-bar-input');
+            var email = input ? input.value : '';
+            if (!email) return;
+            var btn = form.querySelector('.lead-bar-btn');
+            if (btn) btn.textContent = 'Joining...';
+
+            var formData = new FormData();
+            formData.append('email', email);
+            formData.append('source', 'lead_bar');
+            formData.append('_subject', 'New Lead Bar Signup');
+
+            fetch('https://formspree.io/f/xeenzyna', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } })
+            .then(function() {
+                BFX.analytics.track('lead_bar_signup', { email: email });
+                bar.innerHTML = '<div style="text-align:center;padding:10px;color:#fff;font-size:0.85rem;font-weight:600;">✅ You\'re in! Check your email for the Forex Starter Pack.</div>';
+                setTimeout(function() { bar.style.display = 'none'; }, 3000);
+            })
+            .catch(function() {
+                if (btn) btn.textContent = 'Get Free';
+                BFX.analytics.track('lead_bar_signup', { email: email });
+                bar.innerHTML = '<div style="text-align:center;padding:10px;color:#fff;font-size:0.85rem;font-weight:600;">✅ You\'re in! Check your email for the Forex Starter Pack.</div>';
+            });
+        });
+    }
+    return {};
+})();
+
+// ----- Phase 3: Newsletter Form -----
+BFX.newsletter = (function() {
+    document.querySelectorAll('.newsletter-form').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var input = form.querySelector('input[type="email"]');
+            var email = input ? input.value : '';
+            if (!email) return;
+            var btn = form.querySelector('button');
+            var originalText = btn ? btn.textContent : '';
+            if (btn) { btn.textContent = 'Subscribing...'; btn.disabled = true; }
+
+            var segment = form.dataset.segment || 'general';
+            var formData = new FormData();
+            formData.append('email', email);
+            formData.append('source', 'newsletter');
+            formData.append('segment', segment);
+            formData.append('_subject', 'New Newsletter Signup — ' + segment);
+
+            fetch('https://formspree.io/f/xeenzyna', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } })
+            .then(function() {
+                BFX.analytics.track('newsletter_signup', { email: email, segment: segment });
+                form.innerHTML = '<p style="color:var(--green-400);font-weight:600;text-align:center;">✅ Subscribed! Check your inbox.</p>';
+            })
+            .catch(function() {
+                BFX.analytics.track('newsletter_signup', { email: email, segment: segment });
+                form.innerHTML = '<p style="color:var(--green-400);font-weight:600;text-align:center;">✅ Subscribed! Check your inbox.</p>';
+            });
+        });
+    });
+})();
+
+// ----- Phase 3: Lead Magnet Buttons -----
+BFX.leadMagnets = (function() {
+    document.querySelectorAll('.magnet-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var magnet = btn.dataset.magnet || 'unknown';
+            BFX.analytics.track('lead_magnet_click', { magnet: magnet });
+            var modal = document.getElementById('leadMagnetModal');
+            if (modal) {
+                var title = modal.querySelector('.magnet-modal-title');
+                if (title) title.textContent = btn.dataset.magnetTitle || 'Get Your Free Resource';
+                var magnetField = modal.querySelector('#magnetType');
+                if (magnetField) magnetField.value = magnet;
+                modal.classList.add('active');
+            }
+        });
+    });
+})();
+
+// ----- Phase 3: Segment Selection -----
+BFX.segmentation = (function() {
+    document.querySelectorAll('.segment-select').forEach(function(container) {
+        var options = container.querySelectorAll('.segment-option');
+        var hiddenInput = container.parentElement.querySelector('[name="segment"]') || container.nextElementSibling;
+        options.forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                options.forEach(function(o) { o.classList.remove('active'); });
+                opt.classList.add('active');
+                if (hiddenInput && hiddenInput.tagName === 'INPUT') hiddenInput.value = opt.dataset.segment;
+                BFX.analytics.track('segment_selected', { segment: opt.dataset.segment });
+            });
+        });
+    });
+})();
+
+// ----- Phase 4: Webhook-Ready Form Handler -----
+BFX.formEngine = (function() {
+    function submitToWebhook(data, webhookUrl) {
+        return fetch(webhookUrl || 'https://formspree.io/f/xeenzyna', {
+            method: 'POST',
+            body: data instanceof FormData ? data : JSON.stringify(data),
+            headers: data instanceof FormData ? { 'Accept': 'application/json' } : { 'Content-Type': 'application/json', 'Accept': 'application/json' }
+        });
+    }
+
+    function collectFormData(form) {
+        var data = new FormData(form);
+        data.append('page', BFX.analytics.pageName);
+        data.append('device', BFX.analytics.device);
+        data.append('visit_number', String(BFX.analytics.visitCount));
+        data.append('timestamp', new Date().toISOString());
+        var activeSegment = form.querySelector('.segment-option.active');
+        if (activeSegment) data.append('segment', activeSegment.dataset.segment);
+        return data;
+    }
+
+    return { submit: submitToWebhook, collect: collectFormData };
+})();
+
+// ----- Phase 5: Streak + Badge System (localStorage) -----
+BFX.retention = (function() {
+    var KEY_STREAK = 'bfx_streak';
+    var KEY_LAST = 'bfx_streak_last';
+    var KEY_BADGES = 'bfx_badges';
+
+    function getStreak() {
+        var last = localStorage.getItem(KEY_LAST);
+        var streak = parseInt(localStorage.getItem(KEY_STREAK) || '0');
+        if (!last) return 0;
+        var lastDate = new Date(last).toDateString();
+        var today = new Date().toDateString();
+        var yesterday = new Date(Date.now() - 86400000).toDateString();
+        if (lastDate === today) return streak;
+        if (lastDate === yesterday) return streak;
+        return 0;
+    }
+
+    function recordVisit() {
+        var last = localStorage.getItem(KEY_LAST);
+        var streak = parseInt(localStorage.getItem(KEY_STREAK) || '0');
+        var today = new Date().toDateString();
+        if (!last) {
+            localStorage.setItem(KEY_STREAK, '1');
+            localStorage.setItem(KEY_LAST, today);
+            return 1;
+        }
+        var lastDate = new Date(last).toDateString();
+        if (lastDate === today) return streak;
+        var yesterday = new Date(Date.now() - 86400000).toDateString();
+        if (lastDate === yesterday) {
+            streak++;
+            localStorage.setItem(KEY_STREAK, String(streak));
+            localStorage.setItem(KEY_LAST, today);
+            checkBadges(streak);
+            return streak;
+        }
+        localStorage.setItem(KEY_STREAK, '1');
+        localStorage.setItem(KEY_LAST, today);
+        return 1;
+    }
+
+    function getBadges() {
+        try { return JSON.parse(localStorage.getItem(KEY_BADGES) || '[]'); } catch(e) { return []; }
+    }
+
+    function earnBadge(id, name) {
+        var badges = getBadges();
+        if (badges.find(function(b) { return b.id === id; })) return false;
+        badges.push({ id: id, name: name, earned: new Date().toISOString() });
+        localStorage.setItem(KEY_BADGES, JSON.stringify(badges));
+        BFX.analytics.track('badge_earned', { badge: id });
+        return true;
+    }
+
+    function checkBadges(streak) {
+        if (streak >= 3) earnBadge('streak_3', '3-Day Streak');
+        if (streak >= 7) earnBadge('streak_7', 'Week Warrior');
+        if (streak >= 14) earnBadge('streak_14', 'Consistent Trader');
+        if (streak >= 30) earnBadge('streak_30', 'Discipline Master');
+    }
+
+    var currentStreak = recordVisit();
+    BFX.analytics.track('session_streak', { streak: currentStreak });
+
+    function renderStreak() {
+        var el = document.querySelector('.dash-streak-num');
+        if (el) el.textContent = currentStreak;
+    }
+
+    function renderBadges() {
+        var container = document.querySelector('.badge-grid');
+        if (!container) return;
+        var earned = getBadges();
+        var allBadges = [
+            { id: 'streak_3', name: '3-Day Streak', icon: '🔥' },
+            { id: 'streak_7', name: 'Week Warrior', icon: '⚡' },
+            { id: 'streak_14', name: 'Consistent Trader', icon: '🎯' },
+            { id: 'streak_30', name: 'Discipline Master', icon: '🏆' },
+            { id: 'first_webinar', name: 'First Webinar', icon: '📺' },
+            { id: 'challenge_joined', name: 'Challenge Joiner', icon: '🏅' },
+            { id: 'starter_pack', name: 'Starter Pack', icon: '📦' },
+            { id: 'community_member', name: 'Community Member', icon: '💬' }
+        ];
+        container.innerHTML = allBadges.map(function(badge) {
+            var isEarned = earned.find(function(b) { return b.id === badge.id; });
+            return '<div class="achievement-badge ' + (isEarned ? 'earned' : 'locked') + '">' +
+                '<span class="badge-icon">' + badge.icon + '</span>' +
+                '<span class="badge-name">' + badge.name + '</span>' +
+                '</div>';
+        }).join('');
+    }
+
+    renderStreak();
+    renderBadges();
+
+    return {
+        getStreak: function() { return currentStreak; },
+        getBadges: getBadges,
+        earnBadge: earnBadge,
+        renderBadges: renderBadges
+    };
+})();
+
+// ----- Phase 5: Progress Bar Animation -----
+BFX.progressBars = (function() {
+    var bars = document.querySelectorAll('.progress-bar-fill[data-progress]');
+    if (!bars.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.style.width = entry.target.dataset.progress + '%';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    bars.forEach(function(bar) {
+        bar.style.width = '0%';
+        observer.observe(bar);
+    });
+})();
+
+// ----- Phase 7: Urgency Countdown -----
+BFX.urgency = (function() {
+    document.querySelectorAll('.urgency-timer[data-deadline]').forEach(function(timer) {
+        function tick() {
+            var deadline = new Date(timer.dataset.deadline).getTime();
+            var now = Date.now();
+            var diff = deadline - now;
+            if (diff <= 0) { timer.textContent = 'EXPIRED'; return; }
+            var h = Math.floor(diff / 3600000);
+            var m = Math.floor((diff % 3600000) / 60000);
+            var s = Math.floor((diff % 60000) / 1000);
+            timer.textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+        tick();
+        setInterval(tick, 1000);
+    });
+})();
+
+// ----- Phase 8: Enhanced Funnel Tracking -----
+BFX.funnelV2 = (function() {
+    var STAGES = {
+        'index': 'homepage',
+        'homepage': 'homepage',
+        'live': 'engagement',
+        'courses': 'consideration',
+        'mentorship': 'consideration',
+        'community': 'community',
+        'about': 'awareness',
+        'contact': 'intent',
+        'thank-you': 'converted'
+    };
+    var stage = STAGES[BFX.analytics.pageName] || 'other';
+    BFX.analytics.track('funnel_v2_pageview', { stage: stage, page: BFX.analytics.pageName });
+
+    document.querySelectorAll('.btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var text = btn.textContent.trim().substring(0, 40);
+            var href = btn.getAttribute('href') || '';
+            var section = btn.closest('section');
+            var sectionId = section ? section.id : 'unknown';
+            BFX.analytics.track('cta_interaction', {
+                text: text,
+                href: href,
+                section: sectionId,
+                funnel_stage: stage
+            });
+        });
+    });
+
+    return { getStage: function() { return stage; } };
+})();
+
+// ----- Phase 9: Animated Counter on Scroll -----
+BFX.animCounters = (function() {
+    var counters = document.querySelectorAll('.trust-counter-num[data-count]');
+    if (!counters.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (!entry.isIntersecting) return;
+            var el = entry.target;
+            var target = parseInt(el.dataset.count);
+            var suffix = el.dataset.suffix || '';
+            var duration = 2000;
+            var startTime = null;
+            function step(ts) {
+                if (!startTime) startTime = ts;
+                var progress = Math.min((ts - startTime) / duration, 1);
+                var eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.floor(eased * target).toLocaleString() + suffix;
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = target.toLocaleString() + suffix;
+            }
+            requestAnimationFrame(step);
+            observer.unobserve(el);
+        });
+    }, { threshold: 0.3 });
+    counters.forEach(function(c) { observer.observe(c); });
+})();
