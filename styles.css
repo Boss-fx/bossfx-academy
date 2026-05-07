@@ -2947,7 +2947,7 @@ ul {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.75);
-    z-index: 10000;
+    z-index: 10002;
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(4px);
@@ -3528,3 +3528,23 @@ ul {
 .exit-popup-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
 .exit-popup-dismiss { background: none; border: none; color: var(--text-muted); font-size: 0.82rem; cursor: pointer; margin-top: 16px; text-decoration: underline; display: block; margin-left: auto; margin-right: auto; }
 .exit-popup-dismiss:hover { color: var(--text-secondary); }
+
+/* ============================
+   MODAL / POPUP MOBILE FIXES
+   ============================ */
+@media (max-width: 768px) {
+    .webinar-modal { padding: 28px 20px; max-width: 95%; border-radius: 16px; }
+    .webinar-modal h3 { font-size: 1.1rem; }
+    .webinar-modal input, .webinar-modal select { padding: 11px 14px; font-size: 0.85rem; }
+    .exit-popup { padding: 32px 24px; max-width: 95%; border-radius: 16px; }
+    .exit-popup h3 { font-size: 1.2rem; }
+    .exit-popup > p { font-size: 0.88rem; }
+    .pay-modal { max-width: 95%; padding: 28px 20px; border-radius: 16px; }
+}
+@media (max-width: 480px) {
+    .webinar-modal { padding: 24px 16px; }
+    .webinar-modal h3 { font-size: 1rem; }
+    .exit-popup { padding: 28px 18px; }
+    .exit-popup-icon { font-size: 2.2rem; }
+    .pay-modal { padding: 24px 16px; }
+}
