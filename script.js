@@ -1,8 +1,328 @@
-// ===== Analytics helper =====
+// ============================================================
+// BossFx Analytics Intelligence System
+// Centralized event tracking, funnel intelligence, engagement
+// ============================================================
+
+var BFX = BFX || {};
+
+// ----- Core Analytics Engine -----
+BFX.analytics = (function() {
+    var sessionId = sessionStorage.getItem('bfx_sid') || ('s_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6));
+    sessionStorage.setItem('bfx_sid', sessionId);
+
+    // Visit tracking
+    var visitCount = parseInt(localStorage.getItem('bfx_visits') || '0') + 1;
+    localStorage.setItem('bfx_visits', visitCount);
+    var firstVisit = localStorage.getItem('bfx_first_visit');
+    if (!firstVisit) { firstVisit = new Date().toISOString(); localStorage.setItem('bfx_first_visit', firstVisit); }
+    var isReturning = visitCount > 1;
+    var device = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+    var pageName = location.pathname.replace(/\//g, '').replace('.html', '') || 'homepage';
+
+    // Send to GA4 + Clarity
+    function track(eventName, params) {
+        var data = Object.assign({
+            page: pageName,
+            device: device,
+            session_id: sessionId,
+            visit_number: visitCount,
+            is_returning: isReturning
+        }, params || {});
+        if (typeof gtag === 'function') gtag('event', eventName, data);
+        if (typeof clarity === 'function') clarity('event', eventName);
+    }
+
+    // Set GA4 user properties
+    if (typeof gtag === 'function') {
+        gtag('set', 'user_properties', {
+            visit_count: visitCount,
+            user_type: isReturning ? 'returning' : 'new',
+            device_type: device,
+            first_visit_date: firstVisit
+        });
+    }
+
+    // Tag Clarity session
+    if (typeof clarity === 'function') {
+        clarity('set', 'user_type', isReturning ? 'returning' : 'new');
+        clarity('set', 'visit_count', String(visitCount));
+        clarity('set', 'device', device);
+    }
+
+    return {
+        track: track,
+        sessionId: sessionId,
+        visitCount: visitCount,
+        isReturning: isReturning,
+        device: device,
+        pageName: pageName
+    };
+})();
+
+// Backward-compatible wrapper
 function trackEvent(name, params) {
-    if (typeof gtag === 'function') gtag('event', name, params || {});
-    if (typeof clarity === 'function') clarity('event', name);
+    BFX.analytics.track(name, params);
 }
+
+// ----- Funnel Intelligence -----
+BFX.funnel = (function() {
+    var STEPS = ['homepage', 'starter_pack', 'telegram', 'webinar', 'mentorship', 'pricing', 'checkout'];
+    var KEY = 'bfx_funnel_stage';
+
+    function getStage() { return localStorage.getItem(KEY) || 'homepage'; }
+    function setStage(stage) {
+        var prev = getStage();
+        if (STEPS.indexOf(stage) > STEPS.indexOf(prev)) {
+            localStorage.setItem(KEY, stage);
+            BFX.analytics.track('funnel_progress', { from_stage: prev, to_stage: stage, step_index: STEPS.indexOf(stage) });
+        }
+    }
+    function trackView() {
+        var page = BFX.analytics.pageName;
+        if (page === 'homepage' || page === 'index') setStage('homepage');
+        else if (page === 'thank-you') setStage('starter_pack');
+        else if (page === 'community') setStage('telegram');
+        else if (page === 'mentorship') setStage('mentorship');
+        else if (page === 'courses') setStage('pricing');
+        else if (page === 'contact') setStage('checkout');
+    }
+    trackView();
+    return { getStage: getStage, setStage: setStage };
+})();
+
+// ----- Scroll Depth Tracking -----
+BFX.scrollDepth = (function() {
+    var milestones = [25, 50, 75, 100];
+    var reached = {};
+    var maxScroll = 0;
+    function check() {
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        var docHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - window.innerHeight;
+        if (docHeight <= 0) return;
+        var pct = Math.round((scrollTop / docHeight) * 100);
+        if (pct > maxScroll) maxScroll = pct;
+        milestones.forEach(function(m) {
+            if (pct >= m && !reached[m]) {
+                reached[m] = true;
+                BFX.analytics.track('scroll_depth', { depth: m, page: BFX.analytics.pageName });
+            }
+        });
+    }
+    var throttled = false;
+    window.addEventListener('scroll', function() {
+        if (!throttled) { throttled = true; requestAnimationFrame(function() { check(); throttled = false; }); }
+    });
+    // Report max scroll on page exit
+    window.addEventListener('beforeunload', function() {
+        BFX.analytics.track('page_exit_scroll', { max_depth: maxScroll });
+    });
+    return { getMax: function() { return maxScroll; } };
+})();
+
+// ----- CTA Performance Tracking -----
+BFX.cta = (function() {
+    function trackClick(el, ctaName, extra) {
+        el.addEventListener('click', function() {
+            BFX.analytics.track('cta_click', Object.assign({ cta_name: ctaName, cta_text: el.textContent.trim().substring(0, 50) }, extra || {}));
+        });
+    }
+
+    // Navbar CTA
+    document.querySelectorAll('.nav-ea-cta').forEach(function(el) { trackClick(el, 'navbar_get_ea', { location: 'navbar' }); });
+
+    // Floating Telegram
+    document.querySelectorAll('.tg-float-btn').forEach(function(el) { trackClick(el, 'floating_telegram', { location: 'floating_widget' }); });
+
+    // Sticky CTA bar
+    document.querySelectorAll('.sticky-cta-bar .btn').forEach(function(el) {
+        trackClick(el, 'sticky_cta_' + (el.textContent.trim().toLowerCase().includes('ea') ? 'get_ea' : 'start_free'), { location: 'sticky_bar' });
+    });
+
+    // Webinar register buttons
+    document.querySelectorAll('.webinar-register-btn').forEach(function(el) {
+        trackClick(el, 'webinar_register_cta', { location: 'webinar_section', webinar: el.dataset.webinar || '' });
+    });
+
+    // Pricing cards
+    document.querySelectorAll('.pricing-cta, .pricing-card .btn').forEach(function(el) {
+        var card = el.closest('.pricing-card');
+        var tier = card ? (card.dataset.tier || card.querySelector('.pricing-plan-name')?.textContent || 'unknown') : 'unknown';
+        trackClick(el, 'pricing_plan_click', { location: 'pricing_section', tier: tier });
+    });
+
+    // Challenge join buttons
+    document.querySelectorAll('.challenge-join-btn').forEach(function(el) {
+        var card = el.closest('.challenge-card');
+        var title = card ? card.querySelector('.challenge-title').textContent : '';
+        trackClick(el, 'challenge_join', { challenge: title });
+    });
+
+    // Telegram community join
+    document.querySelectorAll('.tg-join-btn').forEach(function(el) { trackClick(el, 'telegram_community_join', { location: 'telegram_section' }); });
+
+    // Exit popup CTA
+    document.querySelectorAll('.exit-popup-cta').forEach(function(el) { trackClick(el, 'exit_popup_telegram', { location: 'exit_popup' }); });
+
+    return { trackClick: trackClick };
+})();
+
+// ----- Primary Conversion Events -----
+BFX.conversions = (function() {
+    // Starter pack download
+    var leadForm = document.getElementById('leadMagnetForm');
+    if (leadForm) {
+        leadForm.addEventListener('submit', function() {
+            BFX.analytics.track('starter_pack_download', { method: 'email_form' });
+            BFX.funnel.setStage('starter_pack');
+        });
+    }
+
+    // Telegram join clicks (all t.me links)
+    document.querySelectorAll('a[href*="t.me/"]').forEach(function(el) {
+        el.addEventListener('click', function() {
+            var location = 'unknown';
+            if (el.closest('.tg-float')) location = 'floating_widget';
+            else if (el.closest('#telegram-community')) location = 'telegram_section';
+            else if (el.closest('.exit-popup')) location = 'exit_popup';
+            else if (el.closest('.challenge-card')) location = 'challenge_card';
+            else if (el.closest('.cta-section')) location = 'final_cta';
+            else if (el.closest('.nav-links')) location = 'navbar';
+            else if (el.closest('.sticky-cta-bar')) location = 'sticky_bar';
+            BFX.analytics.track('telegram_join_click', { location: location });
+            BFX.funnel.setStage('telegram');
+        });
+    });
+
+    // EA purchase clicks
+    document.querySelectorAll('a[href*="mql5.com/en/market/product"]').forEach(function(el) {
+        el.addEventListener('click', function() {
+            var isDemo = el.textContent.trim().toLowerCase().includes('demo');
+            BFX.analytics.track('ea_purchase_click', { type: isDemo ? 'demo' : 'purchase', value: isDemo ? 0 : 49.99 });
+        });
+    });
+
+    // Enroll now clicks (courses page links to pricing)
+    document.querySelectorAll('a[href*="pricing"], a[href*="courses"]').forEach(function(el) {
+        if (el.textContent.toLowerCase().includes('enroll')) {
+            el.addEventListener('click', function() {
+                BFX.analytics.track('enroll_now_click', { destination: el.href });
+            });
+        }
+    });
+
+    // Mentorship application (Apply Now buttons linking to pricing)
+    document.querySelectorAll('a[href*="pricing"]').forEach(function(el) {
+        if (el.textContent.toLowerCase().includes('apply')) {
+            el.addEventListener('click', function() {
+                BFX.analytics.track('mentorship_application', { tier: el.closest('.price-card')?.querySelector('h3')?.textContent || 'unknown' });
+                BFX.funnel.setStage('mentorship');
+            });
+        }
+    });
+
+    // Contact form submission
+    var contactForm = document.querySelector('form[action*="formspree"]');
+    if (contactForm && BFX.analytics.pageName === 'contact') {
+        contactForm.addEventListener('submit', function() {
+            BFX.analytics.track('contact_form_submit', { page: 'contact' });
+            BFX.funnel.setStage('checkout');
+        });
+    }
+
+    // Webinar registration (already tracked in modal handler, add funnel)
+    var webinarForm = document.getElementById('webinarRegForm');
+    if (webinarForm) {
+        webinarForm.addEventListener('submit', function() {
+            BFX.analytics.track('webinar_registration', {
+                webinar: document.getElementById('webinarModalTitle')?.textContent || '',
+                experience: document.getElementById('webinarLevel')?.value || ''
+            });
+            BFX.funnel.setStage('webinar');
+        });
+    }
+
+    // Pay button clicks (pricing section)
+    document.querySelectorAll('.pay-btn').forEach(function(el) {
+        el.addEventListener('click', function() {
+            BFX.analytics.track('pricing_plan_click', {
+                product: el.dataset.product || '',
+                amount: el.dataset.amount || '',
+                name: el.dataset.name || ''
+            });
+            BFX.funnel.setStage('pricing');
+        });
+    });
+})();
+
+// ----- Engagement Intelligence -----
+BFX.engagement = (function() {
+    var startTime = Date.now();
+    var engaged = false;
+    var engagedTime = 0;
+    var lastActive = Date.now();
+
+    // Track active time (pauses when tab hidden)
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            engagedTime += Date.now() - lastActive;
+        } else {
+            lastActive = Date.now();
+        }
+    });
+
+    // Report time on page exit
+    window.addEventListener('beforeunload', function() {
+        engagedTime += Date.now() - lastActive;
+        var totalSeconds = Math.round(engagedTime / 1000);
+        var bucket = totalSeconds < 10 ? 'bounce' : totalSeconds < 30 ? 'glance' : totalSeconds < 60 ? 'reading' : totalSeconds < 180 ? 'engaged' : 'deep_engaged';
+        BFX.analytics.track('page_engagement', {
+            time_seconds: totalSeconds,
+            engagement_level: bucket,
+            page: BFX.analytics.pageName
+        });
+    });
+
+    // Section visibility tracking
+    var sectionsSeen = {};
+    var sectionObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting && !sectionsSeen[entry.target.id]) {
+                sectionsSeen[entry.target.id] = true;
+                BFX.analytics.track('section_view', { section: entry.target.id });
+            }
+        });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('section[id]').forEach(function(s) { sectionObserver.observe(s); });
+
+    // Returning user detection
+    if (BFX.analytics.isReturning) {
+        BFX.analytics.track('returning_visitor', {
+            visit_number: BFX.analytics.visitCount,
+            days_since_first: Math.round((Date.now() - new Date(localStorage.getItem('bfx_first_visit')).getTime()) / 86400000)
+        });
+    }
+
+    return {
+        getEngagedTime: function() { return engagedTime + (Date.now() - lastActive); }
+    };
+})();
+
+// ----- Page Load Performance -----
+BFX.perf = (function() {
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            var perf = performance.getEntriesByType('navigation')[0];
+            if (perf) {
+                BFX.analytics.track('page_performance', {
+                    load_time: Math.round(perf.loadEventEnd - perf.startTime),
+                    dom_ready: Math.round(perf.domContentLoadedEventEnd - perf.startTime),
+                    ttfb: Math.round(perf.responseStart - perf.requestStart)
+                });
+            }
+        }, 100);
+    });
+})();
 
 // ===== Navbar scroll effect =====
 const navbar = document.getElementById('navbar');
@@ -88,29 +408,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// ===== CTA Event Tracking =====
-document.querySelectorAll('a[href*="mql5.com/en/market/product"]').forEach(link => {
-    link.addEventListener('click', () => {
-        const text = link.textContent.trim().toLowerCase();
-        if (text.includes('demo')) {
-            trackEvent('ea_demo_click');
-        } else {
-            trackEvent('ea_buy_click', { value: 49.99 });
-        }
-    });
-});
-
-document.querySelectorAll('a[href*="contact"]').forEach(link => {
-    link.addEventListener('click', () => {
-        trackEvent('course_enroll_click');
-    });
-});
-
-document.querySelectorAll('a[href*="t.me/"]').forEach(link => {
-    link.addEventListener('click', () => {
-        trackEvent('telegram_join');
-    });
-});
 
 // ===== Lead Magnet Form (Formspree) =====
 const leadForm = document.getElementById('leadMagnetForm');
