@@ -2188,6 +2188,37 @@ ul {
     color: #00B450;
 }
 
+.recommended-broker {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 10px 20px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 8px;
+}
+
+.rb-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.rb-link {
+    color: var(--green-400);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.rb-link:hover {
+    color: #fff;
+}
+
 .faq-answer {
     max-height: 0;
     overflow: hidden;
