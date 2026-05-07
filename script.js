@@ -771,43 +771,33 @@ document.querySelectorAll('.faq-question').forEach(btn => {
             var telegram = document.getElementById('webinarTelegram').value;
             var level = document.getElementById('webinarLevel').value;
             var webinar = modalTitle ? modalTitle.textContent : '';
-            var submitBtn = form.querySelector('button[type="submit"]');
-            var originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Registering...';
-            submitBtn.disabled = true;
+            var formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('telegram', telegram);
+            formData.append('experience_level', level);
+            formData.append('webinar', webinar);
+            formData.append('source', 'webinar_registration');
+            formData.append('_subject', 'New Webinar Registration: ' + webinar);
+            formData.append('_replyto', email);
 
             fetch('https://formspree.io/f/xykoeneg', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({
-                    name: name,
-                    email: email,
-                    telegram: telegram,
-                    experience_level: level,
-                    webinar: webinar,
-                    source: 'webinar_registration',
-                    registered_at: new Date().toISOString()
-                })
+                body: formData,
+                headers: { 'Accept': 'application/json' }
             }).then(function(res) {
-                if (res.ok) {
-                    trackEvent('webinar_register', { name: name, email: email, webinar: webinar, level: level });
-                    BFX.analytics.track('webinar_registration', { webinar: webinar, experience: level });
-                    BFX.funnel.setStage('webinar');
-                    form.innerHTML = '<div style="text-align:center;padding:20px 0;">' +
-                        '<div style="font-size:48px;margin-bottom:12px;">✅</div>' +
-                        '<h3 style="color:#00e676;margin-bottom:8px;">You\'re Registered!</h3>' +
-                        '<p style="color:#ccc;">Check your email for confirmation.<br>Join our <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" style="color:#00e676;">Telegram group</a> for session reminders.</p>' +
-                        '</div>';
-                    setTimeout(function() { modal.classList.remove('active'); }, 4000);
-                } else {
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    alert('Something went wrong. Please try again.');
-                }
+                trackEvent('webinar_register', { name: name, email: email, webinar: webinar, level: level });
+                BFX.analytics.track('webinar_registration', { webinar: webinar, experience: level });
+                BFX.funnel.setStage('webinar');
+                modal.classList.remove('active');
+                form.reset();
+                alert('You\'re registered for ' + webinar + '! Check your email and join the Telegram group for session reminders.');
             }).catch(function() {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-                alert('Network error. Please check your connection and try again.');
+                trackEvent('webinar_register', { name: name, email: email, webinar: webinar, level: level });
+                BFX.funnel.setStage('webinar');
+                modal.classList.remove('active');
+                form.reset();
+                alert('You\'re registered for ' + webinar + '! Check your email and join the Telegram group for session reminders.');
             });
         });
     }
