@@ -407,7 +407,7 @@ if (leadForm) {
         const email = document.getElementById('lmEmail').value;
         
         try {
-            await fetch('https://formspree.io/f/xykoeneg', {
+            await fetch('https://formspree.io/f/xeenzyna', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({ email, source: 'bossfx_starter_pack' })
@@ -453,7 +453,7 @@ if (notifySubmit) {
         const email = document.getElementById('notifyEmail').value;
         if (!email) return;
         try {
-            await fetch('https://formspree.io/f/xykoeneg', {
+            await fetch('https://formspree.io/f/xeenzyna', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({ email, source: 'tool_notify' })
@@ -781,7 +781,7 @@ document.querySelectorAll('.faq-question').forEach(btn => {
             formData.append('_subject', 'New Webinar Registration: ' + webinar);
             formData.append('_replyto', email);
 
-            fetch('https://formspree.io/f/xykoeneg', {
+            fetch('https://formspree.io/f/xeenzyna', {
                 method: 'POST',
                 body: formData,
                 headers: { 'Accept': 'application/json' }
