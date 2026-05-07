@@ -345,3 +345,188 @@ document.querySelectorAll('.faq-question').forEach(btn => {
         if (!isOpen) item.classList.add('open');
     });
 });
+
+// ===== Ecosystem Stats Counter Animation =====
+(function() {
+    var statNums = document.querySelectorAll('.eco-stat-number[data-count]');
+    if (!statNums.length) return;
+    var animated = false;
+    function animateCounters() {
+        if (animated) return;
+        animated = true;
+        statNums.forEach(function(el) {
+            var target = parseInt(el.dataset.count);
+            var duration = 2000;
+            var start = 0;
+            var startTime = null;
+            function step(ts) {
+                if (!startTime) startTime = ts;
+                var progress = Math.min((ts - startTime) / duration, 1);
+                var eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = Math.floor(eased * target).toLocaleString();
+                if (progress < 1) requestAnimationFrame(step);
+                else el.textContent = target.toLocaleString();
+            }
+            requestAnimationFrame(step);
+        });
+    }
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) { animateCounters(); observer.disconnect(); }
+        });
+    }, { threshold: 0.3 });
+    observer.observe(statNums[0].closest('.eco-stats'));
+})();
+
+// ===== Market Session Indicator =====
+(function() {
+    var sessions = document.querySelectorAll('.session-item');
+    var note = document.getElementById('sessionNote');
+    if (!sessions.length) return;
+    function updateSessions() {
+        var now = new Date();
+        var utcH = now.getUTCHours();
+        var ranges = {
+            sydney: [21, 6],
+            tokyo: [0, 9],
+            london: [7, 16],
+            newyork: [12, 21]
+        };
+        var activeNames = [];
+        sessions.forEach(function(s) {
+            var key = s.dataset.session;
+            var r = ranges[key];
+            var active = false;
+            if (r[0] < r[1]) active = utcH >= r[0] && utcH < r[1];
+            else active = utcH >= r[0] || utcH < r[1];
+            s.classList.toggle('active', active);
+            if (active) activeNames.push(s.textContent.trim());
+        });
+        if (note) note.textContent = activeNames.length ? activeNames.join(' & ') + ' session open' : 'Markets closed — opens Sunday 9PM WAT';
+    }
+    updateSessions();
+    setInterval(updateSessions, 60000);
+})();
+
+// ===== Daily Motivation Quotes =====
+(function() {
+    var quotes = [
+        { text: '"The goal of a successful trader is to make the best trades. Money is secondary."', author: '— Alexander Elder' },
+        { text: '"In trading, the impossible happens about twice a year."', author: '— Henri M. Simoes' },
+        { text: '"Discipline is the bridge between goals and accomplishment."', author: '— Jim Rohn' },
+        { text: '"Risk comes from not knowing what you are doing."', author: '— Warren Buffett' },
+        { text: '"The market is a device for transferring money from the impatient to the patient."', author: '— Warren Buffett' },
+        { text: '"Plan the trade, trade the plan."', author: '— Trading Proverb' },
+        { text: '"Consistency beats intensity. Show up every day."', author: '— BossFx Academy' }
+    ];
+    var el = document.getElementById('dailyQuote');
+    var author = document.getElementById('dailyQuoteAuthor');
+    if (!el || !author) return;
+    var dayIndex = new Date().getDate() % quotes.length;
+    el.textContent = quotes[dayIndex].text;
+    author.textContent = quotes[dayIndex].author;
+})();
+
+// ===== Webinar Countdown Timers =====
+(function() {
+    document.querySelectorAll('.webinar-countdown').forEach(function(el) {
+        var day = parseInt(el.dataset.webinarDay);
+        var hour = parseInt(el.dataset.webinarHour);
+        var min = parseInt(el.dataset.webinarMin) || 0;
+        var display = el.querySelector('.webinar-timer-display');
+        if (!display) return;
+        function getNext() {
+            var now = new Date();
+            var target = new Date(now);
+            target.setHours(hour, min, 0, 0);
+            var diff = day - now.getDay();
+            if (diff < 0) diff += 7;
+            if (diff === 0 && now > target) diff = 7;
+            target.setDate(target.getDate() + diff);
+            return target;
+        }
+        function tick() {
+            var diff = getNext() - new Date();
+            if (diff <= 0) { display.textContent = 'LIVE NOW!'; return; }
+            var d = Math.floor(diff / 86400000);
+            var h = Math.floor((diff % 86400000) / 3600000);
+            var m = Math.floor((diff % 3600000) / 60000);
+            var s = Math.floor((diff % 60000) / 1000);
+            display.textContent = (d > 0 ? d + 'd ' : '') + h + 'h ' + m + 'm ' + s + 's';
+        }
+        tick();
+        setInterval(tick, 1000);
+    });
+})();
+
+// ===== Webinar Registration Modal =====
+(function() {
+    var modal = document.getElementById('webinarModal');
+    var modalTitle = document.getElementById('webinarModalTitle');
+    var closeBtn = document.getElementById('webinarModalClose');
+    var form = document.getElementById('webinarRegForm');
+    if (!modal) return;
+    document.querySelectorAll('.webinar-register-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var card = btn.closest('.webinar-card');
+            var title = card ? card.querySelector('.webinar-title').textContent : '';
+            if (modalTitle) modalTitle.textContent = title;
+            modal.classList.add('active');
+        });
+    });
+    if (closeBtn) closeBtn.addEventListener('click', function() { modal.classList.remove('active'); });
+    modal.addEventListener('click', function(e) { if (e.target === modal) modal.classList.remove('active'); });
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var name = document.getElementById('webinarName').value;
+            var email = document.getElementById('webinarEmail').value;
+            trackEvent('webinar_register', { name: name, email: email, webinar: modalTitle ? modalTitle.textContent : '' });
+            modal.classList.remove('active');
+            alert('You\'re registered! Check your email and join the Telegram group for session reminders.');
+            form.reset();
+        });
+    }
+})();
+
+// ===== Exit Intent Popup =====
+(function() {
+    var popup = document.getElementById('exitPopup');
+    var closeBtn = document.getElementById('exitPopupClose');
+    var dismissBtn = document.getElementById('exitPopupDismiss');
+    if (!popup) return;
+    var shown = sessionStorage.getItem('bfx_exit_shown');
+    function showPopup() { if (!shown) { popup.classList.add('active'); shown = true; sessionStorage.setItem('bfx_exit_shown', '1'); } }
+    function hidePopup() { popup.classList.remove('active'); }
+    document.addEventListener('mouseout', function(e) {
+        if (e.clientY < 10 && !shown) showPopup();
+    });
+    if (closeBtn) closeBtn.addEventListener('click', hidePopup);
+    if (dismissBtn) dismissBtn.addEventListener('click', hidePopup);
+    popup.addEventListener('click', function(e) { if (e.target === popup) hidePopup(); });
+})();
+
+// ===== Journey Step Animations =====
+(function() {
+    var steps = document.querySelectorAll('.journey-step');
+    if (!steps.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                var step = entry.target;
+                var delay = (parseInt(step.dataset.step) - 1) * 150;
+                setTimeout(function() {
+                    step.style.opacity = '1';
+                    step.style.transform = 'translateY(0)';
+                }, delay);
+                observer.unobserve(step);
+            }
+        });
+    }, { threshold: 0.2 });
+    steps.forEach(function(s) {
+        s.style.opacity = '0';
+        s.style.transform = 'translateY(20px)';
+        s.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        observer.observe(s);
+    });
+})();
