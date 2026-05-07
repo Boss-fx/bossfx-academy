@@ -272,16 +272,17 @@
             transform: rotate(180deg);
             color: var(--green-400);
         }
-        .faq-answer {
+        .faq-list .faq-answer {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 24px;
+            transition: max-height 0.4s ease, padding 0.4s ease;
         }
-        .faq-item.open .faq-answer {
-            max-height: 200px;
+        .faq-list .faq-item.open .faq-answer {
+            max-height: 500px;
+            padding: 0 24px 20px;
         }
         .faq-answer-inner {
-            padding: 0 24px 20px;
             color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.7;
@@ -462,15 +463,6 @@
         </div>
     </footer>
     <script src="script.js"></script>
-    <script>
-        document.querySelectorAll('.faq-question').forEach(q => {
-            q.addEventListener('click', () => {
-                const item = q.parentElement;
-                document.querySelectorAll('.faq-item').forEach(i => { if (i !== item) i.classList.remove('open'); });
-                item.classList.toggle('open');
-            });
-        });
-    </script>
     <div class="sticky-cta-bar" id="stickyCta">
         <span>Get the BossFx EA &middot; Start with Free Forex Starter Pack</span>
         <div class="sticky-cta-btns">
