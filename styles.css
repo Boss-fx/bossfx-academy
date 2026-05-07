@@ -3802,7 +3802,7 @@ ul {
 .proof-toast-text { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
 .proof-toast-text strong { color: var(--text-primary); }
 .proof-toast-time { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; display: block; }
-@media (max-width: 768px) { .proof-toast { left: 12px; right: 12px; max-width: none; bottom: 80px; } }
+@media (max-width: 768px) { .proof-toast { left: 12px; right: 12px; max-width: none; bottom: 96px; } }
 
 /* ============================
    PHASE 9: PLATFORM FEEL
