@@ -2469,6 +2469,18 @@ ul {
     .lm-input-row {
         flex-direction: column;
     }
+    .lm-input-row .btn {
+        width: 100%;
+    }
+    .newsletter-form {
+        flex-direction: column;
+    }
+    .newsletter-form input[type="email"] {
+        width: 100%;
+    }
+    .newsletter-form button {
+        width: 100%;
+    }
     .thankyou-section h1 {
         font-size: 1.8rem;
     }

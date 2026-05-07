@@ -221,7 +221,7 @@ BFX.conversions = (function() {
     });
 
     // Contact form submission
-    var contactForm = document.querySelector('form[action*="formspree"]');
+    var contactForm = document.querySelector('#applyForm') || document.querySelector('form[action*="formspree"]');
     if (contactForm && BFX.analytics.pageName === 'contact') {
         contactForm.addEventListener('submit', function() {
             BFX.analytics.track('contact_form_submit', { page: 'contact' });
@@ -1293,7 +1293,7 @@ BFX.animCounters = (function() {
 
 // ----- Task 1: Resource Floating Carousel -----
 BFX.resourceCarousel = (function() {
-    var grid = document.querySelector('#resources .magnet-grid');
+    var grid = document.querySelector('.magnet-grid');
     if (!grid) return {};
     var cards = grid.querySelectorAll('.magnet-card');
     if (!cards.length) return {};
