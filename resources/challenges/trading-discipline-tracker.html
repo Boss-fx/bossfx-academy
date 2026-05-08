@@ -50,6 +50,13 @@ li{margin-bottom:8px}li strong{color:#fff}
 .disclaimer{font-size:0.72rem;color:#64748b;margin-top:24px;line-height:1.6;max-width:600px;margin-left:auto;margin-right:auto}
 .print-btn{position:fixed;bottom:24px;right:24px;padding:12px 24px;background:#10b981;color:#050a07;border:none;border-radius:10px;font-weight:700;font-size:0.85rem;cursor:pointer;box-shadow:0 4px 20px rgba(16,185,129,0.3);z-index:100}
 @media print{.print-btn{display:none}}
+/* BossFX Watermark */
+.bossfx-watermark{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden}
+.bossfx-watermark-inner{position:absolute;top:-50%;left:-50%;width:200%;height:200%;display:flex;flex-wrap:wrap;align-content:flex-start;gap:120px 100px;transform:rotate(-30deg);padding:60px}
+.bossfx-wm-item{display:flex;align-items:center;gap:8px;opacity:0.045}
+.bossfx-wm-item img{width:40px;height:40px;border-radius:50%;filter:grayscale(100%) brightness(1.5)}
+.bossfx-wm-item span{font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:800;color:#10b981;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+@media print{.bossfx-wm-item{opacity:0.07}.bossfx-wm-item img{filter:grayscale(100%)}}
 </style>
 </head>
 <body>
@@ -164,5 +171,8 @@ li{margin-bottom:8px}li strong{color:#fff}
     <p style="font-size:0.72rem;color:#64748b;margin-top:12px;">&copy; 2026 BossFX Academy. bossfxcademy.com</p>
 </div>
 </div>
+<!-- BossFX Watermark -->
+<div class="bossfx-watermark"><div class="bossfx-watermark-inner" id="bfxWatermark"></div></div>
+<script>(function(){var w=document.getElementById("bfxWatermark");if(!w)return;var h="";for(var i=0;i<80;i++){h+='<div class="bossfx-wm-item"><img src="../../assets/logo.png" alt=""><span>BossFx Academy</span></div>';}w.innerHTML=h;})();</script>
 </body>
 </html>
