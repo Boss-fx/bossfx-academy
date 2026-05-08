@@ -1,0 +1,218 @@
+/* ================================================================
+   BossFx Blog Engine — blog.css
+   Reading progress, category filters, share bar, related posts
+   ================================================================ */
+
+/* Reading Progress Bar */
+.bfx-reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    z-index: 10010;
+    pointer-events: none;
+}
+.bfx-reading-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    transition: width 0.15s ease-out;
+    border-radius: 0 2px 2px 0;
+}
+
+/* Category Filter Tabs */
+.bfx-blog-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+.bfx-filter-btn {
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+.bfx-filter-btn:hover {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: rgba(16, 185, 129, 0.25);
+    color: #10b981;
+}
+.bfx-filter-btn.active {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #10b981;
+    font-weight: 600;
+}
+
+/* Category Badge on Blog Cards */
+.bfx-category-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 12px;
+    color: #10b981;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+/* Share Bar */
+.bfx-share-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 48px;
+    padding: 20px 24px;
+    background: rgba(16, 185, 129, 0.04);
+    border: 1px solid rgba(16, 185, 129, 0.12);
+    border-radius: 14px;
+}
+.bfx-share-label {
+    color: #94a3b8;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.bfx-share-buttons {
+    display: flex;
+    gap: 8px;
+}
+.bfx-share-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+.bfx-share-btn:hover {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #10b981;
+    transform: translateY(-2px);
+}
+
+/* Related Posts */
+.bfx-related-posts {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.bfx-related-posts h3 {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.bfx-related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+.bfx-related-card {
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+.bfx-related-card:hover {
+    background: rgba(16, 185, 129, 0.06);
+    border-color: rgba(16, 185, 129, 0.2);
+    transform: translateY(-2px);
+}
+.bfx-related-card h4 {
+    color: #e2e8f0;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin: 0 0 6px;
+    line-height: 1.4;
+}
+.bfx-related-card p {
+    color: #64748b;
+    font-size: 0.78rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Blog Search */
+.bfx-blog-search {
+    max-width: 400px;
+    margin: 0 auto 24px;
+    position: relative;
+}
+.bfx-blog-search input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    color: #e2e8f0;
+    font-size: 0.88rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.bfx-blog-search input:focus {
+    border-color: rgba(16, 185, 129, 0.4);
+}
+.bfx-blog-search input::placeholder {
+    color: #64748b;
+}
+.bfx-blog-search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .bfx-share-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+    }
+    .bfx-blog-filters {
+        gap: 6px;
+    }
+    .bfx-filter-btn {
+        padding: 6px 14px;
+        font-size: 0.76rem;
+    }
+    .bfx-related-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media print {
+    .bfx-reading-progress,
+    .bfx-share-bar,
+    .bfx-blog-filters,
+    .bfx-related-posts {
+        display: none !important;
+    }
+}

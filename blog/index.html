@@ -12,6 +12,8 @@
     <link rel="manifest" href="/assets/site.webmanifest" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../chatbot.css">
+    <link rel="stylesheet" href="../blog.css">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFQ9P5KFSJ"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -63,49 +65,64 @@
 
     <section class="section">
         <div class="container">
+            <!-- Category Filter Tabs -->
+            <div class="bfx-blog-filters">
+                <button class="bfx-filter-btn active" data-filter="all">All Posts</button>
+                <button class="bfx-filter-btn" data-filter="beginner">Beginner</button>
+                <button class="bfx-filter-btn" data-filter="strategy">Strategy</button>
+                <button class="bfx-filter-btn" data-filter="automation">Automation</button>
+                <button class="bfx-filter-btn" data-filter="behind-the-scenes">Behind the Scenes</button>
+            </div>
+
             <div class="blog-grid">
-                <div class="blog-card">
+                <div class="blog-card" data-category="beginner">
                     <div class="blog-card-body">
+                        <span class="bfx-category-badge">Beginner</span>
                         <span class="blog-card-date">May 2026 &middot; 7 min read</span>
                         <h3>What is Forex Trading and How Does It Work?</h3>
                         <p>A beginner-friendly breakdown of the forex market, how currency pairs work, and why millions trade daily.</p>
                         <a href="what-is-forex.html" class="btn btn-outline">Read Post &rarr;</a>
                     </div>
                 </div>
-                <div class="blog-card">
+                <div class="blog-card" data-category="beginner">
                     <div class="blog-card-body">
+                        <span class="bfx-category-badge">Beginner</span>
                         <span class="blog-card-date">May 2026 &middot; 6 min read</span>
                         <h3>Top 5 Mistakes Beginner Traders Make</h3>
                         <p>Avoid the most common pitfalls that cost new traders money. Learn what NOT to do before you start.</p>
                         <a href="beginner-mistakes.html" class="btn btn-outline">Read Post &rarr;</a>
                     </div>
                 </div>
-                <div class="blog-card">
+                <div class="blog-card" data-category="strategy">
                     <div class="blog-card-body">
+                        <span class="bfx-category-badge">Strategy</span>
                         <span class="blog-card-date">May 2026 &middot; 8 min read</span>
                         <h3>Manual Trading vs Automated Trading: Which is Better?</h3>
                         <p>Compare the pros and cons of manual and algo trading. Find out which approach fits your style.</p>
                         <a href="manual-vs-automated.html" class="btn btn-outline">Read Post &rarr;</a>
                     </div>
                 </div>
-                <div class="blog-card">
+                <div class="blog-card" data-category="behind-the-scenes">
                     <div class="blog-card-body">
+                        <span class="bfx-category-badge">Behind the Scenes</span>
                         <span class="blog-card-date">April 2026 &middot; 8 min read</span>
                         <h3>Why I Built the BossFx SMA Pro Trend EA</h3>
                         <p>From frustration to flagship product. The story behind the EA that made it through MetaQuotes validation.</p>
                         <a href="why-i-built-the-sma-pro-ea.html" class="btn btn-outline">Read Post &rarr;</a>
                     </div>
                 </div>
-                <div class="blog-card">
+                <div class="blog-card" data-category="automation">
                     <div class="blog-card-body">
+                        <span class="bfx-category-badge">Automation</span>
                         <span class="blog-card-date">April 2026 &middot; 6 min read</span>
                         <h3>The 21 Validation Errors That Almost Killed My Bot</h3>
                         <p>What MetaQuotes' validator taught me about broker rules, error handling, and building production-grade EAs.</p>
                         <a href="21-validation-errors.html" class="btn btn-outline">Read Post &rarr;</a>
                     </div>
                 </div>
-                <div class="blog-card">
+                <div class="blog-card" data-category="automation">
                     <div class="blog-card-body">
+                        <span class="bfx-category-badge">Automation</span>
                         <span class="blog-card-date">April 2026 &middot; 5 min read</span>
                         <h3>How to Spot a Scam Forex EA in 2026</h3>
                         <p>Five red flags every trader should know before buying an Expert Advisor.</p>
@@ -126,6 +143,10 @@
     </footer>
 
     <script src="../script.js"></script>
+    <script src="../config.js"></script>
+    <script src="../email-config.js"></script>
+    <script src="../blog.js"></script>
+    <script src="../chatbot.js"></script>
     <div class="sticky-cta-bar" id="stickyCta">
         <span>Get the BossFx EA &middot; Start with Free Forex Starter Pack</span>
         <div class="sticky-cta-btns">
