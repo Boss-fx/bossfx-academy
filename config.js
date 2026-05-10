@@ -20,6 +20,13 @@ BFX.config = {
         tiktok: 'https://www.tiktok.com/@bossfx1'
     },
 
+    // Payment (Flutterwave)
+    flutterwave: {
+        publicKey: 'FLWPUBK_TEST-XXXXXXXXXXXXX', // Replace with real Flutterwave public key
+        currency: 'NGN',
+        logo: 'https://www.bossfxcademy.com/assets/logo.png'
+    },
+
     // Products
     ea: {
         url: 'https://www.mql5.com/en/market/product/174970',

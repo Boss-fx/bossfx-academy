@@ -308,9 +308,9 @@ BFX.tracking = (function() {
 
     // ----- Checkout / Payment Tracking -----
     function setupCheckoutTracking() {
-        // Paystack / payment button clicks
+        // Payment button clicks
         document.addEventListener('click', function(e) {
-            var btn = e.target.closest('.pay-btn, [data-pay], .paystack-btn, [onclick*="paystack"], [onclick*="PaystackPop"]');
+            var btn = e.target.closest('.pay-btn, [data-pay], .pay-modal-submit');
             if (!btn) return;
 
             var product = btn.dataset.product || btn.dataset.name || 'unknown';

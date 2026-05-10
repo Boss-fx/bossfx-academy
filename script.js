@@ -466,9 +466,86 @@ if (notifySubmit) {
     });
 }
 
-// ===== Paystack Checkout =====
-const PAYSTACK_PUBLIC_KEY = 'pk_test_67e628afd5934dd30993c076afb8cf9313796861';
-const ORDER_BUMP_AMOUNT = 1500000;
+// ===== Flutterwave Checkout =====
+const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK_TEST-XXXXXXXXXXXXX'; // Replace with real Flutterwave public key
+const ORDER_BUMP_AMOUNT = 1500000; // ₦15,000 in kobo
+
+// Multi-currency pricing (fallback rates, updated by API on load)
+const BFX_CURRENCY = (function() {
+    const FALLBACK_RATES = { NGN: 1, USD: 0.00062, GBP: 0.00049, EUR: 0.00057 };
+    let rates = Object.assign({}, FALLBACK_RATES);
+    let userCurrency = 'NGN';
+    let ratesLoaded = false;
+
+    // Detect user region
+    function detectCurrency() {
+        try {
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+            if (tz.startsWith('America/') || tz.startsWith('US/')) return 'USD';
+            if (tz.startsWith('Europe/London') || tz === 'GB') return 'GBP';
+            if (tz.startsWith('Europe/')) return 'EUR';
+        } catch(e) {}
+        return 'NGN';
+    }
+
+    // Load live rates (free API, no key required)
+    function loadRates() {
+        fetch('https://open.er-api.com/v6/latest/NGN')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data && data.rates) {
+                    rates.USD = data.rates.USD || FALLBACK_RATES.USD;
+                    rates.GBP = data.rates.GBP || FALLBACK_RATES.GBP;
+                    rates.EUR = data.rates.EUR || FALLBACK_RATES.EUR;
+                    ratesLoaded = true;
+                    renderIntlPricing();
+                }
+            })
+            .catch(function() {
+                // Use fallback rates silently
+                renderIntlPricing();
+            });
+    }
+
+    // Convert NGN amount to target currency
+    function convert(ngnAmount, toCurrency) {
+        return Math.round(ngnAmount * (rates[toCurrency] || 1));
+    }
+
+    // Format currency
+    function format(amount, currency) {
+        var symbols = { NGN: '₦', USD: '$', GBP: '£', EUR: '€' };
+        var symbol = symbols[currency] || currency + ' ';
+        return symbol + amount.toLocaleString('en');
+    }
+
+    // Render international pricing hints
+    function renderIntlPricing() {
+        document.querySelectorAll('.pricing-intl-hint').forEach(function(el) {
+            var ngn = parseInt(el.dataset.baseNgn);
+            if (!ngn) return;
+            var usd = convert(ngn, 'USD');
+            var gbp = convert(ngn, 'GBP');
+            var eur = convert(ngn, 'EUR');
+            el.textContent = 'Approx. $' + usd.toLocaleString('en') +
+                ' · £' + gbp.toLocaleString('en') +
+                ' · €' + eur.toLocaleString('en');
+            el.style.opacity = '1';
+        });
+    }
+
+    userCurrency = detectCurrency();
+    loadRates();
+
+    return {
+        rates: rates,
+        userCurrency: userCurrency,
+        convert: convert,
+        format: format,
+        renderIntlPricing: renderIntlPricing,
+        isReady: function() { return ratesLoaded; }
+    };
+})();
 
 const payModal = document.getElementById('payModal');
 const payModalClose = document.getElementById('payModalClose');
@@ -518,6 +595,7 @@ document.querySelectorAll('.pay-btn').forEach(btn => {
         if (orderBumpCheck) orderBumpCheck.checked = false;
         updateTotal();
         if (payModal) payModal.classList.add('show');
+        trackEvent('checkout_initiated', { product: currentPayment.product, amount: currentPayment.amount });
     });
 });
 
@@ -539,32 +617,77 @@ if (payModalForm) {
         const includesEA = orderBumpCheck && orderBumpCheck.checked;
         const totalAmount = getPaymentTotal();
         const productLabel = includesEA ? currentPayment.name + ' + SMA Pro EA' : currentPayment.name;
+        const txRef = 'BFX-' + currentPayment.product + '-' + Date.now();
 
-        const handler = PaystackPop.setup({
-            key: PAYSTACK_PUBLIC_KEY,
-            email: email,
-            amount: totalAmount,
-            currency: 'NGN',
-            ref: 'BFX-' + currentPayment.product + '-' + Date.now(),
-            metadata: {
-                custom_fields: [
-                    { display_name: 'Full Name', variable_name: 'full_name', value: fullName },
-                    { display_name: 'Phone', variable_name: 'phone', value: phone },
-                    { display_name: 'Product', variable_name: 'product', value: productLabel },
-                    { display_name: 'EA Bundle', variable_name: 'ea_bundle', value: includesEA ? 'Yes' : 'No' }
-                ]
-            },
-            onClose: function() {
-                trackEvent('payment_cancelled', { product: currentPayment.product });
-            },
-            callback: function(response) {
-                trackEvent('payment_success', { product: currentPayment.product, reference: response.reference, ea_bundle: includesEA });
-                payModal.classList.remove('show');
-                payModalForm.reset();
-                window.location.href = 'contact.html?paid=' + currentPayment.product + '&ref=' + response.reference;
+        // Disable submit button to prevent double-clicks
+        const submitBtn = payModalForm.querySelector('.pay-modal-submit');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+        }
+
+        try {
+            FlutterwaveCheckout({
+                public_key: FLUTTERWAVE_PUBLIC_KEY,
+                tx_ref: txRef,
+                amount: totalAmount / 100, // Flutterwave uses actual amount, not kobo
+                currency: 'NGN',
+                payment_options: 'card, banktransfer, ussd, mobilemoney',
+                customer: {
+                    email: email,
+                    phone_number: phone,
+                    name: fullName
+                },
+                customizations: {
+                    title: 'BossFx Academy',
+                    description: productLabel,
+                    logo: 'https://www.bossfxcademy.com/assets/logo.png'
+                },
+                meta: {
+                    product: currentPayment.product,
+                    product_name: productLabel,
+                    ea_bundle: includesEA ? 'yes' : 'no',
+                    source: 'website'
+                },
+                callback: function(response) {
+                    // Payment successful
+                    trackEvent('payment_success', {
+                        product: currentPayment.product,
+                        reference: response.tx_ref,
+                        transaction_id: response.transaction_id,
+                        ea_bundle: includesEA,
+                        amount: totalAmount / 100,
+                        currency: 'NGN'
+                    });
+                    payModal.classList.remove('show');
+                    payModalForm.reset();
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Proceed to Secure Checkout';
+                    }
+                    window.location.href = 'payment-success.html?product=' +
+                        encodeURIComponent(currentPayment.product) +
+                        '&ref=' + response.tx_ref +
+                        '&tid=' + response.transaction_id;
+                },
+                onclose: function(incomplete) {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Proceed to Secure Checkout';
+                    }
+                    if (incomplete) {
+                        trackEvent('payment_cancelled', { product: currentPayment.product });
+                    }
+                }
+            });
+        } catch(err) {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Proceed to Secure Checkout';
             }
-        });
-        handler.openIframe();
+            trackEvent('payment_error', { product: currentPayment.product, error: err.message || 'unknown' });
+            alert('Payment could not be initiated. Please try again or contact support.');
+        }
     });
 }
 

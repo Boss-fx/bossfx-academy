@@ -3102,6 +3102,16 @@ ul {
     margin-top: 1rem;
     margin-bottom: 0;
 }
+/* International pricing hint */
+.pricing-intl-hint {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-align: center;
+    margin: 4px 0 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    letter-spacing: 0.2px;
+}
 .mentorship-card .pay-btn {
     margin-top: 1.25rem;
     width: 100%;
