@@ -85,7 +85,7 @@ BFX.blogShare = (function() {
     'use strict';
 
     function init() {
-        var postBody = document.querySelector('.blog-post-body');
+        var postBody = document.querySelector('.blog-post-body') || document.querySelector('.blog-post-content');
         if (!postBody) return;
 
         var url = encodeURIComponent(window.location.href);
