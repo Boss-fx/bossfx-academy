@@ -16,7 +16,7 @@ BFX.tracking = (function() {
     // ----- Configuration -----
     var CONFIG = {
         gtmId:       'GTM-T3R88HZB',
-        metaPixelId: 'PIXEL_ID_HERE',       // Replace with real Meta Pixel ID
+        metaPixelId: '804009589230621',
         ga4Id:       (BFX.config && BFX.config.ga4Id) || 'G-ZFQ9P5KFSJ',
         debug:       location.search.indexOf('debug_tracking=1') > -1
     };
