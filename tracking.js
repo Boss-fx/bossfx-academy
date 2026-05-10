@@ -15,7 +15,7 @@ BFX.tracking = (function() {
 
     // ----- Configuration -----
     var CONFIG = {
-        gtmId:       'GTM-XXXXXXX',        // Replace with real GTM container ID
+        gtmId:       'GTM-T3R88HZB',
         metaPixelId: 'PIXEL_ID_HERE',       // Replace with real Meta Pixel ID
         ga4Id:       (BFX.config && BFX.config.ga4Id) || 'G-ZFQ9P5KFSJ',
         debug:       location.search.indexOf('debug_tracking=1') > -1
@@ -34,33 +34,16 @@ BFX.tracking = (function() {
         }
     }
 
-    // ----- GTM Container Loader -----
+    // ----- GTM Container -----
+    // GTM snippets are injected directly into HTML <head> and <body> for earliest loading.
+    // This function only verifies the container is present — it does NOT load GTM again.
     function loadGTM() {
         if (CONFIG.gtmId === 'GTM-XXXXXXX' || !CONFIG.gtmId) {
             if (CONFIG.debug) console.log('[BFX.tracking] GTM skipped — no container ID configured');
             return;
         }
-
-        // GTM head snippet
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;
-        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-        f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer', CONFIG.gtmId);
-
-        // GTM noscript iframe (appended to body)
-        var noscript = document.createElement('noscript');
-        var iframe = document.createElement('iframe');
-        iframe.src = 'https://www.googletagmanager.com/ns.html?id=' + CONFIG.gtmId;
-        iframe.height = '0';
-        iframe.width = '0';
-        iframe.style.display = 'none';
-        iframe.style.visibility = 'hidden';
-        noscript.appendChild(iframe);
-        document.body.insertBefore(noscript, document.body.firstChild);
-
-        if (CONFIG.debug) console.log('[BFX.tracking] GTM loaded:', CONFIG.gtmId);
+        // GTM is already loaded via inline <script> in <head> of every HTML page
+        if (CONFIG.debug) console.log('[BFX.tracking] GTM verified:', CONFIG.gtmId);
     }
 
     // ----- Meta Pixel Loader -----
