@@ -467,7 +467,7 @@ if (notifySubmit) {
 }
 
 // ===== Flutterwave Checkout =====
-const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK_TEST-XXXXXXXXXXXXX'; // Replace with real Flutterwave public key
+const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-ef7ae0ec39bd837e57a4a4bb28378fad-X';
 const ORDER_BUMP_AMOUNT = 1500000; // ₦15,000 in kobo
 
 // Multi-currency pricing (fallback rates, updated by API on load)
