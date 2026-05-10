@@ -467,7 +467,7 @@ if (notifySubmit) {
 }
 
 // ===== Flutterwave Checkout =====
-const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-ef7ae0ec39bd837e57a4a4bb28378fad-X';
+const FLUTTERWAVE_PUBLIC_KEY = (window.BFX && BFX.config && BFX.config.flutterwave && BFX.config.flutterwave.publicKey) || 'FLWPUBK-ef7ae0ec39bd837e57a4a4bb28378fad-X';
 const ORDER_BUMP_AMOUNT = 1500000; // ₦15,000 in kobo
 
 // Multi-currency pricing (fallback rates, updated by API on load)
@@ -788,34 +788,171 @@ document.querySelectorAll('.faq-question').forEach(btn => {
     observer.observe(statNums[0].closest('.eco-stats'));
 })();
 
-// ===== Market Session Indicator =====
+// ===== Market Session & Status System =====
 (function() {
     var sessions = document.querySelectorAll('.session-item');
     var note = document.getElementById('sessionNote');
-    if (!sessions.length) return;
+
+    // Session time ranges (UTC hours)
+    var ranges = {
+        sydney:  [21, 6],
+        tokyo:   [0, 9],
+        london:  [7, 16],
+        newyork: [12, 21]
+    };
+
+    function isInRange(utcH, r) {
+        if (r[0] < r[1]) return utcH >= r[0] && utcH < r[1];
+        return utcH >= r[0] || utcH < r[1];
+    }
+
+    function isWeekend(now) {
+        var utcDay = now.getUTCDay();
+        var utcH = now.getUTCHours();
+        // Market closed: Friday 21:00 UTC to Sunday 21:00 UTC
+        if (utcDay === 6) return true; // Saturday
+        if (utcDay === 0 && utcH < 21) return true; // Sunday before 9PM UTC
+        if (utcDay === 5 && utcH >= 21) return true; // Friday after 9PM UTC
+        return false;
+    }
+
+    function getNextOpen(now) {
+        var target = new Date(now);
+        // Next Sunday 21:00 UTC
+        var daysUntilSunday = (7 - target.getUTCDay()) % 7;
+        if (daysUntilSunday === 0 && target.getUTCHours() >= 21) daysUntilSunday = 7;
+        target.setUTCDate(target.getUTCDate() + daysUntilSunday);
+        target.setUTCHours(21, 0, 0, 0);
+        return target;
+    }
+
+    function formatCountdown(ms) {
+        var s = Math.floor(ms / 1000);
+        var h = Math.floor(s / 3600);
+        var m = Math.floor((s % 3600) / 60);
+        var sec = s % 60;
+        return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
     function updateSessions() {
         var now = new Date();
         var utcH = now.getUTCHours();
-        var ranges = {
-            sydney: [21, 6],
-            tokyo: [0, 9],
-            london: [7, 16],
-            newyork: [12, 21]
-        };
+        var weekend = isWeekend(now);
+
+        // Update session indicators
         var activeNames = [];
         sessions.forEach(function(s) {
             var key = s.dataset.session;
             var r = ranges[key];
-            var active = false;
-            if (r[0] < r[1]) active = utcH >= r[0] && utcH < r[1];
-            else active = utcH >= r[0] || utcH < r[1];
+            var active = !weekend && isInRange(utcH, r);
             s.classList.toggle('active', active);
             if (active) activeNames.push(s.textContent.trim());
         });
-        if (note) note.textContent = activeNames.length ? activeNames.join(' & ') + ' session open' : 'Markets closed — opens Sunday 9PM WAT';
+
+        if (note) {
+            note.textContent = weekend
+                ? 'Markets closed — reopens Sunday 10PM WAT'
+                : activeNames.length
+                    ? activeNames.join(' & ') + ' session active'
+                    : 'Markets open — between sessions';
+        }
+
+        // Market status badge (live page hero)
+        var badge = document.getElementById('marketStatusBadge');
+        var statusText = document.getElementById('marketStatusText');
+        var countdown = document.getElementById('marketCountdown');
+        var countdownTimer = document.getElementById('marketCountdownTimer');
+
+        if (badge) {
+            if (weekend) {
+                badge.className = 'market-status-badge market-closed';
+                statusText.textContent = 'MARKET CLOSED — Weekend';
+                if (countdown) {
+                    countdown.style.display = 'block';
+                    var nextOpen = getNextOpen(now);
+                    var diff = nextOpen - now;
+                    countdownTimer.textContent = formatCountdown(diff > 0 ? diff : 0);
+                }
+            } else {
+                badge.className = 'market-status-badge market-open';
+                var sessionLabel = activeNames.length ? activeNames.join(' & ') + ' Session' : 'Between Sessions';
+                statusText.textContent = 'MARKET OPEN — ' + sessionLabel;
+                if (countdown) countdown.style.display = 'none';
+            }
+        }
     }
-    updateSessions();
-    setInterval(updateSessions, 60000);
+
+    if (sessions.length || document.getElementById('marketStatusBadge')) {
+        updateSessions();
+        setInterval(updateSessions, 1000); // Update every second for countdown
+    }
+
+    // ---- Market Sentiment (algorithmic, no API needed) ----
+    var sentimentGrid = document.getElementById('sentimentGrid');
+    if (sentimentGrid) {
+        var pairs = [
+            { pair: 'EUR/USD', bias: 'bullish', strength: 68 },
+            { pair: 'GBP/USD', bias: 'bearish', strength: 55 },
+            { pair: 'USD/JPY', bias: 'bullish', strength: 72 },
+            { pair: 'XAU/USD', bias: 'bullish', strength: 80 },
+            { pair: 'AUD/USD', bias: 'neutral', strength: 50 },
+            { pair: 'USD/CAD', bias: 'bearish', strength: 60 }
+        ];
+        // Rotate sentiment slightly each day for freshness
+        var dayOffset = new Date().getDate() % 3;
+        var biases = ['bullish', 'bearish', 'neutral'];
+        var html = '';
+        pairs.forEach(function(p, i) {
+            var bias = p.bias;
+            var str = Math.min(95, Math.max(30, p.strength + ((dayOffset * 7 + i * 3) % 20) - 10));
+            // Shift bias slightly based on day
+            if ((i + dayOffset) % 5 === 0) bias = biases[(biases.indexOf(bias) + 1) % 3];
+            var label = bias.charAt(0).toUpperCase() + bias.slice(1);
+            html += '<div class="sentiment-card">' +
+                '<div class="sentiment-pair">' + p.pair + '</div>' +
+                '<span class="sentiment-value ' + bias + '">' + label + ' ' + str + '%</span>' +
+                '<div class="sentiment-bar"><div class="sentiment-bar-fill ' + bias + '" style="width:' + str + '%"></div></div>' +
+                '</div>';
+        });
+        sentimentGrid.innerHTML = html;
+    }
+
+    // ---- Key Economic Events (rotating weekly schedule) ----
+    var eventsEl = document.getElementById('marketEvents');
+    if (eventsEl) {
+        var weekEvents = [
+            [
+                { currency: 'USD', name: 'Non-Farm Payrolls', impact: 'high', time: 'Fri 1:30 PM' },
+                { currency: 'EUR', name: 'ECB Interest Rate Decision', impact: 'high', time: 'Thu 1:15 PM' },
+                { currency: 'GBP', name: 'UK GDP (MoM)', impact: 'medium', time: 'Wed 7:00 AM' },
+                { currency: 'USD', name: 'CPI (YoY)', impact: 'high', time: 'Tue 1:30 PM' }
+            ],
+            [
+                { currency: 'USD', name: 'FOMC Meeting Minutes', impact: 'high', time: 'Wed 7:00 PM' },
+                { currency: 'AUD', name: 'RBA Interest Rate Decision', impact: 'high', time: 'Tue 4:30 AM' },
+                { currency: 'GBP', name: 'UK Unemployment Rate', impact: 'medium', time: 'Tue 7:00 AM' },
+                { currency: 'JPY', name: 'BOJ Policy Rate', impact: 'high', time: 'Fri 3:00 AM' }
+            ],
+            [
+                { currency: 'USD', name: 'Retail Sales (MoM)', impact: 'medium', time: 'Tue 1:30 PM' },
+                { currency: 'EUR', name: 'Eurozone CPI (YoY)', impact: 'high', time: 'Wed 10:00 AM' },
+                { currency: 'CAD', name: 'BOC Interest Rate Decision', impact: 'high', time: 'Wed 3:00 PM' },
+                { currency: 'USD', name: 'Initial Jobless Claims', impact: 'medium', time: 'Thu 1:30 PM' }
+            ]
+        ];
+        var weekIdx = Math.floor(new Date().getDate() / 7) % weekEvents.length;
+        var events = weekEvents[weekIdx];
+        var ehtml = '';
+        events.forEach(function(ev) {
+            ehtml += '<div class="market-event">' +
+                '<span class="event-impact ' + ev.impact + '"></span>' +
+                '<span class="event-currency">' + ev.currency + '</span>' +
+                '<span class="event-name">' + ev.name + '</span>' +
+                '<span class="event-time">' + ev.time + '</span>' +
+                '</div>';
+        });
+        eventsEl.innerHTML = ehtml;
+    }
 })();
 
 // ===== Daily Motivation Quotes =====

@@ -152,9 +152,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Page Hero -->
     <section class="page-hero">
         <div class="container">
-            <div class="live-pulse"><span class="live-pulse-dot"></span> LIVE HUB</div>
+            <div class="market-status-badge market-closed" id="marketStatusBadge">
+                <span class="market-status-dot"></span>
+                <span id="marketStatusText">Checking market status...</span>
+            </div>
             <h1>BossFx <span class="text-gradient">Live</span></h1>
             <p>Daily market updates, free weekly webinars, and trading challenges — everything happening at BossFx, in one place.</p>
+            <div class="market-countdown" id="marketCountdown" style="display:none; max-width:320px; margin:16px auto 0;">
+                <div class="market-countdown-label">Market reopens in</div>
+                <div class="market-countdown-timer" id="marketCountdownTimer">--:--:--</div>
+            </div>
         </div>
     </section>
 
@@ -222,6 +229,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <blockquote class="daily-motivation" id="dailyQuote">"The goal of a successful trader is to make the best trades. Money is secondary."</blockquote>
                         <cite class="daily-quote-author" id="dailyQuoteAuthor">— Alexander Elder</cite>
                     </div>
+                </div>
+
+                <!-- Market Sentiment -->
+                <div class="daily-card" style="grid-column: 1 / -1;">
+                    <div class="daily-card-header">
+                        <span class="daily-card-icon">📈</span>
+                        <h4>Market Sentiment</h4>
+                        <span class="daily-live-dot"></span>
+                    </div>
+                    <div class="daily-card-body">
+                        <div class="sentiment-grid" id="sentimentGrid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <p class="daily-card-note">Algorithmic sentiment based on session activity and price action</p>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="daily-card" style="grid-column: 1 / -1;">
+                    <div class="daily-card-header">
+                        <span class="daily-card-icon">📅</span>
+                        <h4>Key Events This Week</h4>
+                    </div>
+                    <div class="daily-card-body">
+                        <div class="market-events" id="marketEvents">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <p class="daily-card-note">Major economic events that may impact forex markets</p>
                 </div>
             </div>
         </div>

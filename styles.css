@@ -4175,3 +4175,331 @@ ul {
     .social-gate { padding: 32px 24px; }
     .social-gate-header h3 { font-size: 1.2rem; }
 }
+
+/* ================================================================
+   MOBILE UX FIXES — Lead bar spacing, hero compression, section priority
+   ================================================================ */
+
+/* Fix: Lead bar overlapping content — add body offset when lead bar is visible */
+body.lead-bar-visible { padding-top: 0; }
+.lead-bar ~ .navbar { top: 0; }
+.lead-bar.active ~ .navbar { top: auto; }
+
+/* Mobile hero compression — reduce vertical bloat */
+@media (max-width: 768px) {
+    .hero {
+        min-height: auto;
+        padding: 100px 0 48px;
+    }
+    .hero-cta { margin-bottom: 28px; }
+    .hero-subtitle { margin-bottom: 24px; font-size: 1rem; }
+    .hero-badge { margin-bottom: 16px; }
+
+    /* Social proof bar — tighter */
+    .social-proof-bar { padding: 12px 0; }
+    .sp-item { font-size: 0.78rem; }
+
+    /* Eco stats — tighter */
+    .eco-stats { padding: 40px 0 !important; }
+    .eco-stats-grid { gap: 12px; }
+    .eco-stat-card { padding: 16px; }
+
+    /* Section spacing compression */
+    .section { padding: 56px 0; }
+    .section-header { margin-bottom: 32px; }
+    .section-title { font-size: 1.7rem; margin-bottom: 12px; }
+    .section-subtitle { font-size: 0.9rem; }
+
+    /* Journey timeline — compact */
+    .journey-timeline { gap: 12px; }
+    .journey-step { padding: 16px; }
+
+    /* Products grid — tighter */
+    .features-grid { gap: 12px; }
+    .feature-card { padding: 24px 20px; }
+    .feature-card h3 { font-size: 1rem; }
+    .feature-card p { font-size: 0.85rem; }
+
+    /* Daily grid — compact */
+    .daily-grid { gap: 12px; }
+    .daily-card { padding: 20px; }
+
+    /* Lead magnet — tighter layout */
+    .lead-magnet-section { padding: 48px 0 !important; }
+    .lead-magnet-title { font-size: 1.5rem !important; }
+    .lead-magnet-sub { font-size: 0.9rem; }
+    .lm-benefit { font-size: 0.85rem; padding: 8px 0; }
+
+    /* Pricing cards — compact */
+    .pricing-grid { gap: 16px; }
+    .pricing-card { padding: 28px 24px; }
+    .pricing-amount { font-size: 2rem; }
+
+    /* Webinar cards */
+    .webinar-grid { gap: 16px; }
+    .webinar-card { padding: 24px 20px; }
+
+    /* Challenge cards */
+    .challenge-grid { gap: 16px; }
+    .challenge-card { padding: 24px 20px; }
+
+    /* Telegram section */
+    .tg-community-layout { gap: 32px; }
+
+    /* EA hero compact */
+    .ea-hero { padding: 56px 0; }
+    .ea-hero-title { font-size: 1.8rem; }
+}
+
+@media (max-width: 480px) {
+    .hero { padding: 88px 0 36px; }
+    .hero-title { font-size: 1.85rem; letter-spacing: -0.5px; }
+    .hero-subtitle { font-size: 0.92rem; line-height: 1.6; }
+    .section { padding: 44px 0; }
+    .section-title { font-size: 1.55rem; }
+    .lead-magnet-title { font-size: 1.3rem !important; }
+    .pricing-card { padding: 24px 18px; }
+    .ea-hero-title { font-size: 1.6rem; }
+    .daily-card { padding: 16px; }
+}
+
+/* ================================================================
+   LIVE PAGE — Market Status System
+   ================================================================ */
+
+/* Market status hero badge */
+.market-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+.market-status-badge.market-open {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.25);
+    color: var(--green-400);
+}
+.market-status-badge.market-closed {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.2);
+    color: #f87171;
+}
+.market-status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+.market-open .market-status-dot { background: var(--green-400); }
+.market-closed .market-status-dot { background: #f87171; }
+
+/* Session cards enhanced */
+.session-item.active .session-dot {
+    background: var(--green-400);
+    box-shadow: 0 0 8px rgba(16,185,129,0.4);
+}
+.session-item.active {
+    color: var(--green-400);
+    font-weight: 600;
+}
+
+/* Sentiment card */
+.sentiment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+.sentiment-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    transition: border-color 0.2s;
+}
+.sentiment-card:hover { border-color: rgba(255,255,255,0.12); }
+.sentiment-pair { font-size: 0.78rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+.sentiment-value { font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 10px; display: inline-block; }
+.sentiment-value.bullish { background: rgba(16,185,129,0.12); color: #34d399; }
+.sentiment-value.bearish { background: rgba(239,68,68,0.1); color: #f87171; }
+.sentiment-value.neutral { background: rgba(245,158,11,0.1); color: #fbbf24; }
+.sentiment-bar { height: 3px; border-radius: 2px; margin-top: 8px; background: rgba(255,255,255,0.06); overflow: hidden; }
+.sentiment-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+.sentiment-bar-fill.bullish { background: var(--green-400); }
+.sentiment-bar-fill.bearish { background: #ef4444; }
+.sentiment-bar-fill.neutral { background: #f59e0b; }
+
+/* Market events */
+.market-events { margin-top: 16px; }
+.market-event {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+}
+.market-event:last-child { margin-bottom: 0; }
+.event-impact {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.event-impact.high { background: #ef4444; }
+.event-impact.medium { background: #f59e0b; }
+.event-impact.low { background: #64748b; }
+.event-time { color: var(--text-muted); font-size: 0.72rem; margin-left: auto; flex-shrink: 0; }
+.event-name { color: var(--text-secondary); flex: 1; }
+.event-currency { font-weight: 600; color: var(--text-primary); flex-shrink: 0; }
+
+/* Countdown to market open */
+.market-countdown {
+    text-align: center;
+    padding: 16px;
+    background: rgba(239,68,68,0.04);
+    border: 1px solid rgba(239,68,68,0.1);
+    border-radius: 12px;
+    margin-top: 12px;
+}
+.market-countdown-label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.market-countdown-timer { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: #f87171; }
+
+/* ================================================================
+   ABOUT PAGE — Founder Section
+   ================================================================ */
+.founder-section {
+    padding: 80px 0;
+}
+.founder-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 60px;
+    align-items: start;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.founder-image-wrap {
+    position: relative;
+}
+.founder-image {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(16,185,129,0.02));
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.founder-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+}
+.founder-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+.founder-initials {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--green-400);
+    opacity: 0.6;
+}
+.founder-title-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--green-400);
+    background: rgba(16,185,129,0.1);
+    padding: 4px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.founder-socials {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    justify-content: center;
+}
+.founder-socials a {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+.founder-socials a:hover {
+    border-color: var(--green-500);
+    color: var(--green-400);
+}
+.founder-bio h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+.founder-bio .founder-role {
+    color: var(--green-400);
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: block;
+}
+.founder-bio p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    margin-bottom: 16px;
+}
+.founder-credentials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+}
+.founder-credential {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 6px 14px;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .founder-layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        text-align: center;
+    }
+    .founder-image-wrap {
+        max-width: 200px;
+        margin: 0 auto;
+    }
+    .founder-bio h2 { font-size: 1.6rem; }
+    .founder-credentials { justify-content: center; }
+    .founder-section { padding: 56px 0; }
+}

@@ -33,7 +33,8 @@ BFX.config = {
         price: '$49.99'
     },
 
-    // Email provider (placeholder — configure when Brevo/ConvertKit is set up)
+    // Email provider (frontend subscribe forms — backend Brevo is separate)
+    // Set provider to 'brevo' and add list IDs when Brevo lists are created
     email: {
         provider: 'none', // 'brevo' | 'convertkit' | 'mailchimp'
         apiEndpoint: '',

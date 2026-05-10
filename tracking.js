@@ -3,10 +3,11 @@
 // GTM dataLayer, Meta Pixel, generate_lead, outbound links,
 // WhatsApp tracking, newsletter signups, consent management
 // ================================================================
-// CONFIGURATION REQUIRED:
-//   GTM Container ID  → replace 'GTM-XXXXXXX' with your real container ID
-//   Meta Pixel ID     → replace 'PIXEL_ID_HERE' with your real pixel ID
-//   Both are optional — the system gracefully degrades without them
+// CONFIGURED:
+//   GTM Container ID  → GTM-T3R88HZB (active)
+//   Meta Pixel ID     → 804009589230621 (active)
+//   GA4 ID            → G-ZFQ9P5KFSJ (active, pulled from BFX.config)
+//   All are optional — the system gracefully degrades without them
 // ================================================================
 var BFX = window.BFX || {};
 
