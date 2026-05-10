@@ -41,7 +41,7 @@ function baseTemplate(content, product) {
     <p style="margin:0;color:#64748b;font-size:11px;">
       <a href="https://www.bossfxcademy.com" style="color:#f59e0b;text-decoration:none;">Website</a> &bull;
       <a href="https://t.me/qD_fBeaziqE5YzU8" style="color:#f59e0b;text-decoration:none;">Telegram</a> &bull;
-      <a href="mailto:bossfx.official@gmail.com" style="color:#f59e0b;text-decoration:none;">Support</a>
+      <a href="mailto:hello@bossfxcademy.com" style="color:#f59e0b;text-decoration:none;">Support</a>
     </p>
   </td></tr>
 </table>
@@ -266,11 +266,11 @@ async function sendFulfillmentEmail(customer, product, txRef) {
     sendSmtpEmail.htmlContent = htmlContent;
     sendSmtpEmail.sender = {
         name: 'BossFx Academy',
-        email: process.env.SENDER_EMAIL || 'bossfx.official@gmail.com'
+        email: process.env.SENDER_EMAIL || 'hello@bossfxcademy.com'
     };
     sendSmtpEmail.to = [{ email: customer.email, name: customer.name }];
     sendSmtpEmail.replyTo = {
-        email: 'bossfx.official@gmail.com',
+        email: 'hello@bossfxcademy.com',
         name: 'BossFx Academy'
     };
     sendSmtpEmail.tags = [product.type, 'fulfillment', 'automated'];
@@ -284,7 +284,7 @@ async function sendFulfillmentEmail(customer, product, txRef) {
  * Send admin notification about a new sale
  */
 async function sendAdminNotification(customer, product, txRef, paymentData) {
-    const adminEmail = process.env.ADMIN_EMAIL || 'bossfx.official@gmail.com';
+    const adminEmail = process.env.ADMIN_EMAIL || 'hello@bossfxcademy.com';
     const client = getBrevoClient();
 
     const htmlContent = baseTemplate(
@@ -297,7 +297,7 @@ async function sendAdminNotification(customer, product, txRef, paymentData) {
     sendSmtpEmail.htmlContent = htmlContent;
     sendSmtpEmail.sender = {
         name: 'BossFx System',
-        email: process.env.SENDER_EMAIL || 'bossfx.official@gmail.com'
+        email: process.env.SENDER_EMAIL || 'hello@bossfxcademy.com'
     };
     sendSmtpEmail.to = [{ email: adminEmail, name: 'BossFx Admin' }];
     sendSmtpEmail.tags = ['admin', 'sale-notification'];

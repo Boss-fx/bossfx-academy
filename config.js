@@ -52,6 +52,6 @@ BFX.config = {
         name: 'BossFx Academy',
         url: 'https://www.bossfxcademy.com',
         founder: 'Timilehin \'BossFx\' Shobande',
-        email: 'bossfx.official@gmail.com'
+        email: 'hello@bossfxcademy.com'
     }
 };

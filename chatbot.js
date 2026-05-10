@@ -101,7 +101,7 @@ BFX.chatbot = (function() {
             },
             {
                 patterns: [/contact|support|help|email|reach|speak|human|real.*person/i],
-                text: "You can reach the BossFx team through:\n\n📧 <b>Email:</b> bossfx.official@gmail.com\n💬 <b>Telegram:</b> DM us in the community\n📱 <b>Instagram:</b> @bossfx_academy\n\nOr use the contact form on our website for specific inquiries.",
+                text: "You can reach the BossFx team through:\n\n📧 <b>Email:</b> hello@bossfxcademy.com\n💬 <b>Telegram:</b> DM us in the community\n📱 <b>Instagram:</b> @bossfx_academy\n\nOr use the contact form on our website for specific inquiries.",
                 ctas: [
                     { label: 'Contact Form', url: 'contact.html' },
                     { label: 'DM on Telegram', url: BFX.config ? BFX.config.socials.telegram : 'https://t.me/qD_fBeaziqE5YzU8' }
