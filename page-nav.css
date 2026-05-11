@@ -1,0 +1,258 @@
+/* ================================================================
+   BossFx Smart Page Navigator — Styles
+   ================================================================ */
+
+/* --- Container --- */
+.bfx-pnav {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(-50%) translateY(-8px);
+    width: auto;
+    max-width: calc(100vw - 32px);
+}
+
+.bfx-pnav--visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* --- Progress bar (thin line at top of toggle) --- */
+.bfx-pnav-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.bfx-pnav-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #10b981, #f59e0b);
+    transition: width 0.15s ease-out;
+    border-radius: 20px;
+}
+
+/* --- Toggle button --- */
+.bfx-pnav-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10, 15, 12, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: 14px;
+    padding: 10px 16px;
+    color: #f1f5f9;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(16, 185, 129, 0.08) inset;
+    min-height: 44px;
+}
+
+.bfx-pnav-toggle:hover {
+    border-color: rgba(16, 185, 129, 0.35);
+    box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(16, 185, 129, 0.08);
+}
+
+.bfx-pnav-toggle:active {
+    transform: scale(0.98);
+}
+
+.bfx-pnav-icon {
+    flex-shrink: 0;
+    color: #10b981;
+}
+
+.bfx-pnav-current {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.bfx-pnav--visible .bfx-pnav-current {
+    color: #f1f5f9;
+}
+
+.bfx-pnav-chev {
+    flex-shrink: 0;
+    color: #64748b;
+    transition: transform 0.25s ease;
+}
+
+.bfx-pnav--open .bfx-pnav-chev {
+    transform: rotate(180deg);
+}
+
+/* --- Dropdown --- */
+.bfx-pnav-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    min-width: 240px;
+    max-width: 320px;
+    width: max-content;
+    background: rgba(10, 15, 12, 0.96);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(16, 185, 129, 0.12);
+    border-radius: 16px;
+    padding: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+    max-height: 60vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.bfx-pnav--open .bfx-pnav-dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Scrollbar */
+.bfx-pnav-dropdown::-webkit-scrollbar {
+    width: 4px;
+}
+.bfx-pnav-dropdown::-webkit-scrollbar-track {
+    background: transparent;
+}
+.bfx-pnav-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(16, 185, 129, 0.2);
+    border-radius: 10px;
+}
+
+/* --- Dropdown items --- */
+.bfx-pnav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    min-height: 42px;
+}
+
+.bfx-pnav-item:hover {
+    background: rgba(16, 185, 129, 0.08);
+    color: #f1f5f9;
+}
+
+.bfx-pnav-item--active {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.bfx-pnav-item--active .bfx-pnav-dot {
+    background: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+/* --- Dot indicator --- */
+.bfx-pnav-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #334155;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.bfx-pnav-item:hover .bfx-pnav-dot {
+    background: #64748b;
+}
+
+.bfx-pnav-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ================================================================
+   Responsive
+   ================================================================ */
+
+/* Mobile: bottom-anchored for thumb reach */
+@media (max-width: 768px) {
+    .bfx-pnav {
+        top: auto;
+        bottom: 80px; /* above mobile sticky CTA */
+        left: 50%;
+        transform: translateX(-50%) translateY(8px);
+    }
+
+    .bfx-pnav--visible {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .bfx-pnav-toggle {
+        padding: 10px 14px;
+        font-size: 0.8rem;
+        border-radius: 50px;
+        box-shadow:
+            0 4px 32px rgba(0, 0, 0, 0.6),
+            0 0 0 1px rgba(16, 185, 129, 0.1) inset;
+    }
+
+    .bfx-pnav-dropdown {
+        bottom: calc(100% + 8px);
+        top: auto;
+        left: 50%;
+        transform: translateX(-50%) translateY(6px);
+        max-height: 50vh;
+        min-width: 220px;
+    }
+
+    .bfx-pnav--open .bfx-pnav-dropdown {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .bfx-pnav-current {
+        max-width: 120px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+    .bfx-pnav-current {
+        max-width: 90px;
+    }
+}
+
+/* Hide when printing */
+@media print {
+    .bfx-pnav { display: none; }
+}
