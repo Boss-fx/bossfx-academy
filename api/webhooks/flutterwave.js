@@ -24,10 +24,10 @@ module.exports = async function handler(req, res) {
     try {
         // ---- 1. Verify webhook signature ----
         const signature = req.headers['verif-hash'];
-        const webhookHash = process.env.FLUTTERWAVE_WEBHOOK_HASH;
+        const webhookHash = process.env.FLUTTERWAVE_WEBHOOK_HASH || process.env.FLUTTERWAVE_WEBHOOK_SECRET;
 
         if (!webhookHash) {
-            console.error('[Webhook] FLUTTERWAVE_WEBHOOK_HASH not configured');
+            console.error('[Webhook] FLUTTERWAVE_WEBHOOK_HASH / FLUTTERWAVE_WEBHOOK_SECRET not configured');
             return res.status(500).json({ error: 'Webhook not configured' });
         }
 
