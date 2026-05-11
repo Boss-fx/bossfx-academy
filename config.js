@@ -22,7 +22,7 @@ BFX.config = {
 
     // Payment (Flutterwave)
     flutterwave: {
-        publicKey: 'FLWPUBK-ef7ae0ec39bd837e57a4a4bb28378fad-X',
+        publicKey: 'FLWPUBK-bce48ede719bb5397228ffedb549c38b-X',
         currency: 'NGN',
         logo: 'https://www.bossfxcademy.com/assets/logo.png'
     },
