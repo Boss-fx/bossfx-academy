@@ -665,7 +665,11 @@ if (payModalForm) {
                         submitBtn.disabled = false;
                         submitBtn.textContent = 'Proceed to Secure Checkout';
                     }
-                    window.location.href = 'payment-success.html?product=' +
+                    // Route forex-101 buyers to premium access page, others to general success
+                    var successPage = currentPayment.product === 'forex-101'
+                        ? 'forex101-access.html'
+                        : 'payment-success.html';
+                    window.location.href = successPage + '?product=' +
                         encodeURIComponent(currentPayment.product) +
                         '&ref=' + response.tx_ref +
                         '&tid=' + response.transaction_id;

@@ -51,12 +51,33 @@ function baseTemplate(content, product) {
 }
 
 function courseEmailContent(customer, product, txRef) {
+    // Generate download token for Forex 101 PDF
+    let downloadSection = '';
+    try {
+        const { generateToken } = require('../download-forex101');
+        const token = generateToken(customer.email, 'forex-101');
+        const downloadUrl = `https://www.bossfxcademy.com/api/download-forex101?token=${token}`;
+        const accessUrl = `https://www.bossfxcademy.com/forex101-access.html?token=${token}&email=${encodeURIComponent(customer.email)}&ref=${txRef}`;
+        downloadSection = `
+    <div style="background:linear-gradient(135deg,#0f172a,#1a2332);border:2px solid #f59e0b;border-radius:12px;padding:24px;margin:24px 0;text-align:center;">
+      <p style="margin:0 0 4px;color:#f59e0b;font-weight:700;font-size:16px;">YOUR FOREX 101 STARTER PACK</p>
+      <p style="margin:0 0 16px;color:#94a3b8;font-size:13px;">Download your PDF instantly. Link valid for 72 hours.</p>
+      <a href="${downloadUrl}" style="display:inline-block;background:#10b981;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;">
+        Download Forex 101 PDF
+      </a>
+      <p style="margin:12px 0 0;color:#64748b;font-size:11px;">Or access your full dashboard: <a href="${accessUrl}" style="color:#f59e0b;">bossfxcademy.com/forex101-access</a></p>
+    </div>`;
+    } catch (e) {
+        console.error('[Email] Could not generate download token:', e.message);
+    }
+
     return `
     <h2 style="margin:0 0 16px;color:#f8fafc;font-size:22px;">Welcome to ${product.name}!</h2>
     <p style="color:#cbd5e1;font-size:15px;line-height:1.6;">
       Hi ${customer.name},<br><br>
-      Your payment has been confirmed and you now have <strong style="color:#f59e0b;">lifetime access</strong> to the complete course.
+      Your payment has been confirmed and you now have <strong style="color:#f59e0b;">lifetime access</strong> to the complete Forex 101 Beginner Starter Pack.
     </p>
+    ${downloadSection}
 
     <div style="background:#0f172a;border-radius:8px;padding:20px;margin:24px 0;">
       <p style="margin:0 0 12px;color:#f59e0b;font-weight:600;font-size:14px;">YOUR PURCHASE DETAILS</p>

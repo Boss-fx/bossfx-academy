@@ -2,6 +2,10 @@
   "version": 2,
   "routes": [
     {
+      "src": "/downloads/(.*)",
+      "status": 404
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     }

@@ -1,0 +1,18 @@
+# ================================================================
+# BossFx Academy — robots.txt
+# ================================================================
+
+User-agent: *
+Allow: /
+
+# Block paid content & download infrastructure
+Disallow: /downloads/
+Disallow: /forex101-access.html
+Disallow: /api/download-forex101
+
+# Block utility pages
+Disallow: /payment-success.html
+Disallow: /thank-you.html
+
+# Sitemap
+Sitemap: https://www.bossfxcademy.com/sitemap.xml

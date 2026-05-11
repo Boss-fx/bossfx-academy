@@ -7,6 +7,7 @@
 // ================================================================
 
 const { getProduct, getProductByAmount } = require('./utils/products');
+const { generateToken } = require('./download-forex101');
 
 module.exports = async function handler(req, res) {
     // CORS headers for frontend requests
@@ -96,6 +97,13 @@ module.exports = async function handler(req, res) {
             }
         }
 
+        // Generate download token for forex-101 purchases
+        let downloadToken = null;
+        if (productId === 'forex-101' || (product && product.type === 'course')) {
+            const customerEmail = paymentData.customer?.email || '';
+            downloadToken = generateToken(customerEmail, productId || 'forex-101');
+        }
+
         return res.status(200).json({
             verified: true,
             txRef: paymentData.tx_ref,
@@ -104,6 +112,7 @@ module.exports = async function handler(req, res) {
             currency: paymentData.currency,
             customerEmail: paymentData.customer?.email,
             customerName: paymentData.customer?.name,
+            downloadToken,
             product: product ? {
                 id: productId,
                 name: product.name,
