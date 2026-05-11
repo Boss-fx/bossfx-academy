@@ -649,47 +649,54 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         var customerNameEl = document.getElementById('customerName');
         var receiptSection = document.getElementById('receiptSection');
 
-        // If we have a token from URL (email link), show download immediately
-        if (tokenFromUrl) {
+        function showDownload(token, customerName, amount, ref) {
             verifyingEl.style.display = 'none';
             downloadCard.style.display = 'block';
             contentSection.style.display = 'block';
-            downloadBtn.href = '/api/download-forex101?token=' + encodeURIComponent(tokenFromUrl);
+            downloadBtn.href = '/api/download-forex101?token=' + encodeURIComponent(token);
+            downloadBtn.setAttribute('download', '');
+
+            if (customerName) {
+                customerNameEl.textContent = customerName.split(' ')[0];
+            }
+            if (amount) {
+                receiptSection.style.display = 'block';
+                document.getElementById('receiptAmount').textContent =
+                    new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(amount);
+                document.getElementById('receiptRef').textContent = ref || txRef;
+            }
+        }
+
+        function showSupport() {
+            verifyingEl.style.display = 'none';
+            downloadCard.style.display = 'block';
+            contentSection.style.display = 'block';
+            downloadBtn.href = 'mailto:hello@bossfxcademy.com?subject=Forex 101 Download Help&body=Hi, I purchased Forex 101 but need help accessing my download. My reference: ' + (txRef || tid);
+            downloadBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Contact Support for Access';
+            downloadBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+        }
+
+        // ===== SCENARIO 1: Token in URL (from email link or direct) =====
+        if (tokenFromUrl) {
             if (emailFromUrl) {
                 var name = emailFromUrl.split('@')[0].replace(/[._-]/g, ' ');
-                customerNameEl.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+                showDownload(tokenFromUrl, name.charAt(0).toUpperCase() + name.slice(1));
+            } else {
+                showDownload(tokenFromUrl);
             }
             return;
         }
 
-        // Verify payment with backend
+        // ===== SCENARIO 2: Transaction ID from payment redirect =====
         if (tid) {
-            fetch('/api/verify-payment?transaction_id=' + tid + '&tx_ref=' + txRef)
+            fetch('/api/verify-payment?transaction_id=' + tid + '&tx_ref=' + encodeURIComponent(txRef))
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
-                    verifyingEl.style.display = 'none';
+                    if (data.downloadToken) {
+                        // Success — show download button with token
+                        showDownload(data.downloadToken, data.customerName, data.amount, data.txRef);
 
-                    if (data.verified) {
-                        downloadCard.style.display = 'block';
-                        contentSection.style.display = 'block';
-
-                        // Set download link
-                        if (data.downloadToken) {
-                            downloadBtn.href = '/api/download-forex101?token=' + encodeURIComponent(data.downloadToken);
-                        }
-
-                        // Set customer name
-                        if (data.customerName) {
-                            customerNameEl.textContent = data.customerName.split(' ')[0];
-                        }
-
-                        // Show receipt
-                        receiptSection.style.display = 'block';
-                        document.getElementById('receiptAmount').textContent =
-                            new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(data.amount);
-                        document.getElementById('receiptRef').textContent = data.txRef || txRef;
-
-                        // Track
+                        // Track successful access
                         if (window.dataLayer) {
                             dataLayer.push({
                                 event: 'forex101_access',
@@ -698,26 +705,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 transaction_id: tid
                             });
                         }
+                    } else if (data.verified) {
+                        // Verified but no token (shouldn't happen, but handle gracefully)
+                        showSupport();
                     } else {
-                        showFallback();
+                        showSupport();
                     }
                 })
-                .catch(function() {
-                    showFallback();
+                .catch(function(err) {
+                    console.error('Verification error:', err);
+                    showSupport();
                 });
         } else {
-            // No transaction ID — show fallback
-            showFallback();
-        }
-
-        function showFallback() {
-            verifyingEl.style.display = 'none';
-            downloadCard.style.display = 'block';
-            contentSection.style.display = 'block';
-            // Without a valid token, disable download and point to support
-            downloadBtn.href = 'mailto:hello@bossfxcademy.com?subject=Forex 101 Download Help&body=Hi, I purchased Forex 101 but need help accessing my download. My reference: ' + txRef;
-            downloadBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Contact Support for Access';
-            downloadBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            // No token, no transaction ID — show support fallback
+            showSupport();
         }
 
         // Track download clicks
