@@ -1,0 +1,410 @@
+/* ================================================================
+   BFX Phase 2 — Conversion Components
+   Exit intent, WhatsApp CTA, enhanced lead capture
+   ================================================================ */
+
+/* --- WhatsApp Floating CTA --- */
+.bfx-wa-float {
+    position: fixed;
+    bottom: 24px;
+    left: 20px;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.bfx-wa-float--visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.bfx-wa-float-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: #25D366;
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+
+.bfx-wa-float-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 28px rgba(37, 211, 102, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.bfx-wa-float-btn:active {
+    transform: scale(0.96);
+}
+
+.bfx-wa-float-btn svg {
+    width: 28px;
+    height: 28px;
+    fill: #fff;
+}
+
+.bfx-wa-float-pulse {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid rgba(37, 211, 102, 0.5);
+    animation: bfx-wa-pulse 2s ease-out infinite;
+}
+
+@keyframes bfx-wa-pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.4); opacity: 0; }
+}
+
+.bfx-wa-float-label {
+    background: rgba(10, 15, 12, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(37, 211, 102, 0.2);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: #f1f5f9;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.bfx-wa-float:hover .bfx-wa-float-label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* --- Smart Exit Intent Overlay --- */
+.bfx-exit-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.bfx-exit-overlay--active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.bfx-exit-modal {
+    background: linear-gradient(145deg, #0f1a14 0%, #0a0f0c 100%);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 20px;
+    padding: 40px 36px;
+    max-width: 440px;
+    width: 92%;
+    text-align: center;
+    position: relative;
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.35s ease;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(16, 185, 129, 0.08) inset;
+}
+
+.bfx-exit-overlay--active .bfx-exit-modal {
+    transform: translateY(0) scale(1);
+}
+
+.bfx-exit-close {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.bfx-exit-close:hover {
+    color: #f1f5f9;
+}
+
+.bfx-exit-badge {
+    display: inline-block;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: #10b981;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+}
+
+.bfx-exit-icon {
+    font-size: 2.8rem;
+    margin-bottom: 12px;
+    line-height: 1;
+}
+
+.bfx-exit-modal h3 {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+
+.bfx-exit-modal h3 .text-gradient {
+    background: linear-gradient(135deg, #10b981, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bfx-exit-desc {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.bfx-exit-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.bfx-exit-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #f1f5f9;
+    font-size: 0.88rem;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 0;
+}
+
+.bfx-exit-input:focus {
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.bfx-exit-input::placeholder {
+    color: #64748b;
+}
+
+.bfx-exit-submit {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.3);
+}
+
+.bfx-exit-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+}
+
+.bfx-exit-submit:active {
+    transform: translateY(0);
+}
+
+.bfx-exit-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.bfx-exit-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bfx-exit-social-label {
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.bfx-exit-social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.bfx-exit-social a:hover {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    transform: scale(1.1);
+}
+
+.bfx-exit-dismiss {
+    display: block;
+    margin: 16px auto 0;
+    background: none;
+    border: none;
+    color: #475569;
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 4px;
+    font-family: 'Inter', sans-serif;
+}
+
+.bfx-exit-dismiss:hover {
+    color: #94a3b8;
+}
+
+.bfx-exit-trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    color: #475569;
+    font-size: 0.72rem;
+}
+
+.bfx-exit-trust svg {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+}
+
+/* Success state */
+.bfx-exit-success {
+    padding: 20px 0;
+}
+
+.bfx-exit-success .bfx-exit-icon {
+    font-size: 3rem;
+}
+
+.bfx-exit-success h3 {
+    color: #10b981;
+}
+
+.bfx-exit-success p {
+    color: #94a3b8;
+    font-size: 0.88rem;
+    margin-top: 8px;
+}
+
+/* --- Mobile-specific --- */
+@media (max-width: 768px) {
+    /* WhatsApp float: smaller on mobile, avoid clash with other elements */
+    .bfx-wa-float {
+        bottom: 90px; /* above mobile sticky CTA */
+        left: 16px;
+    }
+
+    .bfx-wa-float-btn {
+        width: 48px;
+        height: 48px;
+    }
+
+    .bfx-wa-float-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .bfx-wa-float-label {
+        display: none; /* save space on mobile */
+    }
+
+    /* Exit modal: full-width bottom sheet on mobile */
+    .bfx-exit-overlay {
+        align-items: flex-end;
+    }
+
+    .bfx-exit-modal {
+        max-width: 100%;
+        width: 100%;
+        border-radius: 20px 20px 0 0;
+        padding: 32px 24px 40px;
+        transform: translateY(100%);
+        margin: 0;
+    }
+
+    .bfx-exit-overlay--active .bfx-exit-modal {
+        transform: translateY(0);
+    }
+
+    .bfx-exit-modal h3 {
+        font-size: 1.3rem;
+    }
+
+    .bfx-exit-form {
+        flex-direction: column;
+    }
+
+    .bfx-exit-submit {
+        width: 100%;
+        padding: 14px;
+    }
+}
+
+@media (max-width: 380px) {
+    .bfx-wa-float {
+        bottom: 85px;
+        left: 12px;
+    }
+
+    .bfx-wa-float-btn {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* Hide in print */
+@media print {
+    .bfx-wa-float,
+    .bfx-exit-overlay { display: none !important; }
+}
