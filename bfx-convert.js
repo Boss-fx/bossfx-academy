@@ -16,7 +16,7 @@ BFX.whatsapp = (function () {
     'use strict';
 
     // Config — WhatsApp Business number or link
-    var WA_NUMBER = '2349138838957';
+    var WA_NUMBER = '2349155008539';
     var WA_MESSAGE = encodeURIComponent(
         'Hi BossFx! I found you online and I\'m interested in learning forex trading. Can you tell me more about getting started?'
     );
@@ -171,7 +171,7 @@ BFX.exitIntent = (function () {
                 '<div class="bfx-exit-social">' +
                     '<span class="bfx-exit-social-label">Or join us on</span>' +
                     '<a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" aria-label="Telegram" title="Telegram">💬</a>' +
-                    '<a href="' + (BFX.whatsapp ? BFX.whatsapp.url : 'https://wa.me/2349138838957') + '" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">📱</a>' +
+                    '<a href="' + (BFX.whatsapp ? BFX.whatsapp.url : 'https://wa.me/2349155008539') + '" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp">📱</a>' +
                     '<a href="https://www.instagram.com/bossfx_academy" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram">📸</a>' +
                 '</div>' +
                 '<button class="bfx-exit-dismiss">No thanks, I\'m not ready</button>' +
