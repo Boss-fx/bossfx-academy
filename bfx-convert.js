@@ -692,7 +692,7 @@ function getClickLocation(el) {
     if (el.closest('.hero, .page-hero, .ea-hero')) return 'hero';
     if (el.closest('.pricing-section, .pricing-cards')) return 'pricing';
     if (el.closest('.cta-section')) return 'cta_section';
-    if (el.closest('.sticky-cta-bar')) return 'sticky_cta';
+    if (el.closest('.sticky-cta-bar, .lead-bar')) return 'lead_bar';
     var section = el.closest('section[id]');
     return section ? section.id : 'page_body';
 }

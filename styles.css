@@ -3647,8 +3647,8 @@ ul {
    PHASE 3: EMAIL CAPTURE + LEAD SYSTEM
    ============================ */
 
-/* --- Global Lead Bar (top of page) --- */
-.lead-bar { background: linear-gradient(90deg, var(--green-700), var(--green-600)); padding: 10px 0; text-align: center; position: relative; z-index: 999; }
+/* --- Global Lead Bar (fixed bottom) --- */
+.lead-bar { background: linear-gradient(135deg, #0a1a0f, #0d2614); border-top: 1px solid rgba(0,180,80,0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 12px 0; text-align: center; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999; }
 .lead-bar-inner { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
 .lead-bar-text { font-size: 0.85rem; color: #fff; font-weight: 500; }
 .lead-bar-text strong { font-weight: 700; }
@@ -4180,10 +4180,7 @@ ul {
    MOBILE UX FIXES — Lead bar spacing, hero compression, section priority
    ================================================================ */
 
-/* Fix: Lead bar overlapping content — add body offset when lead bar is visible */
-body.lead-bar-visible { padding-top: 0; }
-.lead-bar ~ .navbar { top: 0; }
-.lead-bar.active ~ .navbar { top: auto; }
+/* Lead bar is now fixed at bottom — no body offset needed */
 
 /* Mobile hero compression — reduce vertical bloat */
 @media (max-width: 768px) {
