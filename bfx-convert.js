@@ -587,7 +587,8 @@ BFX.brevo = (function () {
             email: email,
             source: source || 'unknown',
             page: window.location.pathname,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
         };
 
         // Merge extra data

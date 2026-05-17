@@ -106,7 +106,7 @@ module.exports = async function handler(req, res) {
                     console.log(`[setup-lists] Created attribute: ${attr.name}`);
                 } catch (err) {
                     const msg = err.body?.message || err.message;
-                    if (msg.includes('already exist')) {
+                    if (msg.includes('already exist') || msg.includes('must be unique')) {
                         results.attributes[attr.name] = 'exists';
                     } else {
                         results.attributes[attr.name] = 'error: ' + msg;

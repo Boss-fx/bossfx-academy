@@ -8,13 +8,13 @@
 
 const brevo = require('@getbrevo/brevo');
 
-// Brevo list IDs — update these when lists are created in Brevo
+// Brevo list IDs — verified via /api/setup-lists
 const LISTS = {
-    general:    2,  // General subscriber list
-    webinar:    3,  // Webinar registrants
-    mentorship: 4,  // Mentorship inquiries
-    resource:   5,  // Resource downloaders
-    exit_intent: 2  // Exit intent captures → general list
+    general:     2,  // BFX ACADEMY STARTER PACK
+    webinar:     3,  // Enthusiat Traders
+    mentorship:  5,  // Mentorship Inquiries
+    resource:    6,  // Resource Downloaders
+    exit_intent: 2   // Exit intent captures → general list
 };
 
 module.exports = async function handler(req, res) {
@@ -65,17 +65,20 @@ module.exports = async function handler(req, res) {
 
         // Build contact attributes from form + attribution data
         const attributes = {
-            SOURCE:         source,
-            SIGNUP_PAGE:    body.page || body._bfx_landing_page || '',
-            SIGNUP_DATE:    body.timestamp || new Date().toISOString(),
-            UTM_SOURCE:     body._bfx_utm_source || '',
-            UTM_MEDIUM:     body._bfx_utm_medium || '',
-            UTM_CAMPAIGN:   body._bfx_utm_campaign || '',
-            UTM_CONTENT:    body._bfx_utm_content || '',
-            TRAFFIC_SOURCE: body._bfx_source || '',
-            TRAFFIC_CHANNEL:body._bfx_channel || '',
-            LANDING_PAGE:   body._bfx_landing_page || '',
-            REFERRER:       body._bfx_referrer || '',
+            SOURCE:             source,
+            PROGRAM:            body.program || listKey,
+            SIGNUP_PAGE:        body.page || body._bfx_landing_page || '',
+            SIGNUP_DATE:        body.timestamp || new Date().toISOString(),
+            PAGE_URL:           body.page || '',
+            DEVICE_TYPE:        body.device || body._bfx_device || '',
+            UTM_SOURCE:         body._bfx_utm_source || '',
+            UTM_MEDIUM:         body._bfx_utm_medium || '',
+            UTM_CAMPAIGN:       body._bfx_utm_campaign || '',
+            UTM_CONTENT:        body._bfx_utm_content || '',
+            TRAFFIC_SOURCE:     body._bfx_source || '',
+            TRAFFIC_CHANNEL:    body._bfx_channel || '',
+            LANDING_PAGE:       body._bfx_landing_page || '',
+            REFERRER:           body._bfx_referrer || '',
             FIRST_TOUCH_SOURCE: body._bfx_ft_source || '',
             FIRST_TOUCH_MEDIUM: body._bfx_ft_medium || ''
         };
@@ -92,6 +95,12 @@ module.exports = async function handler(req, res) {
             attributes.WEBINAR_NAME = body.webinar || '';
             attributes.EXPERIENCE_LEVEL = body.experience_level || body.level || '';
             attributes.TELEGRAM_HANDLE = body.telegram || '';
+        }
+
+        // Add mentorship-specific fields
+        if (listKey === 'mentorship') {
+            attributes.EXPERIENCE_LEVEL = body.experience || body.experience_level || body.level || '';
+            attributes.PROGRAM = body.program || source;
         }
 
         // Add offer context for exit intent
@@ -321,10 +330,27 @@ function buildWelcomeHTML(firstName, source) {
 function mapSourceToList(source) {
     if (!source) return 'general';
     var s = source.toLowerCase();
-    if (s.includes('webinar'))    return 'webinar';
-    if (s.includes('mentorship')) return 'mentorship';
-    if (s.includes('resource') || s.includes('magnet') || s.includes('starter')) return 'resource';
+
+    // Webinar registrations
+    if (s.includes('webinar')) return 'webinar';
+
+    // Mentorship / high-intent inquiries
+    if (s.includes('mentorship') || s.includes('coaching') || s.includes('funded') ||
+        s.includes('vip') || s.includes('strategy_call') || s.includes('strategy call')) {
+        return 'mentorship';
+    }
+
+    // Resource downloaders
+    if (s.includes('resource') || s.includes('magnet') || s.includes('starter') ||
+        s.includes('ebook') || s.includes('guide') || s.includes('pdf') ||
+        s.includes('download') || s.includes('toolkit')) {
+        return 'resource';
+    }
+
+    // Exit intent → general list
     if (s.includes('exit_intent')) return 'exit_intent';
+
+    // Everything else → general
     return 'general';
 }
 
