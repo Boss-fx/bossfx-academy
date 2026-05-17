@@ -7,6 +7,7 @@
 // ================================================================
 
 const brevo = require('@getbrevo/brevo');
+const { processNewLead } = require('./utils/drip');
 
 // Brevo list IDs — verified via /api/setup-lists
 const LISTS = {
@@ -157,27 +158,28 @@ module.exports = async function handler(req, res) {
             }
         }
 
-        // --- Send welcome email for certain sources ---
-        let welcomeSent = false;
-        if (shouldSendWelcome(source)) {
-            try {
-                await sendWelcomeEmail(email, attributes, source, apiKey);
-                welcomeSent = true;
-                console.log(`[lead-capture] Welcome email sent to ${email}`);
-            } catch (welcomeErr) {
-                console.error(`[lead-capture] Welcome email failed:`, JSON.stringify({
-                    message: welcomeErr.message,
-                    status: welcomeErr.statusCode || welcomeErr.response?.statusCode || 'unknown',
-                    body: welcomeErr.body || welcomeErr.response?.body || null
-                }));
-            }
+        // --- Trigger drip automation sequence ---
+        let automationResult = null;
+        try {
+            automationResult = await processNewLead(email, source, attributes, apiKey);
+            console.log(`[lead-capture] Automation triggered: ${automationResult.sequence} (${automationResult.drip.steps_scheduled}/${automationResult.drip.steps_total} steps)`);
+        } catch (automationErr) {
+            console.error(`[lead-capture] Automation engine error (non-blocking):`, JSON.stringify({
+                message: automationErr.message,
+                stack: automationErr.stack ? automationErr.stack.split('\n').slice(0, 2).join(' | ') : 'no stack'
+            }));
         }
 
         return res.status(200).json({
             success: true,
             brevo: true,
             list: listKey,
-            welcome_sent: welcomeSent,
+            automation: automationResult ? {
+                sequence: automationResult.sequence,
+                steps_scheduled: automationResult.drip.steps_scheduled,
+                score: automationResult.score,
+                tags: automationResult.tags
+            } : null,
             env: process.env.VERCEL_ENV || 'unknown'
         });
 
@@ -198,130 +200,6 @@ module.exports = async function handler(req, res) {
         });
     }
 };
-
-// ----------------------------------------------------------------
-// Welcome Email (for exit intent and lead bar captures)
-// ----------------------------------------------------------------
-async function sendWelcomeEmail(email, attributes, source, apiKey) {
-    const emailApi = new brevo.TransactionalEmailsApi();
-    emailApi.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, apiKey);
-
-    const firstName = attributes.FIRSTNAME || 'Trader';
-    const isExitIntent = source.startsWith('exit_intent');
-
-    const subject = isExitIntent
-        ? `Your free trading resources are ready, ${firstName}`
-        : `Welcome to BossFx, ${firstName} — here's what's next`;
-
-    const htmlContent = buildWelcomeHTML(firstName, source);
-
-    const sendSmtpEmail = new brevo.SendSmtpEmail();
-    sendSmtpEmail.subject = subject;
-    sendSmtpEmail.htmlContent = htmlContent;
-    sendSmtpEmail.sender = {
-        name: 'BossFx Academy',
-        email: process.env.SENDER_EMAIL || 'hello@bossfxcademy.com'
-    };
-    sendSmtpEmail.to = [{ email: email, name: firstName }];
-    sendSmtpEmail.replyTo = {
-        email: 'hello@bossfxcademy.com',
-        name: 'BossFx Academy'
-    };
-    sendSmtpEmail.tags = ['welcome', source, 'automated'];
-
-    const result = await emailApi.sendTransacEmail(sendSmtpEmail);
-    console.log(`[lead-capture] Welcome email API response:`, JSON.stringify({
-        messageId: result.messageId || result.body?.messageId || 'unknown',
-        email: email,
-        source: source
-    }));
-    return result;
-}
-
-function buildWelcomeHTML(firstName, source) {
-    return `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#0a0f0c;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0f0c;padding:40px 20px;">
-<tr><td align="center">
-<table width="560" cellpadding="0" cellspacing="0" style="background:#111816;border-radius:16px;overflow:hidden;border:1px solid rgba(16,185,129,0.15);">
-  <tr><td style="background:linear-gradient(135deg,#10b981,#059669);padding:28px 36px;text-align:center;">
-    <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">Welcome to BossFx Academy</h1>
-  </td></tr>
-  <tr><td style="padding:36px;">
-    <p style="color:#e2e8f0;font-size:16px;line-height:1.7;margin:0 0 20px;">
-      Hey ${firstName},
-    </p>
-    <p style="color:#cbd5e1;font-size:15px;line-height:1.7;margin:0 0 20px;">
-      You just joined <strong style="color:#10b981;">5,200+ traders</strong> who are building real skills in the forex market. No hype, no shortcuts — just structured education that works.
-    </p>
-    <p style="color:#cbd5e1;font-size:15px;line-height:1.7;margin:0 0 24px;">
-      Here's how to get the most out of BossFx:
-    </p>
-
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
-      <tr><td style="padding:14px 16px;background:#0a0f0c;border-radius:10px;border:1px solid rgba(16,185,129,0.1);margin-bottom:8px;">
-        <table><tr>
-          <td style="width:36px;vertical-align:top;font-size:20px;">1.</td>
-          <td>
-            <p style="margin:0;color:#f1f5f9;font-weight:600;font-size:14px;">Start Forex 101 (Free)</p>
-            <p style="margin:4px 0 0;color:#94a3b8;font-size:13px;">Our 12-module course takes you from zero to structured trader.</p>
-          </td>
-        </tr></table>
-      </td></tr>
-    </table>
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
-      <tr><td style="padding:14px 16px;background:#0a0f0c;border-radius:10px;border:1px solid rgba(16,185,129,0.1);">
-        <table><tr>
-          <td style="width:36px;vertical-align:top;font-size:20px;">2.</td>
-          <td>
-            <p style="margin:0;color:#f1f5f9;font-weight:600;font-size:14px;">Join the Telegram Community</p>
-            <p style="margin:4px 0 0;color:#94a3b8;font-size:13px;">Daily setups, live analysis, and real trader conversations.</p>
-          </td>
-        </tr></table>
-      </td></tr>
-    </table>
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
-      <tr><td style="padding:14px 16px;background:#0a0f0c;border-radius:10px;border:1px solid rgba(16,185,129,0.1);">
-        <table><tr>
-          <td style="width:36px;vertical-align:top;font-size:20px;">3.</td>
-          <td>
-            <p style="margin:0;color:#f1f5f9;font-weight:600;font-size:14px;">Download Your Free Resources</p>
-            <p style="margin:4px 0 0;color:#94a3b8;font-size:13px;">8 professional trading tools — checklists, blueprints, templates.</p>
-          </td>
-        </tr></table>
-      </td></tr>
-    </table>
-
-    <div style="text-align:center;margin:0 0 16px;">
-      <a href="https://www.bossfxcademy.com/courses.html?utm_source=email&utm_medium=welcome&utm_campaign=lead_nurture" style="display:inline-block;background:#10b981;color:#fff;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">
-        Start Forex 101 — Free
-      </a>
-    </div>
-    <div style="text-align:center;margin:0 0 8px;">
-      <a href="https://t.me/qD_fBeaziqE5YzU8" style="display:inline-block;background:transparent;border:2px solid #10b981;color:#10b981;padding:12px 28px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px;">
-        Join Telegram Community
-      </a>
-    </div>
-
-    <p style="color:#64748b;font-size:12px;line-height:1.6;margin:28px 0 0;text-align:center;">
-      Questions? Reply to this email or reach out at hello@bossfxcademy.com
-    </p>
-  </td></tr>
-  <tr><td style="padding:16px 36px 24px;border-top:1px solid rgba(255,255,255,0.06);text-align:center;">
-    <p style="margin:0;color:#475569;font-size:11px;">
-      BossFx Academy &bull;
-      <a href="https://www.bossfxcademy.com?utm_source=email&utm_medium=welcome" style="color:#10b981;text-decoration:none;">Website</a> &bull;
-      <a href="https://www.instagram.com/bossfx_academy" style="color:#10b981;text-decoration:none;">Instagram</a> &bull;
-      <a href="https://www.tiktok.com/@bossfx1" style="color:#10b981;text-decoration:none;">TikTok</a>
-    </p>
-  </td></tr>
-</table>
-</td></tr>
-</table>
-</body></html>`;
-}
 
 // ----------------------------------------------------------------
 // Helpers
@@ -352,12 +230,6 @@ function mapSourceToList(source) {
 
     // Everything else → general
     return 'general';
-}
-
-function shouldSendWelcome(source) {
-    // Send welcome email for direct lead captures
-    var triggers = ['exit_intent', 'lead_bar', 'newsletter', 'footer', 'blog'];
-    return triggers.some(function (t) { return (source || '').toLowerCase().includes(t); });
 }
 
 function cleanAttributes(attrs) {

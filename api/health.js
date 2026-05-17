@@ -32,6 +32,9 @@ module.exports = async function handler(req, res) {
         routes: {
             lead_capture: '/api/lead-capture (POST)',
             health: '/api/health (GET)',
+            setup_lists: '/api/setup-lists (GET/POST)',
+            setup_automations: '/api/setup-automations (GET/POST)',
+            cron_reengagement: '/api/cron-reengagement (GET — daily cron)',
             verify_payment: '/api/verify-payment (POST)',
             flutterwave_webhook: '/api/webhooks/flutterwave (POST)'
         }

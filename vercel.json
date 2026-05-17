@@ -14,5 +14,11 @@
     "api/**/*.js": {
       "maxDuration": 30
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron-reengagement",
+      "schedule": "0 9 * * *"
+    }
+  ]
 }
