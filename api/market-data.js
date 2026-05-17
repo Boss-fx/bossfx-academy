@@ -66,18 +66,28 @@ function setCache(key, data) {
 // ================================================================
 
 // Forex prices from Frankfurter API (open, unlimited, no key)
-// Fetches today's rate AND yesterday's rate for accurate daily change
+// Fetches latest rate AND previous business day's rate for accurate change
 function fetchForexPrices() {
     var today = new Date();
-    var yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    // Skip weekends for yesterday's date
-    if (yesterday.getUTCDay() === 0) yesterday.setDate(yesterday.getDate() - 2); // Sunday → Friday
-    if (yesterday.getUTCDay() === 6) yesterday.setDate(yesterday.getDate() - 1); // Saturday → Friday
-    var yStr = yesterday.toISOString().split('T')[0];
+    var dayOfWeek = today.getUTCDay();
+
+    // Determine the "previous" date for comparison
+    // On weekdays: compare latest vs yesterday (skip weekends)
+    // On weekends: compare Friday vs Thursday (show last trading day change)
+    var prevDate = new Date(today);
+    if (dayOfWeek === 0) { // Sunday: compare Friday vs Thursday
+        prevDate.setDate(prevDate.getDate() - 3); // Thursday
+    } else if (dayOfWeek === 6) { // Saturday: compare Friday vs Thursday
+        prevDate.setDate(prevDate.getDate() - 2); // Thursday
+    } else if (dayOfWeek === 1) { // Monday: compare today vs Friday
+        prevDate.setDate(prevDate.getDate() - 3); // Friday
+    } else {
+        prevDate.setDate(prevDate.getDate() - 1); // Previous day
+    }
+    var prevStr = prevDate.toISOString().split('T')[0];
 
     var latestUrl = 'https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR,GBP,JPY';
-    var prevUrl = 'https://api.frankfurter.dev/v1/' + yStr + '?base=USD&symbols=EUR,GBP,JPY';
+    var prevUrl = 'https://api.frankfurter.dev/v1/' + prevStr + '?base=USD&symbols=EUR,GBP,JPY';
 
     return Promise.all([fetchJSON(latestUrl, 5000), fetchJSON(prevUrl, 5000)])
         .then(function (results) {
