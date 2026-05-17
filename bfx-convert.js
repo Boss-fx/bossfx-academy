@@ -558,6 +558,117 @@ BFX.liveCount = (function () {
 
 
 // ================================================================
+// 6. BREVO LEAD CAPTURE BRIDGE
+// ================================================================
+// Automatically mirrors all form submissions containing email to
+// /api/lead-capture for Brevo contact creation. Zero-modification
+// approach — intercepts at form submit level.
+// ================================================================
+BFX.brevo = (function () {
+    'use strict';
+
+    var ENDPOINT = '/api/lead-capture';
+    var capturedEmails = {}; // Deduplicate within session
+
+    /**
+     * Send a lead to Brevo via /api/lead-capture
+     * Fire-and-forget — never blocks UX
+     */
+    function capture(email, source, extraData) {
+        if (!email || !email.includes('@')) return;
+        email = email.trim().toLowerCase();
+
+        // Deduplicate: don't send same email+source twice in one session
+        var dedupeKey = email + '|' + source;
+        if (capturedEmails[dedupeKey]) return;
+        capturedEmails[dedupeKey] = true;
+
+        var payload = {
+            email: email,
+            source: source || 'unknown',
+            page: window.location.pathname,
+            timestamp: new Date().toISOString()
+        };
+
+        // Merge extra data
+        if (extraData && typeof extraData === 'object') {
+            Object.keys(extraData).forEach(function (k) {
+                if (extraData[k]) payload[k] = extraData[k];
+            });
+        }
+
+        // Append attribution data
+        if (BFX.attribution && BFX.attribution.getFormData) {
+            var attrData = BFX.attribution.getFormData();
+            Object.keys(attrData).forEach(function (k) {
+                if (attrData[k]) payload[k] = attrData[k];
+            });
+        }
+
+        // Fire and forget — don't await, don't block
+        fetch(ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then(function (res) {
+            if (res.ok) {
+                console.log('[BFX.brevo] Lead captured:', email, source);
+            } else {
+                console.warn('[BFX.brevo] API returned', res.status);
+            }
+        }).catch(function (err) {
+            console.warn('[BFX.brevo] Capture failed (non-fatal):', err.message);
+        });
+    }
+
+    /**
+     * Global form submit interceptor
+     * Watches all form submissions for email fields and mirrors to Brevo
+     */
+    document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!form || form.tagName !== 'FORM') return;
+
+        // Skip the exit intent form (already handled directly)
+        if (form.id === 'bfxExitForm') return;
+
+        // Find email input in the form
+        var emailInput = form.querySelector('input[type="email"], input[name="email"], input[name="_replyto"]');
+        if (!emailInput || !emailInput.value) return;
+
+        var email = emailInput.value.trim();
+        if (!email.includes('@')) return;
+
+        // Determine source from form data
+        var sourceInput = form.querySelector('input[name="source"], [name="source"]');
+        var source = sourceInput ? sourceInput.value : (form.dataset.source || form.id || 'form_' + getPageName());
+
+        // Collect extra fields
+        var extra = {};
+        var nameInput = form.querySelector('input[name="name"], input[name="firstName"]');
+        if (nameInput && nameInput.value) extra.name = nameInput.value;
+
+        var telegramInput = form.querySelector('input[name="telegram"]');
+        if (telegramInput && telegramInput.value) extra.telegram = telegramInput.value;
+
+        var webinarInput = form.querySelector('input[name="webinar"], select[name="webinar"]');
+        if (webinarInput && webinarInput.value) extra.webinar = webinarInput.value;
+
+        var levelInput = form.querySelector('select[name="experience_level"], input[name="experience_level"]');
+        if (levelInput && levelInput.value) extra.experience_level = levelInput.value;
+
+        var segmentInput = form.querySelector('input[name="segment"]');
+        if (segmentInput && segmentInput.value) extra.segment = segmentInput.value;
+
+        // Capture to Brevo (fire-and-forget)
+        capture(email, source, extra);
+    }, true); // Use capture phase to fire before form handlers
+
+    return { capture: capture };
+})();
+
+
+// ================================================================
 // SHARED HELPERS
 // ================================================================
 function track(name, params) {

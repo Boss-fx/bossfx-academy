@@ -705,6 +705,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         var formData = new FormData();
         Object.keys(data).forEach(function(key) { formData.append(key, data[key]); });
 
+        // Mirror to Brevo via lead-capture API
+        if (BFX.brevo && BFX.brevo.capture) {
+            BFX.brevo.capture(data.email, data.source, data);
+        }
+
         fetch('https://formspree.io/f/xeenzyna', {
             method: 'POST',
             body: formData,

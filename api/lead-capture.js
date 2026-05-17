@@ -25,10 +25,27 @@ module.exports = async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+    // --- Environment validation ---
     const apiKey = process.env.BREVO_API_KEY;
+    const envInfo = {
+        has_api_key: !!apiKey,
+        key_length: apiKey ? apiKey.length : 0,
+        key_prefix: apiKey ? apiKey.substring(0, 8) + '...' : 'NOT_SET',
+        node_env: process.env.NODE_ENV || 'unknown',
+        vercel_env: process.env.VERCEL_ENV || 'unknown'
+    };
+
+    console.log('[lead-capture] Environment check:', JSON.stringify(envInfo));
+
     if (!apiKey) {
         console.warn('[lead-capture] BREVO_API_KEY not set — skipping Brevo, returning success');
-        return res.status(200).json({ success: true, brevo: false, reason: 'no_api_key' });
+        console.warn('[lead-capture] VERCEL_ENV:', process.env.VERCEL_ENV, '| NODE_ENV:', process.env.NODE_ENV);
+        return res.status(200).json({
+            success: true,
+            brevo: false,
+            reason: 'no_api_key',
+            env: process.env.VERCEL_ENV || 'unknown'
+        });
     }
 
     try {
@@ -43,6 +60,8 @@ module.exports = async function handler(req, res) {
         const source = body.source || 'unknown';
         const listKey = mapSourceToList(source);
         const listId = LISTS[listKey] || LISTS.general;
+
+        console.log(`[lead-capture] Processing: ${email} | source: ${source} | list: ${listKey} (${listId})`);
 
         // Build contact attributes from form + attribution data
         const attributes = {
@@ -80,7 +99,7 @@ module.exports = async function handler(req, res) {
             attributes.EXIT_INTENT_OFFER = body.offer || '';
         }
 
-        // Create/update contact in Brevo
+        // --- Create/update contact in Brevo ---
         const contactsApi = new brevo.ContactsApi();
         contactsApi.setApiKey(brevo.ContactsApiApiKeys.apiKey, apiKey);
 
@@ -88,30 +107,85 @@ module.exports = async function handler(req, res) {
         createContact.email = email;
         createContact.attributes = cleanAttributes(attributes);
         createContact.listIds = [listId];
-        createContact.updateEnabled = true;
+        createContact.updateEnabled = true; // Update existing contacts instead of failing
 
-        await contactsApi.createContact(createContact);
-        console.log(`[lead-capture] Contact created/updated: ${email} → list ${listId} (${listKey})`);
+        let contactResult;
+        try {
+            contactResult = await contactsApi.createContact(createContact);
+            console.log(`[lead-capture] Brevo contact created/updated: ${email} → list ${listId} (${listKey})`, JSON.stringify(contactResult));
+        } catch (brevoErr) {
+            // Extract detailed Brevo error information
+            const errBody = brevoErr.body || brevoErr.response?.body || {};
+            const errStatus = brevoErr.statusCode || brevoErr.response?.statusCode || 'unknown';
+            const errCode = errBody.code || 'unknown';
+            const errMessage = errBody.message || brevoErr.message || 'Unknown error';
 
-        // Send welcome email for certain sources
+            console.error(`[lead-capture] Brevo contact creation failed:`, JSON.stringify({
+                status: errStatus,
+                code: errCode,
+                message: errMessage,
+                email: email,
+                listId: listId
+            }));
+
+            // Handle specific Brevo errors
+            if (errCode === 'duplicate_parameter' || errMessage.includes('already exist')) {
+                // Contact already exists — this is OK, updateEnabled should handle it
+                // but some versions of the SDK throw anyway
+                console.log(`[lead-capture] Contact ${email} already exists — attempting update via getContactInfo`);
+                try {
+                    await contactsApi.updateContact(email, {
+                        attributes: cleanAttributes(attributes),
+                        listIds: [listId]
+                    });
+                    console.log(`[lead-capture] Contact ${email} updated successfully via updateContact`);
+                } catch (updateErr) {
+                    console.error(`[lead-capture] Update also failed: ${updateErr.message}`);
+                }
+            } else {
+                // Non-duplicate error — log but continue (don't break UX)
+                console.error(`[lead-capture] Non-recoverable Brevo error (continuing anyway): ${errMessage}`);
+            }
+        }
+
+        // --- Send welcome email for certain sources ---
+        let welcomeSent = false;
         if (shouldSendWelcome(source)) {
-            await sendWelcomeEmail(email, attributes, source, apiKey);
+            try {
+                await sendWelcomeEmail(email, attributes, source, apiKey);
+                welcomeSent = true;
+                console.log(`[lead-capture] Welcome email sent to ${email}`);
+            } catch (welcomeErr) {
+                console.error(`[lead-capture] Welcome email failed:`, JSON.stringify({
+                    message: welcomeErr.message,
+                    status: welcomeErr.statusCode || welcomeErr.response?.statusCode || 'unknown',
+                    body: welcomeErr.body || welcomeErr.response?.body || null
+                }));
+            }
         }
 
         return res.status(200).json({
             success: true,
             brevo: true,
             list: listKey,
-            welcome_sent: shouldSendWelcome(source)
+            welcome_sent: welcomeSent,
+            env: process.env.VERCEL_ENV || 'unknown'
         });
 
     } catch (err) {
-        console.error('[lead-capture] Error:', err.message);
-        // Return success even on Brevo error — don't break the UX
+        // Top-level catch — unexpected errors
+        console.error('[lead-capture] Unexpected error:', JSON.stringify({
+            message: err.message,
+            stack: err.stack ? err.stack.split('\n').slice(0, 3).join(' | ') : 'no stack',
+            name: err.name
+        }));
+
+        // Return success even on error — don't break the UX
         return res.status(200).json({
             success: true,
             brevo: false,
-            reason: err.message
+            reason: err.message,
+            env: process.env.VERCEL_ENV || 'unknown'
         });
     }
 };
@@ -120,38 +194,39 @@ module.exports = async function handler(req, res) {
 // Welcome Email (for exit intent and lead bar captures)
 // ----------------------------------------------------------------
 async function sendWelcomeEmail(email, attributes, source, apiKey) {
-    try {
-        const emailApi = new brevo.TransactionalEmailsApi();
-        emailApi.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, apiKey);
+    const emailApi = new brevo.TransactionalEmailsApi();
+    emailApi.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, apiKey);
 
-        const firstName = attributes.FIRSTNAME || 'Trader';
-        const isExitIntent = source.startsWith('exit_intent');
+    const firstName = attributes.FIRSTNAME || 'Trader';
+    const isExitIntent = source.startsWith('exit_intent');
 
-        const subject = isExitIntent
-            ? `Your free trading resources are ready, ${firstName}`
-            : `Welcome to BossFx, ${firstName} — here's what's next`;
+    const subject = isExitIntent
+        ? `Your free trading resources are ready, ${firstName}`
+        : `Welcome to BossFx, ${firstName} — here's what's next`;
 
-        const htmlContent = buildWelcomeHTML(firstName, source);
+    const htmlContent = buildWelcomeHTML(firstName, source);
 
-        const sendSmtpEmail = new brevo.SendSmtpEmail();
-        sendSmtpEmail.subject = subject;
-        sendSmtpEmail.htmlContent = htmlContent;
-        sendSmtpEmail.sender = {
-            name: 'BossFx Academy',
-            email: process.env.SENDER_EMAIL || 'hello@bossfxcademy.com'
-        };
-        sendSmtpEmail.to = [{ email: email, name: firstName }];
-        sendSmtpEmail.replyTo = {
-            email: 'hello@bossfxcademy.com',
-            name: 'BossFx Academy'
-        };
-        sendSmtpEmail.tags = ['welcome', source, 'automated'];
+    const sendSmtpEmail = new brevo.SendSmtpEmail();
+    sendSmtpEmail.subject = subject;
+    sendSmtpEmail.htmlContent = htmlContent;
+    sendSmtpEmail.sender = {
+        name: 'BossFx Academy',
+        email: process.env.SENDER_EMAIL || 'hello@bossfxcademy.com'
+    };
+    sendSmtpEmail.to = [{ email: email, name: firstName }];
+    sendSmtpEmail.replyTo = {
+        email: 'hello@bossfxcademy.com',
+        name: 'BossFx Academy'
+    };
+    sendSmtpEmail.tags = ['welcome', source, 'automated'];
 
-        const result = await emailApi.sendTransacEmail(sendSmtpEmail);
-        console.log(`[lead-capture] Welcome email sent to ${email}`, result.messageId);
-    } catch (err) {
-        console.error(`[lead-capture] Welcome email failed (non-fatal): ${err.message}`);
-    }
+    const result = await emailApi.sendTransacEmail(sendSmtpEmail);
+    console.log(`[lead-capture] Welcome email API response:`, JSON.stringify({
+        messageId: result.messageId || result.body?.messageId || 'unknown',
+        email: email,
+        source: source
+    }));
+    return result;
 }
 
 function buildWelcomeHTML(firstName, source) {
