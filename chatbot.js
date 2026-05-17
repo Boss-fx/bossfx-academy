@@ -85,7 +85,7 @@ BFX.mirror = (function () {
             },
             {
                 id: 'resources',
-                patterns: [/resource|download|free.*guide|checklist|template|journal|starter.*pack|blueprint|toolkit/i],
+                patterns: [/resource|download|free.*guide|checklist|template|starter.*pack|blueprint|toolkit/i],
                 intent: 'resource',
                 text: "We have <b>8 free professional trading tools</b>:\n\n📦 Forex Starter Pack\n✅ Pre-Trade Checklist\n🛡️ Risk Management Blueprint\n🧮 Position Size Calculator\n📋 Trading Plan Template\n📓 Trade Journal Sheet\n🎯 Prop Firm Survival Guide\n🔥 30-Day Discipline Tracker\n\nAll created by BossFx founder Timilehin Shobande.",
                 ctas: [
@@ -117,7 +117,7 @@ BFX.mirror = (function () {
             },
             {
                 id: 'ea',
-                patterns: [/ea|robot|automat|expert.*advisor|sma.*pro|mt5|metatrader|algo/i],
+                patterns: [/\bea\b|robot|automat|expert.*advisor|sma.*pro|mt5|metatrader|algo/i],
                 intent: 'ea',
                 text: "The <b>SMA Pro Trend EA</b> is our automated trading system for MT5.\n\n✅ MetaQuotes marketplace validated\n✅ Smart trailing stop technology\n✅ Fixed 1% risk per trade\n✅ Free demo available\n\nPrice: <b>$49.99</b> — one-time purchase with lifetime updates.",
                 ctas: [
@@ -128,7 +128,7 @@ BFX.mirror = (function () {
             },
             {
                 id: 'pricing',
-                patterns: [/price|cost|pay|afford|money|fee|subscription|how much|budget/i],
+                patterns: [/price|cost|pay|afford|fee|subscription|how much|budget/i],
                 intent: null,
                 text: "Most of what BossFx offers is <b>completely free</b>:\n\n🆓 Forex 101 course\n🆓 All 8 trading resources\n🆓 Telegram community (5,200+ traders)\n🆓 Weekly webinars\n\n💰 <b>Paid options:</b>\n• SMA Pro Trend EA — $49.99 (one-time)\n• Group Mentorship — see mentorship page\n• 1-on-1 Mentorship — premium tier\n\nStart free, upgrade when you're ready.",
                 ctas: [
@@ -167,7 +167,7 @@ BFX.mirror = (function () {
             },
             {
                 id: 'about',
-                patterns: [/who|founder|about|timilehin|bossfx.*academy|story|behind/i],
+                patterns: [/who.*(?:is|are|founded)|founder|about.*(?:bossfx|academy|you)|timilehin|bossfx.*academy|story|behind.*bossfx/i],
                 intent: null,
                 text: "BossFx Academy was founded by <b>Timilehin 'BossFx' Shobande</b> — a forex trader and educator building Africa's most accessible trading education platform.\n\nOur mission: give every trader the structured education, tools, and community they need to succeed.\n\nWe've taught 5,200+ traders across Africa and beyond.",
                 ctas: [
@@ -176,7 +176,7 @@ BFX.mirror = (function () {
             },
             {
                 id: 'support',
-                patterns: [/contact|support|help|email|reach|speak|human|real.*person|complaint|issue/i],
+                patterns: [/contact|support|need.*help|email|reach|speak|human|real.*person|complaint|issue/i],
                 intent: 'support',
                 text: "You can reach the BossFx team through:\n\n📧 <b>Email:</b> hello@bossfxcademy.com\n💬 <b>Telegram:</b> DM us in the community\n📱 <b>WhatsApp:</b> +234 915 500 8539\n📸 <b>Instagram:</b> @bossfx_academy\n\nOr use the contact form for detailed inquiries.",
                 ctas: [
@@ -208,7 +208,7 @@ BFX.mirror = (function () {
             },
             {
                 id: 'trading-plan',
-                patterns: [/trading.*plan|plan.*trade|rules|system.*creat|build.*strat|my.*strategy|develop.*plan/i],
+                patterns: [/trading.*plan|plan.*trade|rules|system.*creat|build.*strat|develop.*plan|create.*plan/i],
                 intent: 'beginner',
                 text: "A <b>trading plan</b> is the single most important document a trader can create. It eliminates 90% of emotional decisions.\n\nYour plan should include:\n• Markets and sessions you trade\n• Entry and exit criteria (specific, not vague)\n• Risk per trade (we recommend 1%)\n• Maximum daily loss limit (3%)\n• Weekly review process\n\nOur <b>Trading Plan Template</b> gives you the exact framework — just fill in your rules and follow them.",
                 ctas: [
