@@ -7,8 +7,8 @@
 // ================================================================
 
 const brevo = require('@getbrevo/brevo');
-const { triggerSequence } = require('./utils/drip');
-const { TEMPLATES } = require('./utils/templates');
+const { triggerSequence } = require('../lib/drip');
+const { TEMPLATES } = require('../lib/templates');
 
 // Config
 const INACTIVITY_DAYS = 30;          // Days without activity before re-engagement

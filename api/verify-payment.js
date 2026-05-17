@@ -6,7 +6,7 @@
 // and display the correct product information
 // ================================================================
 
-const { getProduct, getProductByAmount } = require('./utils/products');
+const { getProduct, getProductByAmount } = require('../lib/products');
 const { generateToken } = require('./download-forex101');
 
 module.exports = async function handler(req, res) {

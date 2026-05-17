@@ -12,8 +12,8 @@
 // ================================================================
 
 const crypto = require('crypto');
-const { fulfillOrder } = require('../utils/fulfillment');
-const { getProduct, getProductByAmount } = require('../utils/products');
+const { fulfillOrder } = require('../../lib/fulfillment');
+const { getProduct, getProductByAmount } = require('../../lib/products');
 
 module.exports = async function handler(req, res) {
     // ---- Method check ----

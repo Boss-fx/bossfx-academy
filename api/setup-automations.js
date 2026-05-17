@@ -7,8 +7,8 @@
 // ================================================================
 
 const brevo = require('@getbrevo/brevo');
-const { TEMPLATES, BRAND } = require('./utils/templates');
-const { SEQUENCES } = require('./utils/drip');
+const { TEMPLATES, BRAND } = require('../lib/templates');
+const { SEQUENCES } = require('../lib/drip');
 
 // Additional attributes needed for automation tracking
 const AUTOMATION_ATTRIBUTES = [

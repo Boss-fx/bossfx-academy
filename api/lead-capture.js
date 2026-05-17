@@ -7,7 +7,7 @@
 // ================================================================
 
 const brevo = require('@getbrevo/brevo');
-const { processNewLead } = require('./utils/drip');
+const { processNewLead } = require('../lib/drip');
 
 // Brevo list IDs — verified via /api/setup-lists
 const LISTS = {
