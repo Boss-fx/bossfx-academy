@@ -167,46 +167,74 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </section>
 
-    <!-- Today at BossFx -->
+    <!-- Market Intelligence Dashboard -->
     <section class="section" id="daily">
         <div class="container">
             <div class="section-header center">
-                <span class="section-tag">📡 Live Updates</span>
-                <h2 class="section-title">Today at<br><span class="text-gradient">BossFx</span></h2>
+                <span class="section-tag">📡 Market Intelligence</span>
+                <h2 class="section-title">Live Market<br><span class="text-gradient">Dashboard</span></h2>
+                <div class="mkt-meta-bar">
+                    <span class="mkt-meta-item"><span class="daily-live-dot"></span> <span id="mktMarketSession" class="mkt-session-active">Loading...</span></span>
+                    <span class="mkt-meta-item">Last updated: <span id="mktLastUpdated">--</span></span>
+                    <button class="mkt-refresh-btn" onclick="BFX.market.refresh()" title="Refresh data">&#x21bb;</button>
+                </div>
             </div>
+
+            <!-- Live Price Ticker -->
+            <div class="daily-card mkt-full-card">
+                <div class="daily-card-header">
+                    <span class="daily-card-icon">📊</span>
+                    <h4>Live Prices</h4>
+                    <span class="daily-live-dot"></span>
+                </div>
+                <div class="daily-card-body">
+                    <div class="mkt-price-grid mkt-skeleton" id="mktPriceGrid">
+                        <div class="mkt-skeleton-card"></div>
+                        <div class="mkt-skeleton-card"></div>
+                        <div class="mkt-skeleton-card"></div>
+                        <div class="mkt-skeleton-card"></div>
+                        <div class="mkt-skeleton-card"></div>
+                        <div class="mkt-skeleton-card"></div>
+                        <div class="mkt-skeleton-card"></div>
+                        <div class="mkt-skeleton-card"></div>
+                    </div>
+                </div>
+                <p class="daily-card-note">Prices update every 5 minutes. Click any asset for AI analysis.</p>
+            </div>
+
             <div class="daily-grid">
-                <div class="daily-card daily-bias">
+                <!-- Market Sentiment Heatmap -->
+                <div class="daily-card" style="grid-column: 1 / -1;">
                     <div class="daily-card-header">
-                        <span class="daily-card-icon">📊</span>
-                        <h4>Daily Market Bias</h4>
+                        <span class="daily-card-icon">📈</span>
+                        <h4>Market Sentiment</h4>
                         <span class="daily-live-dot"></span>
                     </div>
                     <div class="daily-card-body">
-                        <div class="daily-pair"><span>EUR/USD</span><span class="daily-bias-tag bullish">Bullish</span></div>
-                        <div class="daily-pair"><span>GBP/USD</span><span class="daily-bias-tag bearish">Bearish</span></div>
-                        <div class="daily-pair"><span>XAU/USD</span><span class="daily-bias-tag bullish">Bullish</span></div>
-                        <div class="daily-pair"><span>USD/JPY</span><span class="daily-bias-tag neutral">Neutral</span></div>
-                    </div>
-                    <p class="daily-card-note">Updated daily by BossFx mentors</p>
-                </div>
-                <div class="daily-card daily-idea">
-                    <div class="daily-card-header">
-                        <span class="daily-card-icon">💡</span>
-                        <h4>Trade Idea of the Day</h4>
-                    </div>
-                    <div class="daily-card-body">
-                        <div class="daily-trade-setup">
-                            <span class="daily-trade-pair">EUR/USD Long</span>
-                            <div class="daily-trade-details">
-                                <span>Entry: 1.0845</span>
-                                <span>SL: 1.0810</span>
-                                <span>TP: 1.0920</span>
-                            </div>
-                            <div class="daily-trade-rr">Risk:Reward — 1:2.1</div>
+                        <div id="mktSentimentGrid" class="mkt-skeleton">
+                            <div class="mkt-skeleton-bar"></div>
+                            <div class="mkt-skeleton-bar"></div>
+                            <div class="mkt-skeleton-bar"></div>
                         </div>
                     </div>
-                    <p class="daily-card-note">For educational purposes only</p>
+                    <p class="daily-card-note">Algorithmic sentiment derived from price action and momentum</p>
                 </div>
+
+                <!-- Volatility Meter -->
+                <div class="daily-card">
+                    <div class="daily-card-header">
+                        <span class="daily-card-icon">⚡</span>
+                        <h4>Volatility Index</h4>
+                    </div>
+                    <div class="daily-card-body">
+                        <div id="mktVolatility" class="mkt-skeleton">
+                            <div class="mkt-skeleton-bar"></div>
+                        </div>
+                    </div>
+                    <p class="daily-card-note">Average movement across tracked assets</p>
+                </div>
+
+                <!-- Market Session -->
                 <div class="daily-card daily-session">
                     <div class="daily-card-header">
                         <span class="daily-card-icon">🕐</span>
@@ -222,6 +250,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                     <p class="daily-card-note" id="sessionNote">Checking sessions...</p>
                 </div>
+
+                <!-- Economic Calendar -->
+                <div class="daily-card" style="grid-column: 1 / -1;">
+                    <div class="daily-card-header">
+                        <span class="daily-card-icon">📅</span>
+                        <h4>Economic Calendar</h4>
+                    </div>
+                    <div class="daily-card-body">
+                        <div id="mktCalendar" class="mkt-skeleton">
+                            <div class="mkt-skeleton-bar"></div>
+                            <div class="mkt-skeleton-bar"></div>
+                            <div class="mkt-skeleton-bar"></div>
+                        </div>
+                    </div>
+                    <p class="daily-card-note">High-impact events that may move forex and metals markets</p>
+                </div>
+
+                <!-- Market News -->
+                <div class="daily-card" style="grid-column: 1 / -1;">
+                    <div class="daily-card-header">
+                        <span class="daily-card-icon">🗞️</span>
+                        <h4>Market Headlines</h4>
+                    </div>
+                    <div class="daily-card-body">
+                        <div id="mktNewsFeed" class="mkt-skeleton">
+                            <div class="mkt-skeleton-bar"></div>
+                            <div class="mkt-skeleton-bar"></div>
+                        </div>
+                    </div>
+                    <p class="daily-card-note">AI-generated market commentary based on current conditions</p>
+                </div>
+
+                <!-- Daily Motivation (keep existing) -->
                 <div class="daily-card daily-quote">
                     <div class="daily-card-header">
                         <span class="daily-card-icon">🔥</span>
@@ -231,35 +292,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <blockquote class="daily-motivation" id="dailyQuote">"The goal of a successful trader is to make the best trades. Money is secondary."</blockquote>
                         <cite class="daily-quote-author" id="dailyQuoteAuthor">— Alexander Elder</cite>
                     </div>
-                </div>
-
-                <!-- Market Sentiment -->
-                <div class="daily-card" style="grid-column: 1 / -1;">
-                    <div class="daily-card-header">
-                        <span class="daily-card-icon">📈</span>
-                        <h4>Market Sentiment</h4>
-                        <span class="daily-live-dot"></span>
-                    </div>
-                    <div class="daily-card-body">
-                        <div class="sentiment-grid" id="sentimentGrid">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                    <p class="daily-card-note">Algorithmic sentiment based on session activity and price action</p>
-                </div>
-
-                <!-- Upcoming Events -->
-                <div class="daily-card" style="grid-column: 1 / -1;">
-                    <div class="daily-card-header">
-                        <span class="daily-card-icon">📅</span>
-                        <h4>Key Events This Week</h4>
-                    </div>
-                    <div class="daily-card-body">
-                        <div class="market-events" id="marketEvents">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                    <p class="daily-card-note">Major economic events that may impact forex markets</p>
                 </div>
             </div>
         </div>
@@ -585,6 +617,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="tracking.js"></script>
     <script src="bfx-analytics.js"></script>
     <script src="bfx-convert.js"></script>
+    <script src="bfx-market.js"></script>
     <div class="sticky-cta-bar" id="stickyCta">
         <span>Get the BossFx EA &middot; Start with Free Forex Starter Pack</span>
         <div class="sticky-cta-btns">
