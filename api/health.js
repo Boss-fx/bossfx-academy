@@ -32,6 +32,7 @@ module.exports = async function handler(req, res) {
         routes: {
             lead_capture: '/api/lead-capture (POST)',
             health: '/api/health (GET)',
+            market_data: '/api/market-data (GET — ?type=all|prices|calendar|sentiment|news)',
             setup_lists: '/api/setup-lists (GET/POST)',
             setup_automations: '/api/setup-automations (GET/POST)',
             cron_reengagement: '/api/cron-reengagement (GET — daily cron)',
