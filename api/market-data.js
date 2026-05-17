@@ -18,13 +18,13 @@ var _cacheTTL = {
 
 // ── Fallback data when APIs are unreachable ──
 var FALLBACK_PRICES = {
-    EURUSD: { price: 1.0850, change: 0, changePct: 0, direction: 'flat' },
-    GBPUSD: { price: 1.2720, change: 0, changePct: 0, direction: 'flat' },
-    USDJPY: { price: 154.50, change: 0, changePct: 0, direction: 'flat' },
-    XAUUSD: { price: 2650.00, change: 0, changePct: 0, direction: 'flat' },
-    US30:   { price: 42500, change: 0, changePct: 0, direction: 'flat' },
-    NAS100: { price: 21200, change: 0, changePct: 0, direction: 'flat' },
-    BTCUSD: { price: 104000, change: 0, changePct: 0, direction: 'flat' },
+    EURUSD: { price: 1.1180, change: 0, changePct: 0, direction: 'flat' },
+    GBPUSD: { price: 1.3300, change: 0, changePct: 0, direction: 'flat' },
+    USDJPY: { price: 145.50, change: 0, changePct: 0, direction: 'flat' },
+    XAUUSD: { price: 3220.00, change: 0, changePct: 0, direction: 'flat' },
+    US30:   { price: 42200, change: 0, changePct: 0, direction: 'flat' },
+    NAS100: { price: 21400, change: 0, changePct: 0, direction: 'flat' },
+    BTCUSD: { price: 103500, change: 0, changePct: 0, direction: 'flat' },
     ETHUSD: { price: 2500, change: 0, changePct: 0, direction: 'flat' }
 };
 
@@ -66,25 +66,42 @@ function setCache(key, data) {
 // ================================================================
 
 // Forex prices from Frankfurter API (open, unlimited, no key)
+// Fetches today's rate AND yesterday's rate for accurate daily change
 function fetchForexPrices() {
-    var url = 'https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR,GBP,JPY';
-    return fetchJSON(url, 5000).then(function (data) {
-        var rates = data.rates || {};
-        var result = {};
-        if (rates.EUR) {
-            var eurusd = parseFloat((1 / rates.EUR).toFixed(5));
-            result.EURUSD = buildPrice(eurusd, FALLBACK_PRICES.EURUSD.price);
-        }
-        if (rates.GBP) {
-            var gbpusd = parseFloat((1 / rates.GBP).toFixed(5));
-            result.GBPUSD = buildPrice(gbpusd, FALLBACK_PRICES.GBPUSD.price);
-        }
-        if (rates.JPY) {
-            var usdjpy = parseFloat(rates.JPY.toFixed(3));
-            result.USDJPY = buildPrice(usdjpy, FALLBACK_PRICES.USDJPY.price);
-        }
-        return result;
-    }).catch(function () { return {}; });
+    var today = new Date();
+    var yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    // Skip weekends for yesterday's date
+    if (yesterday.getUTCDay() === 0) yesterday.setDate(yesterday.getDate() - 2); // Sunday → Friday
+    if (yesterday.getUTCDay() === 6) yesterday.setDate(yesterday.getDate() - 1); // Saturday → Friday
+    var yStr = yesterday.toISOString().split('T')[0];
+
+    var latestUrl = 'https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR,GBP,JPY';
+    var prevUrl = 'https://api.frankfurter.dev/v1/' + yStr + '?base=USD&symbols=EUR,GBP,JPY';
+
+    return Promise.all([fetchJSON(latestUrl, 5000), fetchJSON(prevUrl, 5000)])
+        .then(function (results) {
+            var latest = results[0].rates || {};
+            var prev = results[1].rates || {};
+            var result = {};
+
+            if (latest.EUR) {
+                var euNow = parseFloat((1 / latest.EUR).toFixed(5));
+                var euPrev = prev.EUR ? parseFloat((1 / prev.EUR).toFixed(5)) : euNow;
+                result.EURUSD = buildPriceFromPrev(euNow, euPrev);
+            }
+            if (latest.GBP) {
+                var gbNow = parseFloat((1 / latest.GBP).toFixed(5));
+                var gbPrev = prev.GBP ? parseFloat((1 / prev.GBP).toFixed(5)) : gbNow;
+                result.GBPUSD = buildPriceFromPrev(gbNow, gbPrev);
+            }
+            if (latest.JPY) {
+                var jpNow = parseFloat(latest.JPY.toFixed(3));
+                var jpPrev = prev.JPY ? parseFloat(prev.JPY.toFixed(3)) : jpNow;
+                result.USDJPY = buildPriceFromPrev(jpNow, jpPrev);
+            }
+            return result;
+        }).catch(function () { return {}; });
 }
 
 // Crypto prices from CoinGecko (free, 30 calls/min)
@@ -329,6 +346,18 @@ function buildPrice(current, baseline) {
         change: change,
         changePct: changePct,
         direction: changePct >= 0 ? 'up' : 'down'
+    };
+}
+
+function buildPriceFromPrev(current, previous) {
+    var change = parseFloat((current - previous).toFixed(5));
+    var pctBase = previous !== 0 ? previous : 1;
+    var changePct = parseFloat(((change / pctBase) * 100).toFixed(2));
+    return {
+        price: current,
+        change: change,
+        changePct: changePct,
+        direction: changePct > 0 ? 'up' : (changePct < 0 ? 'down' : 'flat')
     };
 }
 
