@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
             SENDER_EMAIL: envStatus(process.env.SENDER_EMAIL),
             ADMIN_EMAIL: envStatus(process.env.ADMIN_EMAIL),
             FLUTTERWAVE_SECRET_KEY: envStatus(process.env.FLUTTERWAVE_SECRET_KEY),
-            FLUTTERWAVE_WEBHOOK_HASH: envStatus(process.env.FLUTTERWAVE_WEBHOOK_HASH),
+            FLUTTERWAVE_WEBHOOK_HASH: envStatus(process.env.FLUTTERWAVE_WEBHOOK_HASH || process.env.FLUTTERWAVE_WEBHOOK_SECRET),
             DOWNLOAD_SECRET: envStatus(process.env.DOWNLOAD_SECRET)
         },
         brevo: { status: 'not_tested' },
