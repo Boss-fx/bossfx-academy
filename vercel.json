@@ -1,6 +1,31 @@
 {
   "version": 2,
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*\\.js)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, s-maxage=604800" }
+      ]
+    },
+    {
+      "source": "/(.*\\.css)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, s-maxage=604800" }
+      ]
+    }
+  ],
   "routes": [
+    {
+      "src": "/index.html",
+      "headers": { "Location": "https://www.bossfxcademy.com/" },
+      "status": 301
+    },
     {
       "src": "/downloads/(.*)",
       "status": 404

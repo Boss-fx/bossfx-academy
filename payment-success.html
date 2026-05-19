@@ -17,6 +17,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png" />
     <link rel="apple-touch-icon" href="/assets/favicon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="chatbot.css">
@@ -35,6 +37,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
       })(window, document, "clarity", "script", "wnde2od79f");
+    </script>
+    <!-- Polyfill: fix e.target.closest errors on text nodes & older browsers -->
+    <script>
+      (function(){if(typeof Element!=="undefined"&&!Element.prototype.closest){Element.prototype.closest=function(s){var e=this;while(e&&e.nodeType===1){if(e.matches(s))return e;e=e.parentElement}return null}}if(typeof Node!=="undefined"&&!Node.prototype.hasOwnProperty("closest")){Object.defineProperty(Node.prototype,"closest",{value:function(s){var e=this.nodeType===1?this:this.parentElement;return e?e.closest(s):null},configurable:true,writable:true})}})();
     </script>
     <style>
         /* ===== Success Page — Premium Onboarding ===== */

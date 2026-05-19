@@ -17,19 +17,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta property="og:type" content="website" />
     <meta property="og:title" content="BossFx Academy — Professional Forex Tools & Education" />
     <meta property="og:description" content="Home of the BossFx SMA Pro Trend EA. Validated by MetaQuotes. Built in Africa." />
-    <meta property="og:image" content="https://bossfxcademy.com/assets/og-banner.png" />
+    <meta property="og:image" content="https://www.bossfxcademy.com/assets/og-banner.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="https://bossfxcademy.com" />
+    <meta property="og:url" content="https://www.bossfxcademy.com/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="BossFx Academy — Professional Forex Tools & Education" />
     <meta name="twitter:description" content="Home of the BossFx SMA Pro Trend EA. Validated by MetaQuotes." />
-    <meta name="twitter:image" content="https://bossfxcademy.com/assets/og-banner.png" />
+    <meta name="twitter:image" content="https://www.bossfxcademy.com/assets/og-banner.png" />
+    <link rel="canonical" href="https://www.bossfxcademy.com/" />
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png" />
     <link rel="apple-touch-icon" href="/assets/favicon-192.png" />
     <link rel="manifest" href="/assets/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="chatbot.css">
@@ -52,6 +55,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
       })(window, document, "clarity", "script", "wnde2od79f");
     </script>
+    <!-- Polyfill: fix e.target.closest errors on text nodes & older browsers -->
+    <script>
+      (function(){if(typeof Element!=="undefined"&&!Element.prototype.closest){Element.prototype.closest=function(s){var e=this;while(e&&e.nodeType===1){if(e.matches(s))return e;e=e.parentElement}return null}}if(typeof Node!=="undefined"&&!Node.prototype.hasOwnProperty("closest")){Object.defineProperty(Node.prototype,"closest",{value:function(s){var e=this.nodeType===1?this:this.parentElement;return e?e.closest(s):null},configurable:true,writable:true})}})();
+    </script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -63,7 +70,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
             <a href="index.html" class="nav-logo">
-                <img src="assets/logo.png" alt="BossFX Academy Logo">
+                <img src="assets/logo.png" alt="BossFX Academy Logo" width="40" height="40">
             </a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="index.html" style="color: var(--green-400);">Home</a></li>
@@ -1029,7 +1036,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <div class="founder-layout">
                 <div class="founder-photo-card" style="padding: 0; overflow: hidden; min-height: auto;">
-                    <img src="assets/founder.jpg" alt="Timilehin Olabode Shobande — Founder, BossFx Academy" style="width: 100%; height: auto; display: block; object-fit: cover;">
+                    <img src="assets/founder.jpg" alt="Timilehin Olabode Shobande — Founder, BossFx Academy" width="400" height="400" loading="lazy" style="width: 100%; height: auto; display: block; object-fit: cover;">
                     <div class="founder-socials">
                         <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" aria-label="Telegram">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
@@ -1398,15 +1405,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <a href="courses.html" class="btn btn-primary btn-lg btn-pulse">Start Forex 101 — Free</a>
     </div>
 
-    <script src="https://checkout.flutterwave.com/v3.js"></script>
     <script src="script.js"></script>
     <script src="config.js"></script>
     <script src="email-config.js"></script>
-    <script src="blog.js"></script>
-    <script src="chatbot.js"></script>
-    <script src="tracking.js"></script>
-    <script src="bfx-analytics.js"></script>
-    <script src="bfx-convert.js"></script>
-<script src="page-nav.js" defer></script>
+    <script src="https://checkout.flutterwave.com/v3.js" defer></script>
+    <script src="blog.js" defer></script>
+    <script src="chatbot.js" defer></script>
+    <script src="tracking.js" defer></script>
+    <script src="bfx-analytics.js" defer></script>
+    <script src="bfx-convert.js" defer></script>
+    <script src="page-nav.js" defer></script>
 </body>
 </html>

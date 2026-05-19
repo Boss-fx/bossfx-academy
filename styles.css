@@ -45,7 +45,16 @@ body {
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     padding-bottom: 60px;
+    /* CLS fix: prevent layout shift from font swap */
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
 }
+
+/* CLS fix: reserve space for dynamic elements to prevent layout shift */
+.social-proof-bar { min-height: 58px; }
+.eco-stats-grid { min-height: 120px; }
+.proof-toast { contain: layout; }
+.mobile-sticky-cta { contain: layout style; }
 
 a {
     text-decoration: none;
