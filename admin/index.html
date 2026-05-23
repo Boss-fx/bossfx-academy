@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | BossFx Academy</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="supabase-url" content="https://kklwvzpwgpcwxjmgikfq.supabase.co">
+    <meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbHd2enB3Z3Bjd3hqbWdpa2ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Mzk3MTYsImV4cCI6MjA5NTExNTcxNn0.cJZkXzogx0TKXg9fht7fP_iH_qjhxbka9nzIRwKumXg">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- Login -->
+<div id="admLogin" style="display:none">
+    <div class="adm-login">
+        <h2>Admin Dashboard</h2>
+        <p>Sign in with your BossFx admin account</p>
+        <div class="adm-login-error" id="admLoginError"></div>
+        <form id="admLoginForm">
+            <input type="email" id="admEmail" placeholder="Email address" required>
+            <input type="password" id="admPassword" placeholder="Password" required>
+            <button type="submit" class="adm-btn adm-btn-primary" style="width:100%">Sign In</button>
+        </form>
+    </div>
+</div>
+
+<!-- Dashboard -->
+<div id="admDashboard" style="display:none">
+    <div class="adm-header">
+        <h1>BossFx <span>Admin</span></h1>
+        <div class="adm-header-actions">
+            <span class="adm-user" id="admUser"></span>
+            <button class="adm-btn adm-btn-outline adm-btn-sm" onclick="admLogout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="adm-container">
+        <!-- Stats -->
+        <div class="adm-stats">
+            <div class="adm-stat">
+                <div class="adm-stat-label">Total Orders</div>
+                <div class="adm-stat-value" id="statOrders">—</div>
+            </div>
+            <div class="adm-stat">
+                <div class="adm-stat-label">Revenue</div>
+                <div class="adm-stat-value green" id="statRevenue">—</div>
+            </div>
+            <div class="adm-stat">
+                <div class="adm-stat-label">Downloads</div>
+                <div class="adm-stat-value" id="statDownloads">—</div>
+            </div>
+            <div class="adm-stat">
+                <div class="adm-stat-label">Bookings</div>
+                <div class="adm-stat-value" id="statBookings">—</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="adm-tabs">
+            <button class="adm-tab active" data-panel="orders">Orders</button>
+            <button class="adm-tab" data-panel="downloads">Downloads</button>
+            <button class="adm-tab" data-panel="bookings">Bookings</button>
+        </div>
+
+        <!-- Orders Panel -->
+        <div class="adm-panel active" id="panel-orders">
+            <div class="adm-search">
+                <input type="text" id="admSearchInput" placeholder="Search orders by email, ref, product...">
+            </div>
+            <div class="adm-table-wrap">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Email</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersBody">
+                        <tr><td colspan="7" class="adm-empty">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Downloads Panel -->
+        <div class="adm-panel" id="panel-downloads">
+            <div class="adm-table-wrap">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Product</th>
+                            <th>File</th>
+                            <th>IP</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="downloadsBody">
+                        <tr><td colspan="5" class="adm-empty">Click to load...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bookings Panel -->
+        <div class="adm-panel" id="panel-bookings">
+            <div class="adm-table-wrap">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Program</th>
+                            <th>Preferred</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsBody">
+                        <tr><td colspan="6" class="adm-empty">Click to load...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/admin/admin.js"></script>
+
+</body>
+</html>

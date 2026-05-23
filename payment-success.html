@@ -457,13 +457,72 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         /* -- Product-conditional visibility (set by JS) -- */
-        .sp-show-mentorship, .sp-show-course, .sp-show-vip, .sp-show-ea { display: none; }
+        .sp-show-mentorship, .sp-show-course, .sp-show-vip, .sp-show-ea, .sp-show-download { display: none; }
         [data-product-type="mentorship"] .sp-show-mentorship,
         [data-product-type="course"] .sp-show-course,
+        [data-product-type="course"] .sp-show-download,
         [data-product-type="vip"] .sp-show-vip,
-        [data-product-type="ea"] .sp-show-ea { display: block; }
+        [data-product-type="vip"] .sp-show-download,
+        [data-product-type="ea"] .sp-show-ea,
+        [data-product-type="ea"] .sp-show-download { display: block; }
         [data-product-type="mentorship"] .sp-hide-mentorship,
         [data-product-type="vip"] .sp-hide-vip { display: none; }
+
+        /* Download Card */
+        .sp-download-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 28px; margin-top: 24px; }
+        .sp-download-card h4 { color: #fff; margin: 0 0 16px; font-size: 1.1rem; }
+        .sp-download-files { display: flex; flex-direction: column; gap: 10px; }
+        .sp-file-item { display: flex; align-items: center; justify-content: space-between; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15); border-radius: 12px; padding: 14px 18px; }
+        .sp-file-info { display: flex; align-items: center; gap: 12px; }
+        .sp-file-icon { width: 36px; height: 36px; background: rgba(16,185,129,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .sp-file-icon svg { width: 18px; height: 18px; stroke: #10B981; fill: none; stroke-width: 2; }
+        .sp-file-name { font-weight: 600; color: #e2e8f0; font-size: 0.9rem; }
+        .sp-file-meta { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+        .sp-file-download { background: #10B981; color: #fff; border: none; padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s; }
+        .sp-file-download:hover { background: #059669; }
+        .sp-download-note { margin-top: 14px; font-size: 0.78rem; color: #64748b; }
+        .sp-loading-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(16,185,129,0.3); border-top-color: #10B981; border-radius: 50%; animation: spSpin 0.6s linear infinite; vertical-align: middle; margin-right: 8px; }
+        @keyframes spSpin { to { transform: rotate(360deg); } }
+        .sp-error-msg { color: #f87171; background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.15); border-radius: 10px; padding: 12px 16px; font-size: 0.85rem; margin-top: 10px; }
+        .sp-error-msg a { color: #f87171; text-decoration: underline; }
+
+        /* EA Install Guide */
+        .sp-install-guide { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 28px; margin-top: 16px; }
+        .sp-install-guide h4 { color: #fff; margin: 0 0 16px; font-size: 1.05rem; }
+        .sp-install-steps { display: flex; flex-direction: column; gap: 12px; }
+        .sp-install-step { display: flex; gap: 14px; align-items: flex-start; }
+        .sp-install-num { width: 28px; height: 28px; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: #10B981; flex-shrink: 0; }
+        .sp-install-text { color: #cbd5e1; font-size: 0.88rem; line-height: 1.5; }
+        .sp-install-text code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+
+        /* Booking Form */
+        .sp-booking { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 28px; margin-top: 24px; }
+        .sp-booking h4 { color: #fff; margin: 0 0 6px; font-size: 1.1rem; }
+        .sp-booking > p { color: #94a3b8; font-size: 0.88rem; margin: 0 0 20px; }
+        .sp-booking-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .sp-booking-form .sp-field-full { grid-column: 1 / -1; }
+        .sp-booking-form label { display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sp-booking-form select, .sp-booking-form textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 11px 14px; color: #e2e8f0; font-size: 0.88rem; font-family: inherit; }
+        .sp-booking-form select:focus, .sp-booking-form textarea:focus { border-color: #10B981; outline: none; }
+        .sp-booking-form select option { background: #1e293b; color: #e2e8f0; }
+        .sp-booking-form textarea { min-height: 70px; resize: vertical; }
+        .sp-booking-submit { grid-column: 1 / -1; background: #10B981; color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
+        .sp-booking-submit:hover { background: #059669; }
+        .sp-booking-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .sp-booking-success { display: none; text-align: center; padding: 24px; }
+        .sp-booking-success h5 { color: #10B981; margin: 0 0 8px; font-size: 1.1rem; }
+        .sp-booking-success p { color: #94a3b8; margin: 0; }
+        @media (max-width: 640px) { .sp-booking-form { grid-template-columns: 1fr; } }
+
+        /* VIP Portal Card */
+        .sp-vip-portal { background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(139,92,246,0.08)); border: 1px solid rgba(16,185,129,0.2); border-radius: 16px; padding: 32px; margin-top: 24px; text-align: center; }
+        .sp-vip-portal h4 { color: #fff; margin: 0 0 8px; font-size: 1.2rem; }
+        .sp-vip-portal p { color: #94a3b8; margin: 0 0 20px; font-size: 0.9rem; }
+        .sp-vip-badge { display: inline-block; background: linear-gradient(135deg, #10B981, #059669); color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 16px; }
+        .sp-vip-benefits { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; text-align: left; }
+        .sp-vip-benefit { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #cbd5e1; }
+        .sp-vip-benefit svg { width: 16px; height: 16px; stroke: #10B981; fill: none; flex-shrink: 0; }
+        @media (max-width: 640px) { .sp-vip-benefits { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -581,6 +640,160 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     Get Support
                 </a>
+            </div>
+
+            <!-- Download Card (course/ea/vip) -->
+            <div class="sp-download-card sp-show-download" id="spDownloadCard">
+                <h4>Your Files</h4>
+                <div class="sp-download-files" id="spDownloadFiles">
+                    <p style="color:#64748b;font-size:0.88rem"><span class="sp-loading-spinner"></span>Loading your downloads...</p>
+                </div>
+                <p class="sp-download-note">Download links expire in 72 hours. Check your email for a permanent link.</p>
+            </div>
+
+            <!-- EA Installation Guide (ea only) -->
+            <div class="sp-install-guide sp-show-ea">
+                <h4>MT5 Installation Guide</h4>
+                <div class="sp-install-steps">
+                    <div class="sp-install-step">
+                        <div class="sp-install-num">1</div>
+                        <div class="sp-install-text">Open MetaTrader 5 and go to <code>File &rarr; Open Data Folder</code></div>
+                    </div>
+                    <div class="sp-install-step">
+                        <div class="sp-install-num">2</div>
+                        <div class="sp-install-text">Navigate to <code>MQL5 &rarr; Experts</code> and paste the EA file (.ex5)</div>
+                    </div>
+                    <div class="sp-install-step">
+                        <div class="sp-install-num">3</div>
+                        <div class="sp-install-text">Restart MT5, then find the EA under <code>Navigator &rarr; Expert Advisors</code></div>
+                    </div>
+                    <div class="sp-install-step">
+                        <div class="sp-install-num">4</div>
+                        <div class="sp-install-text">Drag it onto your chart, enable <code>AutoTrading</code>, and configure your risk settings</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mentorship Booking Form (mentorship only) -->
+            <div class="sp-booking sp-show-mentorship" id="spBooking">
+                <h4>Schedule Your First Session</h4>
+                <p>Fill in your preferences and we'll confirm your session time within 24 hours.</p>
+                <form class="sp-booking-form" id="spBookingForm">
+                    <div>
+                        <label for="bookDay">Preferred Day</label>
+                        <select id="bookDay" name="preferredDay">
+                            <option value="">Select a day...</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="bookTime">Preferred Time</label>
+                        <select id="bookTime" name="preferredTime">
+                            <option value="">Select a time...</option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="13:00">1:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                            <option value="18:00">6:00 PM</option>
+                            <option value="19:00">7:00 PM</option>
+                            <option value="20:00">8:00 PM</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="bookComm">Communication</label>
+                        <select id="bookComm" name="communication">
+                            <option value="telegram">Telegram</option>
+                            <option value="zoom">Zoom</option>
+                            <option value="google_meet">Google Meet</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="bookFocus">Focus Area</label>
+                        <select id="bookFocus" name="focusArea">
+                            <option value="">Select focus...</option>
+                            <option value="Technical Analysis">Technical Analysis</option>
+                            <option value="Risk Management">Risk Management</option>
+                            <option value="Trading Psychology">Trading Psychology</option>
+                            <option value="Prop Firm Prep">Prop Firm Prep</option>
+                            <option value="Price Action">Price Action</option>
+                            <option value="General">General / All Areas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="bookExp">Experience Level</label>
+                        <select id="bookExp" name="experience">
+                            <option value="">Select level...</option>
+                            <option value="Beginner">Beginner (0-6 months)</option>
+                            <option value="Intermediate">Intermediate (6-24 months)</option>
+                            <option value="Advanced">Advanced (2+ years)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="bookTimezone">Timezone</label>
+                        <select id="bookTimezone" name="timezone">
+                            <option value="Africa/Lagos">West Africa (WAT)</option>
+                            <option value="Africa/Cairo">East Africa (EAT)</option>
+                            <option value="Europe/London">London (GMT/BST)</option>
+                            <option value="America/New_York">New York (EST/EDT)</option>
+                            <option value="Asia/Dubai">Dubai (GST)</option>
+                            <option value="Asia/Qatar">Qatar (AST)</option>
+                        </select>
+                    </div>
+                    <div class="sp-field-full">
+                        <label for="bookNotes">Additional Notes</label>
+                        <textarea id="bookNotes" name="notes" placeholder="Any specific topics, questions, or goals you'd like to discuss..."></textarea>
+                    </div>
+                    <button type="submit" class="sp-booking-submit" id="spBookingSubmit">Submit Booking Request</button>
+                </form>
+                <div class="sp-booking-success" id="spBookingSuccess">
+                    <h5>Booking Submitted!</h5>
+                    <p>Check your email for a confirmation and calendar invite. Timilehin will confirm your session time within 24 hours.</p>
+                </div>
+            </div>
+
+            <!-- VIP Portal Card (vip only) -->
+            <div class="sp-vip-portal sp-show-vip" id="spVipPortal">
+                <div class="sp-vip-badge">VIP LIFETIME ACCESS</div>
+                <h4>Welcome to the Inner Circle</h4>
+                <p>You now have unlimited access to everything BossFx Academy offers — courses, mentorship, tools, and exclusive VIP resources.</p>
+                <div class="sp-vip-benefits">
+                    <div class="sp-vip-benefit">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        All courses included
+                    </div>
+                    <div class="sp-vip-benefit">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        1-on-1 mentorship sessions
+                    </div>
+                    <div class="sp-vip-benefit">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Premium trading tools
+                    </div>
+                    <div class="sp-vip-benefit">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        VIP Telegram group
+                    </div>
+                    <div class="sp-vip-benefit">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Priority support
+                    </div>
+                    <div class="sp-vip-benefit">
+                        <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Future products free
+                    </div>
+                </div>
+                <a href="#" class="btn btn-primary" id="spVipPortalLink" style="display:none">Enter VIP Portal &rarr;</a>
             </div>
 
             <!-- Webinar CTA -->
@@ -777,6 +990,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         });
 
         // Verify payment via backend (if we have a transaction_id)
+        var verifiedData = null;
         if (tid) {
             var verifyUrl = '/api/verify-payment?transaction_id=' + encodeURIComponent(tid);
             if (ref) verifyUrl += '&tx_ref=' + encodeURIComponent(ref);
@@ -784,22 +998,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             fetch(verifyUrl)
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
+                    verifiedData = data;
                     if (data.verified && data.product) {
-                        // Update product name with verified info
                         if (prodEl) prodEl.textContent = data.product.name;
 
-                        // Set product type from verified data
                         if (pageEl && data.product.type) {
                             pageEl.setAttribute('data-product-type', data.product.type);
                         }
 
-                        // Update Telegram link to product-specific invite
                         var telegramBtn = document.getElementById('ctaTelegram');
                         if (telegramBtn && data.product.telegramInvite) {
                             telegramBtn.href = data.product.telegramInvite;
                         }
 
-                        // Update GA4 purchase with real value
                         if (typeof gtag === 'function' && data.amount) {
                             gtag('event', 'purchase', {
                                 transaction_id: data.transactionId,
@@ -809,12 +1020,128 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             });
                         }
 
+                        renderDownloads(data);
+                        if (data.bookingRequired) initBookingForm(data);
+                        if (data.product.type === 'vip' && data.downloadToken) {
+                            var vipLink = document.getElementById('spVipPortalLink');
+                            if (vipLink) {
+                                vipLink.href = '/vip/welcome.html?token=' + encodeURIComponent(data.downloadToken);
+                                vipLink.style.display = '';
+                            }
+                        }
+
                         console.log('[Payment] Verified:', data.product.name);
                     }
                 })
                 .catch(function(err) {
                     console.warn('[Payment] Verification check failed (non-critical):', err.message);
+                    var container = document.getElementById('spDownloadFiles');
+                    if (container) {
+                        container.innerHTML = '<p style="color:#94a3b8;font-size:0.88rem">Your files will be delivered via email shortly. If you don\'t receive them within 5 minutes, contact <a href="mailto:hello@bossfxcademy.com" style="color:#10B981">support</a>.</p>';
+                    }
                 });
+        }
+
+        function renderDownloads(data) {
+            var container = document.getElementById('spDownloadFiles');
+            if (!container || !data.downloadToken) return;
+
+            var files = data.productFiles || [];
+            if (files.length === 0) {
+                container.innerHTML = '<p style="color:#64748b;font-size:0.88rem">Your files will be delivered via email shortly.</p>';
+                return;
+            }
+
+            var html = '';
+            files.forEach(function(f) {
+                var sizeStr = f.size ? (f.size > 1048576 ? (f.size / 1048576).toFixed(1) + ' MB' : (f.size / 1024).toFixed(0) + ' KB') : '';
+                var typeIcon = f.type === 'pdf' ? 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z' : 'M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z';
+                var downloadUrl = '/api/download?token=' + encodeURIComponent(data.downloadToken) + '&file=' + encodeURIComponent(f.key || f.id);
+                html += '<div class="sp-file-item">' +
+                    '<div class="sp-file-info">' +
+                        '<div class="sp-file-icon"><svg viewBox="0 0 24 24"><path d="' + typeIcon + '"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>' +
+                        '<div><div class="sp-file-name">' + escapeHtml(f.name) + '</div>' +
+                        '<div class="sp-file-meta">' + escapeHtml(f.type || '').toUpperCase() + (sizeStr ? ' &middot; ' + sizeStr : '') + '</div></div>' +
+                    '</div>' +
+                    '<a href="' + downloadUrl + '" class="sp-file-download" target="_blank" rel="noopener">' +
+                        '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
+                        'Download</a>' +
+                    '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function initBookingForm(data) {
+            var form = document.getElementById('spBookingForm');
+            if (!form) return;
+
+            var tzSelect = document.getElementById('bookTimezone');
+            if (tzSelect) {
+                try {
+                    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    var opts = tzSelect.querySelectorAll('option');
+                    var matched = false;
+                    for (var i = 0; i < opts.length; i++) {
+                        if (opts[i].value === tz) { tzSelect.value = tz; matched = true; break; }
+                    }
+                    if (!matched && tz) {
+                        var opt = document.createElement('option');
+                        opt.value = tz;
+                        opt.textContent = tz.replace(/_/g, ' ');
+                        tzSelect.appendChild(opt);
+                        tzSelect.value = tz;
+                    }
+                } catch(e) {}
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var btn = document.getElementById('spBookingSubmit');
+                if (btn) { btn.disabled = true; btn.textContent = 'Submitting...'; }
+
+                var body = {
+                    txRef: data.txRef || ref,
+                    email: data.customerEmail || '',
+                    name: data.customerName || '',
+                    productId: data.product ? data.product.id : product,
+                    preferredDay: form.preferredDay ? form.preferredDay.value : '',
+                    preferredTime: form.preferredTime ? form.preferredTime.value : '',
+                    timezone: form.timezone ? form.timezone.value : 'Africa/Lagos',
+                    communication: form.communication ? form.communication.value : 'telegram',
+                    focusArea: form.focusArea ? form.focusArea.value : '',
+                    experience: form.experience ? form.experience.value : '',
+                    notes: form.notes ? form.notes.value : ''
+                };
+
+                fetch('/api/booking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(result) {
+                    if (result.success) {
+                        form.style.display = 'none';
+                        var success = document.getElementById('spBookingSuccess');
+                        if (success) success.style.display = 'block';
+                        window.dataLayer = window.dataLayer || [];
+                        window.dataLayer.push({ event: 'booking_submitted', product: body.productId });
+                    } else {
+                        if (btn) { btn.disabled = false; btn.textContent = 'Submit Booking Request'; }
+                        alert('Booking failed: ' + (result.error || 'Please try again or contact support.'));
+                    }
+                })
+                .catch(function(err) {
+                    if (btn) { btn.disabled = false; btn.textContent = 'Submit Booking Request'; }
+                    alert('Network error. Please check your connection and try again.');
+                });
+            });
+        }
+
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(str || ''));
+            return div.innerHTML;
         }
 
         // Track webinar CTA clicks

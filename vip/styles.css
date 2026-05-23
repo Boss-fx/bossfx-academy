@@ -1,0 +1,237 @@
+/* ===== VIP Welcome Portal — Premium Dark Theme ===== */
+:root {
+    --vip-bg: #060A08;
+    --vip-card: rgba(255,255,255,0.025);
+    --vip-border: rgba(255,255,255,0.06);
+    --vip-green: #10B981;
+    --vip-green-dim: rgba(16,185,129,0.1);
+    --vip-purple: #8B5CF6;
+    --vip-gold: #F59E0B;
+    --vip-text: #e2e8f0;
+    --vip-muted: #94a3b8;
+    --vip-dim: #64748b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--vip-bg);
+    color: var(--vip-text);
+    min-height: 100vh;
+}
+
+.vip-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 80px 24px 60px;
+}
+
+.vip-hero {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: vipFadeUp .5s ease both;
+}
+.vip-hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--vip-green), var(--vip-purple));
+    color: #fff;
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+.vip-hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 12px;
+}
+.vip-hero h1 span { color: var(--vip-green); }
+.vip-hero p {
+    color: var(--vip-muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.vip-loading, .vip-error {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--vip-muted);
+    font-size: 1rem;
+}
+.vip-error { color: #ef4444; }
+.vip-error a { color: var(--vip-green); }
+
+.vip-section {
+    margin-bottom: 32px;
+    animation: vipFadeUp .5s ease both;
+}
+.vip-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.vip-section-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+}
+.vip-section-header .vip-count {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--vip-green);
+    background: var(--vip-green-dim);
+    padding: 3px 10px;
+    border-radius: 10px;
+}
+
+.vip-downloads-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.vip-file-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--vip-card);
+    border: 1px solid var(--vip-border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    transition: border-color 0.2s;
+}
+.vip-file-card:hover { border-color: rgba(16,185,129,0.2); }
+
+.vip-file-info { display: flex; align-items: center; gap: 14px; }
+.vip-file-icon {
+    width: 40px; height: 40px;
+    background: var(--vip-green-dim);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.vip-file-icon svg { width: 20px; height: 20px; stroke: var(--vip-green); fill: none; stroke-width: 2; }
+.vip-file-name { font-weight: 600; font-size: 0.92rem; }
+.vip-file-meta { font-size: 0.75rem; color: var(--vip-dim); margin-top: 2px; }
+
+.vip-file-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--vip-green);
+    color: #fff;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+.vip-file-download:hover { background: #059669; }
+.vip-file-download svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+.vip-product-group { margin-bottom: 20px; }
+.vip-product-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--vip-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.vip-quick-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+}
+.vip-quick-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 24px 16px;
+    background: var(--vip-card);
+    border: 1px solid var(--vip-border);
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--vip-text);
+    transition: border-color 0.2s, background 0.2s;
+    text-align: center;
+}
+.vip-quick-link:hover {
+    border-color: rgba(16,185,129,0.2);
+    background: rgba(16,185,129,0.03);
+}
+.vip-quick-link-icon {
+    width: 44px; height: 44px;
+    background: var(--vip-green-dim);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.vip-quick-link-icon svg { width: 22px; height: 22px; stroke: var(--vip-green); fill: none; stroke-width: 1.8; }
+.vip-quick-link h4 { font-size: 0.88rem; font-weight: 600; }
+.vip-quick-link p { font-size: 0.75rem; color: var(--vip-dim); line-height: 1.4; }
+
+.vip-bookings-list { display: flex; flex-direction: column; gap: 10px; }
+.vip-booking-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--vip-card);
+    border: 1px solid var(--vip-border);
+    border-radius: 12px;
+    padding: 16px 20px;
+}
+.vip-booking-detail { font-size: 0.88rem; font-weight: 500; }
+.vip-booking-status {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.vip-booking-status.pending { background: rgba(245,158,11,0.15); color: var(--vip-gold); }
+.vip-booking-status.confirmed { background: var(--vip-green-dim); color: var(--vip-green); }
+.vip-booking-status.completed { background: rgba(100,116,139,0.15); color: var(--vip-dim); }
+
+.vip-support {
+    text-align: center;
+    padding: 32px;
+    background: var(--vip-card);
+    border: 1px solid var(--vip-border);
+    border-radius: 16px;
+    margin-top: 40px;
+}
+.vip-support p { color: var(--vip-muted); font-size: 0.88rem; line-height: 1.6; }
+.vip-support a { color: var(--vip-green); font-weight: 500; }
+
+@keyframes vipFadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 640px) {
+    .vip-page { padding: 60px 16px 40px; }
+    .vip-hero h1 { font-size: 1.6rem; }
+    .vip-quick-links { grid-template-columns: 1fr; }
+    .vip-file-card { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .vip-file-download { width: 100%; justify-content: center; }
+    .vip-booking-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+}

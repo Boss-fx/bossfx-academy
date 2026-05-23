@@ -49,6 +49,12 @@ module.exports = async function handler(req, res) {
 
         console.log(`[Webhook] Received: event=${event}, id=${data.id}, status=${data.status}, tx_ref=${data.tx_ref}`);
 
+        // Log failed charges for monitoring
+        if (event === 'charge.completed' && data.status === 'failed') {
+            console.error(`[Webhook] FAILED payment: id=${data.id}, tx_ref=${data.tx_ref}, amount=${data.amount}, email=${data.customer?.email || 'unknown'}`);
+            return res.status(200).json({ status: 'logged', reason: 'Failed payment recorded' });
+        }
+
         // Only process successful charges
         if (event !== 'charge.completed' || data.status !== 'successful') {
             console.log(`[Webhook] Skipping: event=${event}, status=${data.status}`);

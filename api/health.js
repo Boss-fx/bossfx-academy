@@ -26,8 +26,12 @@ module.exports = async function handler(req, res) {
             ADMIN_EMAIL: envStatus(process.env.ADMIN_EMAIL),
             FLUTTERWAVE_SECRET_KEY: envStatus(process.env.FLUTTERWAVE_SECRET_KEY),
             FLUTTERWAVE_WEBHOOK_HASH: envStatus(process.env.FLUTTERWAVE_WEBHOOK_HASH || process.env.FLUTTERWAVE_WEBHOOK_SECRET),
-            DOWNLOAD_SECRET: envStatus(process.env.DOWNLOAD_SECRET)
+            DOWNLOAD_SECRET: envStatus(process.env.DOWNLOAD_SECRET),
+            SUPABASE_URL: envStatus(process.env.SUPABASE_URL),
+            SUPABASE_SERVICE_ROLE_KEY: envStatus(process.env.SUPABASE_SERVICE_ROLE_KEY),
+            SUPABASE_ANON_KEY: envStatus(process.env.SUPABASE_ANON_KEY)
         },
+        supabase: { status: 'not_tested' },
         brevo: { status: 'not_tested' },
         routes: {
             lead_capture: '/api/lead-capture (POST)',
@@ -40,6 +44,29 @@ module.exports = async function handler(req, res) {
             flutterwave_webhook: '/api/webhooks/flutterwave (POST)'
         }
     };
+
+    // Test Supabase connectivity
+    if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        try {
+            const { getSupabaseClient } = require('../lib/supabase');
+            const sb = getSupabaseClient();
+            if (sb) {
+                const { count, error } = await sb.from('orders').select('*', { count: 'exact', head: true });
+                if (error) throw error;
+                const { data: files } = await sb.from('product_files').select('product_id', { count: 'exact', head: true });
+                const { data: buckets } = await sb.storage.listBuckets();
+                checks.supabase = {
+                    status: 'connected',
+                    orders: count || 0,
+                    storageBuckets: (buckets || []).map(b => b.name)
+                };
+            }
+        } catch (err) {
+            checks.supabase = { status: 'error', message: err.message };
+        }
+    } else {
+        checks.supabase = { status: 'missing_keys', hint: 'Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY' };
+    }
 
     // Test Brevo connectivity if API key exists
     if (process.env.BREVO_API_KEY) {
