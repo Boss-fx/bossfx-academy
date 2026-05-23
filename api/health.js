@@ -36,12 +36,14 @@ module.exports = async function handler(req, res) {
         routes: {
             lead_capture: '/api/lead-capture (POST)',
             health: '/api/health (GET)',
-            market_data: '/api/market-data (GET — ?type=all|prices|calendar|sentiment|news)',
-            setup_lists: '/api/setup-lists (GET/POST)',
-            setup_automations: '/api/setup-automations (GET/POST)',
-            cron_reengagement: '/api/cron-reengagement (GET — daily cron)',
-            verify_payment: '/api/verify-payment (POST)',
-            flutterwave_webhook: '/api/webhooks/flutterwave (POST)'
+            market_data: '/api/market-data (GET)',
+            verify_payment: '/api/verify-payment (GET)',
+            download: '/api/download (GET)',
+            booking: '/api/booking (POST)',
+            vip_access: '/api/vip-access (GET)',
+            admin: '/api/admin (GET/POST — ?action=stats|resend|token)',
+            flutterwave_webhook: '/api/webhooks/flutterwave (POST)',
+            cron_reengagement: '/api/cron-reengagement (GET — daily cron)'
         }
     };
 

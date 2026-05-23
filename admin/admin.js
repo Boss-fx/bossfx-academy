@@ -98,7 +98,7 @@
     }
 
     function loadStats() {
-        fetch('/api/admin/stats', { headers: authHeaders() })
+        fetch('/api/admin?action=stats', { headers: authHeaders() })
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 setText('statOrders', data.totalOrders || 0);
@@ -187,7 +187,7 @@
     // Actions
     window.admResend = function(orderId) {
         if (!confirm('Resend fulfillment email for this order?')) return;
-        fetch('/api/admin/resend-email', {
+        fetch('/api/admin?action=resend', {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify({ orderId: orderId })
@@ -200,7 +200,7 @@
     };
 
     window.admGenToken = function(orderId) {
-        fetch('/api/admin/generate-token', {
+        fetch('/api/admin?action=token', {
             method: 'POST',
             headers: authHeaders(),
             body: JSON.stringify({ orderId: orderId })
