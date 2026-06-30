@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Founder Command Center | BossFx Academy</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="supabase-url" content="https://kklwvzpwgpcwxjmgikfq.supabase.co">
+    <meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbHd2enB3Z3Bjd3hqbWdpa2ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Mzk3MTYsImV4cCI6MjA5NTExNTcxNn0.cJZkXzogx0TKXg9fht7fP_iH_qjhxbka9nzIRwKumXg">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/founder/founder.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- Login -->
+<div id="fdrLogin" class="fdr-login-wrap">
+    <div class="fdr-login">
+        <h2>BossFx <span>Command Center</span></h2>
+        <p>Founder access only</p>
+        <div class="fdr-login-error" id="fdrLoginError"></div>
+        <form id="fdrLoginForm">
+            <input type="email" id="fdrEmail" placeholder="Email address" required autocomplete="email">
+            <input type="password" id="fdrPassword" placeholder="Password" required autocomplete="current-password">
+            <button type="submit" class="fdr-btn fdr-btn-primary" style="width:100%">Sign In</button>
+        </form>
+    </div>
+</div>
+
+<!-- App Shell -->
+<div id="fdrApp" style="display:none" class="fdr-app">
+    <!-- Mobile overlay -->
+    <div id="fdrOverlay" class="fdr-overlay"></div>
+
+    <!-- Sidebar -->
+    <aside id="fdrSidebar" class="fdr-sidebar">
+        <div class="fdr-sidebar-brand">
+            <h1>BossFx <span>HQ</span></h1>
+        </div>
+        <nav class="fdr-sidebar-nav">
+            <button class="fdr-nav-item active" data-section="overview">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm9 0a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm9 0a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/></svg>
+                Overview
+            </button>
+            <button class="fdr-nav-item" data-section="revenue">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/></svg>
+                Revenue & Sales
+            </button>
+            <button class="fdr-nav-item" data-section="students">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zm8 0a3 3 0 11-6 0 3 3 0 016 0zm-4.07 11c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+                Students
+            </button>
+            <button class="fdr-nav-item" data-section="marketing">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"/></svg>
+                Marketing
+            </button>
+            <div class="fdr-nav-sep"></div>
+            <button class="fdr-nav-item" data-section="operations">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+                Operations
+            </button>
+            <button class="fdr-nav-item" data-section="ai-team">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 7H7v6h6V7z"/><path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"/></svg>
+                AI Team
+            </button>
+            <button class="fdr-nav-item" data-section="decisions">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                Decisions
+            </button>
+            <div class="fdr-nav-sep"></div>
+            <button class="fdr-nav-item" data-section="reports">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/></svg>
+                Reports
+            </button>
+            <button class="fdr-nav-item" data-section="settings">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zm6 0a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zm5 2a1 1 0 112 0v5.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V6z"/></svg>
+                Settings
+            </button>
+        </nav>
+        <div class="fdr-sidebar-footer">
+            <div id="fdrUserEmail" style="margin-bottom:4px;word-break:break-all;"></div>
+            <button onclick="fdrLogout()">Sign Out</button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="fdr-main">
+        <div class="fdr-topbar">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="fdr-hamburger" id="fdrHamburger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <span class="fdr-topbar-title" id="fdrPageTitle">Executive Overview</span>
+            </div>
+            <div class="fdr-topbar-actions">
+                <span class="fdr-topbar-time" id="fdrClock"></span>
+                <button class="fdr-btn fdr-btn-outline fdr-btn-sm" onclick="fdrRefresh()">Refresh</button>
+            </div>
+        </div>
+        <div class="fdr-content">
+
+            <!-- ===== OVERVIEW ===== -->
+            <section id="sec-overview" class="fdr-section active">
+                <div id="overviewMetrics" class="fdr-metrics">
+                    <div class="fdr-metric"><div class="fdr-metric-label">Revenue Today</div><div class="fdr-metric-value green" id="mRevToday">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Revenue This Month</div><div class="fdr-metric-value green" id="mRevMonth">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Orders Today</div><div class="fdr-metric-value" id="mOrdToday">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Total Students</div><div class="fdr-metric-value blue" id="mStudents">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Downloads</div><div class="fdr-metric-value" id="mDownloads">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Bookings</div><div class="fdr-metric-value" id="mBookings">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">EA Addon Rate</div><div class="fdr-metric-value amber" id="mEaRate">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Email Subscribers</div><div class="fdr-metric-value purple" id="mEmailSubs">—</div></div>
+                </div>
+                <div class="fdr-grid-2">
+                    <div class="fdr-card">
+                        <div class="fdr-card-header">
+                            <span class="fdr-card-title">30-Day Revenue Trend</span>
+                        </div>
+                        <div id="overviewTrend" class="fdr-trend"></div>
+                    </div>
+                    <div class="fdr-card">
+                        <div class="fdr-card-header">
+                            <span class="fdr-card-title">Revenue by Product</span>
+                        </div>
+                        <div id="overviewProducts"></div>
+                    </div>
+                </div>
+                <div class="fdr-card">
+                    <div class="fdr-card-header">
+                        <span class="fdr-card-title">Recent Orders</span>
+                        <button class="fdr-btn fdr-btn-outline fdr-btn-sm" onclick="fdrNav('revenue')">View All</button>
+                    </div>
+                    <div class="fdr-table-wrap">
+                        <table class="fdr-table">
+                            <thead><tr><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                            <tbody id="overviewOrders"><tr><td colspan="6" class="fdr-table-empty"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== REVENUE ===== -->
+            <section id="sec-revenue" class="fdr-section">
+                <h2 class="fdr-section-title">Revenue & Sales</h2>
+                <div class="fdr-metrics" id="revenueMetrics">
+                    <div class="fdr-metric"><div class="fdr-metric-label">Today</div><div class="fdr-metric-value green" id="rRevToday">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">This Week</div><div class="fdr-metric-value green" id="rRevWeek">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">This Month</div><div class="fdr-metric-value green" id="rRevMonth">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">This Quarter</div><div class="fdr-metric-value green" id="rRevQuarter">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">All Time</div><div class="fdr-metric-value green" id="rRevAll">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Avg Order Value</div><div class="fdr-metric-value" id="rAOV">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">EA Addon Revenue</div><div class="fdr-metric-value amber" id="rEaRev">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">EA Conv. Rate</div><div class="fdr-metric-value amber" id="rEaConv">—</div></div>
+                </div>
+                <div class="fdr-grid-2">
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">Revenue by Product</span></div>
+                        <div id="revProducts"></div>
+                    </div>
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">30-Day Trend</span></div>
+                        <div id="revTrend" class="fdr-trend"></div>
+                    </div>
+                </div>
+                <div class="fdr-card">
+                    <div class="fdr-card-header"><span class="fdr-card-title">All Orders</span></div>
+                    <div class="fdr-table-wrap">
+                        <table class="fdr-table">
+                            <thead><tr><th>Reference</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                            <tbody id="revOrders"><tr><td colspan="7" class="fdr-table-empty"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== STUDENTS ===== -->
+            <section id="sec-students" class="fdr-section">
+                <h2 class="fdr-section-title">Student Overview</h2>
+                <div class="fdr-metrics" id="studentMetrics">
+                    <div class="fdr-metric"><div class="fdr-metric-label">Total Students</div><div class="fdr-metric-value blue" id="sTotal">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">New This Month</div><div class="fdr-metric-value" id="sMonth">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Total Downloads</div><div class="fdr-metric-value" id="sDl">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Mentorship Bookings</div><div class="fdr-metric-value" id="sBook">—</div></div>
+                </div>
+                <div class="fdr-grid-2">
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">Students by Product</span></div>
+                        <div id="studentsByProduct"></div>
+                    </div>
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">Recent Downloads</span></div>
+                        <div class="fdr-table-wrap">
+                            <table class="fdr-table">
+                                <thead><tr><th>Email</th><th>Product</th><th>Date</th></tr></thead>
+                                <tbody id="studentDownloads"><tr><td colspan="3" class="fdr-table-empty">Loading...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="fdr-card">
+                    <div class="fdr-card-header"><span class="fdr-card-title">Mentorship Bookings</span></div>
+                    <div class="fdr-table-wrap">
+                        <table class="fdr-table">
+                            <thead><tr><th>Name</th><th>Email</th><th>Program</th><th>Status</th><th>Date</th></tr></thead>
+                            <tbody id="studentBookings"><tr><td colspan="5" class="fdr-table-empty">Loading...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== MARKETING ===== -->
+            <section id="sec-marketing" class="fdr-section">
+                <h2 class="fdr-section-title">Marketing Overview</h2>
+                <div class="fdr-metrics">
+                    <div class="fdr-metric"><div class="fdr-metric-label">Email Subscribers</div><div class="fdr-metric-value purple" id="mkSubs">—</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Blog Posts</div><div class="fdr-metric-value" id="mkBlog">11</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Resource Tools</div><div class="fdr-metric-value" id="mkTools">8</div></div>
+                    <div class="fdr-metric"><div class="fdr-metric-label">Lead Capture Points</div><div class="fdr-metric-value" id="mkCapture">6</div></div>
+                </div>
+                <div class="fdr-grid-2">
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">Email Lists (Brevo)</span></div>
+                        <div id="mkLists"></div>
+                    </div>
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">Analytics Dashboards</span></div>
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <a href="https://analytics.google.com" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;">
+                                <span class="fdr-setting-row-label"><strong>Google Analytics 4</strong><small>G-ZFQ9P5KFSJ</small></span>
+                                <span class="fdr-badge fdr-badge-green">Active</span>
+                            </a>
+                            <a href="https://tagmanager.google.com" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;">
+                                <span class="fdr-setting-row-label"><strong>Google Tag Manager</strong><small>GTM-T3R88HZB</small></span>
+                                <span class="fdr-badge fdr-badge-green">Active</span>
+                            </a>
+                            <a href="https://business.facebook.com" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;">
+                                <span class="fdr-setting-row-label"><strong>Meta Pixel</strong><small>804009589230621</small></span>
+                                <span class="fdr-badge fdr-badge-green">Active</span>
+                            </a>
+                            <a href="https://clarity.microsoft.com" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;">
+                                <span class="fdr-setting-row-label"><strong>Microsoft Clarity</strong><small>wnde2od79f</small></span>
+                                <span class="fdr-badge fdr-badge-green">Active</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="fdr-card">
+                    <div class="fdr-card-header"><span class="fdr-card-title">Social Media Channels</span></div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+                        <a href="https://www.instagram.com/bossfx_academy" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>Instagram</span><span class="fdr-badge fdr-badge-green">Active</span></a>
+                        <a href="https://www.tiktok.com/@bossfx1" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>TikTok</span><span class="fdr-badge fdr-badge-green">Active</span></a>
+                        <a href="https://youtube.com/@bossfx-tradingcommunity" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>YouTube</span><span class="fdr-badge fdr-badge-green">Active</span></a>
+                        <a href="https://x.com/teebossx" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>X (Twitter)</span><span class="fdr-badge fdr-badge-green">Active</span></a>
+                        <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>Telegram</span><span class="fdr-badge fdr-badge-green">Active</span></a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== OPERATIONS ===== -->
+            <section id="sec-operations" class="fdr-section">
+                <h2 class="fdr-section-title">Operations & System Health</h2>
+                <div id="opsHealth" class="fdr-health-grid">
+                    <div class="fdr-health-card"><div class="fdr-health-card-name"><span class="fdr-status-dot dim"></span>Loading...</div></div>
+                </div>
+                <div class="fdr-card" style="margin-top:20px;">
+                    <div class="fdr-card-header"><span class="fdr-card-title">Environment Variables</span></div>
+                    <div id="opsEnvVars"></div>
+                </div>
+            </section>
+
+            <!-- ===== AI TEAM ===== -->
+            <section id="sec-ai-team" class="fdr-section">
+                <h2 class="fdr-section-title">AI Team</h2>
+                <p class="fdr-section-subtitle">13 AI roles operating across all business functions</p>
+                <div id="aiTeamGrid" class="fdr-ai-grid"></div>
+            </section>
+
+            <!-- ===== DECISIONS ===== -->
+            <section id="sec-decisions" class="fdr-section">
+                <h2 class="fdr-section-title">Decision Center</h2>
+                <div id="decAlerts" style="margin-bottom:20px;"></div>
+                <div class="fdr-grid-2">
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">Today's Priorities</span></div>
+                        <ul id="decDaily" class="fdr-goals"></ul>
+                        <div class="fdr-goal-add"><input type="text" id="decDailyInput" placeholder="Add priority..."><button class="fdr-btn fdr-btn-primary fdr-btn-sm" onclick="fdrAddGoal('daily')">Add</button></div>
+                    </div>
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">Weekly Goals</span></div>
+                        <ul id="decWeekly" class="fdr-goals"></ul>
+                        <div class="fdr-goal-add"><input type="text" id="decWeeklyInput" placeholder="Add goal..."><button class="fdr-btn fdr-btn-primary fdr-btn-sm" onclick="fdrAddGoal('weekly')">Add</button></div>
+                    </div>
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">Monthly Goals</span></div>
+                        <ul id="decMonthly" class="fdr-goals"></ul>
+                        <div class="fdr-goal-add"><input type="text" id="decMonthlyInput" placeholder="Add goal..."><button class="fdr-btn fdr-btn-primary fdr-btn-sm" onclick="fdrAddGoal('monthly')">Add</button></div>
+                    </div>
+                    <div class="fdr-card">
+                        <div class="fdr-card-header"><span class="fdr-card-title">Quarterly Objectives</span></div>
+                        <ul id="decQuarterly" class="fdr-goals"></ul>
+                        <div class="fdr-goal-add"><input type="text" id="decQuarterlyInput" placeholder="Add objective..."><button class="fdr-btn fdr-btn-primary fdr-btn-sm" onclick="fdrAddGoal('quarterly')">Add</button></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== REPORTS ===== -->
+            <section id="sec-reports" class="fdr-section">
+                <h2 class="fdr-section-title">Reports</h2>
+                <div class="fdr-period-tabs" id="reportPeriodTabs">
+                    <button class="fdr-period-tab active" data-period="today">Today</button>
+                    <button class="fdr-period-tab" data-period="week">This Week</button>
+                    <button class="fdr-period-tab" data-period="month">This Month</button>
+                    <button class="fdr-period-tab" data-period="quarter">This Quarter</button>
+                    <button class="fdr-period-tab" data-period="all">All Time</button>
+                </div>
+                <div id="reportContent" class="fdr-report"></div>
+            </section>
+
+            <!-- ===== SETTINGS ===== -->
+            <section id="sec-settings" class="fdr-section">
+                <h2 class="fdr-section-title">Settings</h2>
+                <div class="fdr-grid-2">
+                    <div>
+                        <div class="fdr-setting-group">
+                            <div class="fdr-setting-group-title">API Connections</div>
+                            <div id="settingsAPIs"></div>
+                        </div>
+                        <div class="fdr-setting-group">
+                            <div class="fdr-setting-group-title">Infrastructure</div>
+                            <div class="fdr-setting-row">
+                                <span class="fdr-setting-row-label"><strong>Vercel Plan</strong><small>Hobby (Free Tier)</small></span>
+                                <span class="fdr-badge fdr-badge-green">Active</span>
+                            </div>
+                            <div class="fdr-setting-row">
+                                <span class="fdr-setting-row-label"><strong>Serverless Functions</strong><small>11 of 12 used</small></span>
+                                <span class="fdr-badge fdr-badge-amber">Near Limit</span>
+                            </div>
+                            <div class="fdr-setting-row">
+                                <span class="fdr-setting-row-label"><strong>Domain</strong><small>www.bossfxcademy.com</small></span>
+                                <span class="fdr-badge fdr-badge-green">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="fdr-setting-group">
+                            <div class="fdr-setting-group-title">Quick Links</div>
+                            <div style="display:flex;flex-direction:column;gap:6px;">
+                                <a href="https://vercel.com" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>Vercel Dashboard</span><span style="color:var(--fdr-dim);">&rarr;</span></a>
+                                <a href="https://supabase.com" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>Supabase Dashboard</span><span style="color:var(--fdr-dim);">&rarr;</span></a>
+                                <a href="https://dashboard.flutterwave.com" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>Flutterwave Dashboard</span><span style="color:var(--fdr-dim);">&rarr;</span></a>
+                                <a href="https://app.brevo.com" target="_blank" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>Brevo Dashboard</span><span style="color:var(--fdr-dim);">&rarr;</span></a>
+                                <a href="/admin/" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>Legacy Admin Dashboard</span><span style="color:var(--fdr-dim);">&rarr;</span></a>
+                            </div>
+                        </div>
+                        <div class="fdr-setting-group">
+                            <div class="fdr-setting-group-title">Documentation</div>
+                            <div style="display:flex;flex-direction:column;gap:6px;">
+                                <div class="fdr-setting-row"><span>CLAUDE.md</span><span class="fdr-badge fdr-badge-green">Current</span></div>
+                                <div class="fdr-setting-row"><span>Business OS</span><span class="fdr-badge fdr-badge-green">40 files</span></div>
+                                <div class="fdr-setting-row"><span>Technical Docs</span><span class="fdr-badge fdr-badge-green">26 files</span></div>
+                                <div class="fdr-setting-row"><span>SOPs</span><span class="fdr-badge fdr-badge-green">9 files</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- Toast -->
+<div id="fdrToast" class="fdr-toast"></div>
+
+<script src="/founder/app.js"></script>
+</body>
+</html>

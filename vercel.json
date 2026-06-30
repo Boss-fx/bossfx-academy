@@ -36,6 +36,14 @@
       ]
     },
     {
+      "source": "/founder/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Cache-Control", "value": "no-store, no-cache" }
+      ]
+    },
+    {
       "source": "/vip/(.*)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" },

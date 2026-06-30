@@ -6,6 +6,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and [Sem
 
 ---
 
+## [3.0.0] — Unreleased (Pending Deploy)
+
+### Added
+- **Founder Command Center** — authenticated CEO dashboard at `/founder/`
+  - 9 modules: Executive Overview, Revenue & Sales, Students, Marketing, Operations, AI Team, Decisions, Reports, Settings
+  - Real-time data from Supabase (orders, downloads, bookings) and Brevo (email subscribers, lists)
+  - 30-day revenue trend visualization
+  - Product breakdown with revenue share percentages
+  - System health monitoring (Supabase, Brevo, Flutterwave, Vercel status)
+  - AI Team overview (13 roles from business/AI_ROLES.md)
+  - Decision Center with localStorage-persisted goals (daily/weekly/monthly/quarterly)
+  - Period-filtered reports (today, week, month, quarter, all-time)
+  - Settings with API connection status and quick links
+  - Full responsive design with collapsible sidebar
+  - Order management with fulfillment email resend
+- Two new admin API actions via consolidated router:
+  - `?action=founder` — comprehensive dashboard data in a single call
+  - `?action=system` — service health checks and environment status
+- Noindex/nofollow headers for `/founder/` path in vercel.json
+- Business Operating System documentation (40 files, 4,609 lines in /business/)
+
 ## [2.1.0] — Unreleased (Pending Deploy)
 
 ### Added
