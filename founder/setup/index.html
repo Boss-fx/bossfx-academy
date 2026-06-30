@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Founder Setup | BossFx Academy</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#060a07;--bg2:#0a0f0c;--card:rgba(255,255,255,0.025);--border:rgba(255,255,255,0.06);--green:#10B981;--green-dim:rgba(16,185,129,0.12);--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);--red:#ef4444;--red-dim:rgba(239,68,68,0.12);--blue:#3b82f6;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;}
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+        .setup{max-width:600px;width:100%;}
+        .setup-header{text-align:center;margin-bottom:32px;}
+        .setup-header h1{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin-bottom:4px;}
+        .setup-header h1 span{color:var(--green);}
+        .setup-header p{color:var(--dim);font-size:0.85rem;}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;}
+        .card-title{font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+        .check-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.84rem;}
+        .check-row:last-child{border:none;}
+        .check-label{color:var(--muted);}
+        .badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:0.68rem;font-weight:600;text-transform:uppercase;}
+        .badge-green{background:var(--green-dim);color:var(--green);}
+        .badge-red{background:var(--red-dim);color:var(--red);}
+        .badge-amber{background:var(--amber-dim);color:var(--amber);}
+        .badge-dim{background:rgba(100,116,139,0.15);color:var(--dim);}
+        .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+        .dot-green{background:var(--green);box-shadow:0 0 6px var(--green);}
+        .dot-red{background:var(--red);box-shadow:0 0 6px var(--red);}
+        .dot-amber{background:var(--amber);box-shadow:0 0 6px var(--amber);}
+        .dot-dim{background:var(--dim);}
+        .form-group{margin-bottom:14px;}
+        .form-group label{display:block;font-size:0.76rem;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+        .form-group input{width:100%;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:0.9rem;font-family:inherit;outline:none;transition:border-color .2s;}
+        .form-group input:focus{border-color:var(--green);}
+        .form-group input:disabled{opacity:0.5;cursor:not-allowed;}
+        .form-group small{display:block;margin-top:4px;font-size:0.72rem;color:var(--dim);}
+        .pw-rules{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:8px;}
+        .pw-rule{font-size:0.72rem;color:var(--dim);display:flex;align-items:center;gap:4px;}
+        .pw-rule.pass{color:var(--green);}
+        .pw-rule::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--dim);flex-shrink:0;}
+        .pw-rule.pass::before{background:var(--green);}
+        .btn{display:block;width:100%;padding:13px;border-radius:10px;font-weight:600;font-size:0.88rem;cursor:pointer;border:none;font-family:inherit;transition:all .15s;}
+        .btn-primary{background:var(--green);color:#fff;}
+        .btn-primary:hover:not(:disabled){background:#059669;}
+        .btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+        .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);margin-top:8px;}
+        .btn-outline:hover{border-color:var(--green);color:var(--green);}
+        .alert{padding:14px 18px;border-radius:10px;font-size:0.84rem;margin-bottom:16px;line-height:1.5;}
+        .alert-error{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2);}
+        .alert-success{background:var(--green-dim);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
+        .alert-warn{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2);}
+        .spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+        .hidden{display:none;}
+        #setupComplete{text-align:center;}
+        #setupComplete h2{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;margin-bottom:8px;color:var(--green);}
+        #setupComplete p{color:var(--muted);margin-bottom:20px;font-size:0.88rem;}
+    </style>
+</head>
+<body>
+<div class="setup">
+    <div class="setup-header">
+        <h1>BossFx <span>Setup</span></h1>
+        <p>Founder Command Center — First-Time Configuration</p>
+    </div>
+
+    <!-- Alert area -->
+    <div id="alertArea"></div>
+
+    <!-- Step 1: System checks -->
+    <div id="step1" class="card">
+        <div class="card-title"><span class="dot dot-dim" id="step1Dot"></span> System Verification</div>
+        <div id="checksLoading" style="text-align:center;padding:20px;color:var(--dim);"><span class="spinner"></span> Running checks...</div>
+        <div id="checksContent" class="hidden">
+            <div class="check-row"><span class="check-label">Supabase URL</span><span id="chkSbUrl"></span></div>
+            <div class="check-row"><span class="check-label">Supabase Service Role Key</span><span id="chkSbKey"></span></div>
+            <div class="check-row"><span class="check-label">Supabase Anon Key</span><span id="chkSbAnon"></span></div>
+            <div class="check-row"><span class="check-label">Supabase Connection</span><span id="chkSbConn"></span></div>
+            <div class="check-row"><span class="check-label">Flutterwave Secret Key</span><span id="chkFlw"></span></div>
+            <div class="check-row"><span class="check-label">Brevo API Key</span><span id="chkBrevo"></span></div>
+            <div class="check-row"><span class="check-label">Download Secret</span><span id="chkDlSecret"></span></div>
+            <div class="check-row"><span class="check-label">Admin Email Whitelist</span><span id="chkAdminEmails"></span></div>
+            <div class="check-row"><span class="check-label">Founder Account</span><span id="chkFounder"></span></div>
+        </div>
+    </div>
+
+    <!-- Step 2: Create account -->
+    <div id="step2" class="card hidden">
+        <div class="card-title"><span class="dot dot-dim" id="step2Dot"></span> Create Founder Account</div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Create the Supabase Auth account that will authenticate into the Founder Command Center and Admin Dashboard.</p>
+        <form id="setupForm">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="setupEmail" required autocomplete="email">
+                <small id="emailHint"></small>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="setupPassword" required autocomplete="new-password" minlength="8">
+                <div class="pw-rules" id="pwRules">
+                    <span class="pw-rule" id="pwLen">8+ characters</span>
+                    <span class="pw-rule" id="pwUpper">Uppercase letter</span>
+                    <span class="pw-rule" id="pwLower">Lowercase letter</span>
+                    <span class="pw-rule" id="pwNum">Number</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="setupPasswordConfirm" required autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn btn-primary" id="setupBtn" disabled>Create Founder Account</button>
+        </form>
+    </div>
+
+    <!-- Setup already complete -->
+    <div id="alreadyComplete" class="card hidden">
+        <div class="card-title"><span class="dot dot-green"></span> Setup Complete</div>
+        <p style="font-size:0.84rem;color:var(--muted);margin-bottom:12px;">A founder account already exists. This setup page is no longer active.</p>
+        <div id="existingInfo"></div>
+        <a href="/founder/" class="btn btn-primary" style="text-decoration:none;text-align:center;display:block;margin-top:16px;">Go to Founder Command Center</a>
+    </div>
+
+    <!-- Success -->
+    <div id="setupComplete" class="hidden">
+        <div class="card">
+            <h2>Account Created</h2>
+            <p>Your founder account is ready. You can now sign in to the Founder Command Center.</p>
+            <a href="/founder/" class="btn btn-primary" style="text-decoration:none;text-align:center;display:block;">Sign In to Command Center</a>
+            <a href="/admin/" class="btn btn-outline" style="text-decoration:none;text-align:center;display:block;">Or go to Admin Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var checkData = null;
+
+    async function runChecks() {
+        try {
+            var resp = await fetch('/api/health?action=check-setup', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+            if (!resp.ok) throw new Error('Health check failed: ' + resp.status);
+            checkData = await resp.json();
+            renderChecks();
+        } catch (err) {
+            showAlert('Failed to connect to the server: ' + err.message + '. Make sure the application is deployed.', 'error');
+            document.getElementById('checksLoading').innerHTML = '<span style="color:var(--red);">Connection failed</span>';
+        }
+    }
+
+    function renderChecks() {
+        document.getElementById('checksLoading').classList.add('hidden');
+        document.getElementById('checksContent').classList.remove('hidden');
+
+        var d = checkData;
+        var ev = d.envVars || {};
+
+        setBadge('chkSbUrl', ev.SUPABASE_URL, 'Set', 'Missing');
+        setBadge('chkSbKey', ev.SUPABASE_SERVICE_ROLE_KEY, 'Set', 'Missing');
+        setBadge('chkSbAnon', ev.SUPABASE_ANON_KEY, 'Set', 'Missing');
+        setBadge('chkSbConn', d.supabase.connected, 'Connected', d.supabase.error || 'Not Connected');
+        setBadge('chkFlw', ev.FLUTTERWAVE_SECRET_KEY, 'Set', 'Missing');
+        setBadge('chkBrevo', ev.BREVO_API_KEY, 'Set', 'Missing');
+        setBadge('chkDlSecret', ev.DOWNLOAD_SECRET, 'Set', 'Not Set', true);
+        setBadge('chkAdminEmails', d.adminEmails.configured, d.adminEmails.count + ' email' + (d.adminEmails.count !== 1 ? 's' : ''), 'Not Configured');
+
+        var allCritical = ev.SUPABASE_URL && ev.SUPABASE_SERVICE_ROLE_KEY && ev.SUPABASE_ANON_KEY && d.supabase.connected;
+
+        if (d.founderExists) {
+            document.getElementById('chkFounder').innerHTML = '<span class="badge badge-green">Exists</span>';
+            document.getElementById('step1Dot').className = 'dot dot-green';
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('alreadyComplete').classList.remove('hidden');
+            if (d.existingAdmins && d.existingAdmins.length) {
+                var info = d.existingAdmins.map(function(a) {
+                    return '<div class="check-row"><span class="check-label">' + esc(a.email) + '</span><span class="badge badge-green">' + (a.confirmed ? 'Confirmed' : 'Pending') + '</span></div>';
+                }).join('');
+                document.getElementById('existingInfo').innerHTML = info;
+            }
+            return;
+        }
+
+        document.getElementById('chkFounder').innerHTML = '<span class="badge badge-amber">Not Created</span>';
+
+        if (!allCritical) {
+            document.getElementById('step1Dot').className = 'dot dot-red';
+            showAlert('Critical environment variables are missing. Set them in Vercel Dashboard → Settings → Environment Variables before continuing.', 'error');
+            return;
+        }
+
+        if (!d.adminEmails.configured) {
+            document.getElementById('step1Dot').className = 'dot dot-amber';
+            showAlert('ADMIN_EMAILS is not set. Add your founder email to ADMIN_EMAILS in Vercel environment variables, then redeploy.', 'warn');
+            return;
+        }
+
+        document.getElementById('step1Dot').className = 'dot dot-green';
+        document.getElementById('step2').classList.remove('hidden');
+        document.getElementById('step2Dot').className = 'dot dot-amber';
+
+        var emailInput = document.getElementById('setupEmail');
+        if (d.adminEmails.count === 1) {
+            var maskedEmail = d.adminEmails.emails[0];
+            document.getElementById('emailHint').textContent = 'Must match the email in your ADMIN_EMAILS whitelist (' + maskedEmail + ')';
+        } else {
+            document.getElementById('emailHint').textContent = 'Must match one of the ' + d.adminEmails.count + ' emails in your ADMIN_EMAILS whitelist';
+        }
+
+        setupPasswordValidation();
+    }
+
+    function setupPasswordValidation() {
+        var pw = document.getElementById('setupPassword');
+        var confirm = document.getElementById('setupPasswordConfirm');
+        var btn = document.getElementById('setupBtn');
+        var email = document.getElementById('setupEmail');
+
+        function validate() {
+            var v = pw.value;
+            var len = v.length >= 8;
+            var upper = /[A-Z]/.test(v);
+            var lower = /[a-z]/.test(v);
+            var num = /[0-9]/.test(v);
+            var match = v === confirm.value && v.length > 0;
+
+            toggleRule('pwLen', len);
+            toggleRule('pwUpper', upper);
+            toggleRule('pwLower', lower);
+            toggleRule('pwNum', num);
+
+            btn.disabled = !(len && upper && lower && num && match && email.value.trim());
+        }
+
+        pw.addEventListener('input', validate);
+        confirm.addEventListener('input', validate);
+        email.addEventListener('input', validate);
+    }
+
+    function toggleRule(id, pass) {
+        var el = document.getElementById(id);
+        if (el) el.className = 'pw-rule' + (pass ? ' pass' : '');
+    }
+
+    document.getElementById('setupForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var email = document.getElementById('setupEmail').value.trim();
+        var password = document.getElementById('setupPassword').value;
+        var confirm = document.getElementById('setupPasswordConfirm').value;
+        var btn = document.getElementById('setupBtn');
+
+        if (password !== confirm) {
+            showAlert('Passwords do not match.', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Creating account...';
+        clearAlert();
+
+        try {
+            var resp = await fetch('/api/health?action=setup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            });
+            var data = await resp.json();
+
+            if (!resp.ok) {
+                throw new Error(data.error || 'Setup failed');
+            }
+
+            document.getElementById('step2Dot').className = 'dot dot-green';
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('setupComplete').classList.remove('hidden');
+            showAlert('Founder account created for ' + data.email + '. You can now sign in.', 'success');
+        } catch (err) {
+            showAlert(err.message, 'error');
+            btn.disabled = false;
+            btn.textContent = 'Create Founder Account';
+        }
+    });
+
+    function setBadge(id, ok, okText, failText, isWarning) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (ok) {
+            el.innerHTML = '<span class="badge badge-green">' + esc(String(okText)) + '</span>';
+        } else {
+            el.innerHTML = '<span class="badge ' + (isWarning ? 'badge-amber' : 'badge-red') + '">' + esc(String(failText)) + '</span>';
+        }
+    }
+
+    function showAlert(msg, type) {
+        document.getElementById('alertArea').innerHTML = '<div class="alert alert-' + type + '">' + esc(msg) + '</div>';
+    }
+
+    function clearAlert() {
+        document.getElementById('alertArea').innerHTML = '';
+    }
+
+    function esc(str) {
+        var d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    runChecks();
+})();
+</script>
+</body>
+</html>

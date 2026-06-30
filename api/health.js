@@ -1,17 +1,25 @@
 // ================================================================
-// /api/health — Diagnostic Health Check
+// /api/health — Diagnostic Health Check + First-Run Setup
 // ================================================================
-// Tests Brevo API connectivity, env var presence, and reports
-// runtime environment details for debugging deployment issues.
+// GET: Tests Brevo/Supabase connectivity, env var presence
+// POST ?action=setup: One-time founder account creation (self-disabling)
+// POST ?action=check-setup: Check if setup is needed
 // ================================================================
 
 const brevo = require('@getbrevo/brevo');
 
 module.exports = async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') return res.status(200).end();
+
+    if (req.method === 'POST') {
+        var action = req.query.action || '';
+        if (action === 'setup') return handleSetup(req, res);
+        if (action === 'check-setup') return handleCheckSetup(req, res);
+        return res.status(400).json({ error: 'Unknown POST action' });
+    }
 
     const checks = {
         timestamp: new Date().toISOString(),
@@ -119,6 +127,137 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json(checks);
 };
+
+// ================================================================
+// Setup handlers — one-time founder account provisioning
+// ================================================================
+
+async function handleCheckSetup(req, res) {
+    var url = process.env.SUPABASE_URL;
+    var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    var anonKey = process.env.SUPABASE_ANON_KEY;
+    var adminEmails = (process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || '').split(',').map(function (e) { return e.trim().toLowerCase(); }).filter(Boolean);
+
+    var result = {
+        supabase: { url: !!url, serviceKey: !!serviceKey, anonKey: !!anonKey, connected: false },
+        adminEmails: { configured: adminEmails.length > 0, count: adminEmails.length, emails: adminEmails.map(function (e) { return e.charAt(0) + '***@' + e.split('@')[1]; }) },
+        founderExists: false,
+        setupComplete: false,
+        envVars: {
+            SUPABASE_URL: !!url,
+            SUPABASE_SERVICE_ROLE_KEY: !!serviceKey,
+            SUPABASE_ANON_KEY: !!anonKey,
+            FLUTTERWAVE_SECRET_KEY: !!process.env.FLUTTERWAVE_SECRET_KEY,
+            BREVO_API_KEY: !!process.env.BREVO_API_KEY,
+            DOWNLOAD_SECRET: !!process.env.DOWNLOAD_SECRET,
+            ADMIN_EMAILS: !!(process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL)
+        }
+    };
+
+    if (!url || !serviceKey) {
+        return res.status(200).json(result);
+    }
+
+    try {
+        var { createClient } = require('@supabase/supabase-js');
+        var sb = createClient(url, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } });
+
+        var { count, error } = await sb.from('orders').select('*', { count: 'exact', head: true });
+        if (error) throw error;
+        result.supabase.connected = true;
+        result.supabase.orderCount = count || 0;
+
+        if (adminEmails.length > 0) {
+            var { data: usersData, error: usersErr } = await sb.auth.admin.listUsers({ perPage: 100 });
+            if (usersErr) throw usersErr;
+
+            var existingAdmins = (usersData.users || []).filter(function (u) {
+                return adminEmails.includes((u.email || '').toLowerCase());
+            });
+
+            result.founderExists = existingAdmins.length > 0;
+            result.setupComplete = existingAdmins.length > 0;
+            if (existingAdmins.length > 0) {
+                result.existingAdmins = existingAdmins.map(function (u) {
+                    return { email: u.email, confirmed: !!u.email_confirmed_at, createdAt: u.created_at };
+                });
+            }
+        }
+    } catch (err) {
+        result.supabase.error = err.message;
+    }
+
+    return res.status(200).json(result);
+}
+
+async function handleSetup(req, res) {
+    var { email, password } = req.body || {};
+
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    if (typeof password !== 'string' || password.length < 8) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+
+    email = email.trim().toLowerCase();
+
+    var adminEmails = (process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || '').split(',').map(function (e) { return e.trim().toLowerCase(); }).filter(Boolean);
+
+    if (adminEmails.length === 0) {
+        return res.status(400).json({ error: 'ADMIN_EMAILS environment variable is not configured. Set it in Vercel before running setup.' });
+    }
+
+    if (!adminEmails.includes(email)) {
+        return res.status(403).json({ error: 'This email is not in the ADMIN_EMAILS whitelist. Only whitelisted emails can be provisioned.' });
+    }
+
+    var url = process.env.SUPABASE_URL;
+    var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !serviceKey) {
+        return res.status(500).json({ error: 'SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set' });
+    }
+
+    try {
+        var { createClient } = require('@supabase/supabase-js');
+        var sb = createClient(url, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } });
+
+        var { data: usersData, error: listErr } = await sb.auth.admin.listUsers({ perPage: 100 });
+        if (listErr) throw listErr;
+
+        var existingAdmin = (usersData.users || []).find(function (u) {
+            return adminEmails.includes((u.email || '').toLowerCase());
+        });
+
+        if (existingAdmin) {
+            return res.status(409).json({
+                error: 'Setup already completed. A founder account already exists.',
+                email: existingAdmin.email,
+                createdAt: existingAdmin.created_at
+            });
+        }
+
+        var { data: newUser, error: createErr } = await sb.auth.admin.createUser({
+            email: email,
+            password: password,
+            email_confirm: true
+        });
+
+        if (createErr) throw createErr;
+
+        return res.status(201).json({
+            success: true,
+            message: 'Founder account created successfully',
+            email: newUser.user.email,
+            id: newUser.user.id,
+            createdAt: newUser.user.created_at
+        });
+    } catch (err) {
+        console.error('[Setup] Error:', err.message);
+        return res.status(500).json({ error: 'Failed to create account: ' + err.message });
+    }
+}
 
 function envStatus(value) {
     if (!value) return { set: false, value: 'NOT_SET' };
