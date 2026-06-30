@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const { verifyAccessToken, getProductFiles, getSignedDownloadUrl, recordDownload } = require('../lib/files');
+const { getOrderByFlwId } = require('../lib/orders');
 const { applyRateLimit } = require('../lib/rate-limit');
 
 module.exports = async function handler(req, res) {
@@ -36,6 +37,19 @@ module.exports = async function handler(req, res) {
     const productId = payload.product;
     const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '';
     const ua = req.headers['user-agent'] || '';
+
+    // EA entitlement check: token must explicitly grant EA access
+    // Tokens for ea-bundle product are only generated when:
+    // 1. Standalone ea-bundle purchase (product.type === 'ea')
+    // 2. EA addon was purchased with another product (separate ea-bundle token)
+    // 3. VIP purchases (which include everything)
+    // This prevents accessing EA files with a course-only token
+    if (productId === 'ea-bundle' && payload.type !== 'ea' && payload.type !== 'vip') {
+        return res.status(403).json({
+            error: 'EA access not included',
+            message: 'Your purchase does not include the SMA Pro Trend EA. Purchase it separately or add it to your next order.'
+        });
+    }
 
     try {
         const files = await getProductFiles(productId);

@@ -106,6 +106,29 @@ module.exports = async function handler(req, res) {
             }
         }
 
+        // Detect EA addon from Flutterwave meta
+        const meta = paymentData?.meta || {};
+        const hasEaAddon = meta.ea_bundle === 'yes' || meta.has_ea_addon === true;
+
+        // Generate EA download token + fetch EA files if addon purchased
+        let eaDownloadToken = null;
+        let eaFiles = [];
+        if (hasEaAddon && productId !== 'ea-bundle') {
+            try {
+                eaDownloadToken = generateAccessToken(customerEmail, 'ea-bundle', 'ea', null);
+                const eaFileData = await getProductFiles('ea-bundle');
+                eaFiles = eaFileData.map(f => ({
+                    id: f.id,
+                    name: f.file_name,
+                    type: f.file_type,
+                    size: f.file_size,
+                    key: f.file_key
+                }));
+            } catch (err) {
+                console.warn('[Verify] EA addon file fetch failed:', err.message);
+            }
+        }
+
         const bookingRequired = product && product.type === 'mentorship';
 
         return res.status(200).json({
@@ -121,6 +144,9 @@ module.exports = async function handler(req, res) {
             legacyToken,
             productFiles,
             bookingRequired,
+            hasEaAddon,
+            eaDownloadToken,
+            eaFiles,
             product: product ? {
                 id: productId,
                 name: product.name,

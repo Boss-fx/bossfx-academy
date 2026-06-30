@@ -457,7 +457,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         /* -- Product-conditional visibility (set by JS) -- */
-        .sp-show-mentorship, .sp-show-course, .sp-show-vip, .sp-show-ea, .sp-show-download { display: none; }
+        .sp-show-mentorship, .sp-show-course, .sp-show-vip, .sp-show-ea, .sp-show-download, .sp-show-ea-addon { display: none; }
         [data-product-type="mentorship"] .sp-show-mentorship,
         [data-product-type="course"] .sp-show-course,
         [data-product-type="course"] .sp-show-download,
@@ -467,6 +467,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         [data-product-type="ea"] .sp-show-download { display: block; }
         [data-product-type="mentorship"] .sp-hide-mentorship,
         [data-product-type="vip"] .sp-hide-vip { display: none; }
+        /* EA addon sections shown via JS when hasEaAddon is true */
+        [data-has-ea-addon="true"] .sp-show-ea-addon { display: block; }
+        /* Also show download card for mentorship when EA addon is included */
+        [data-has-ea-addon="true"][data-product-type="mentorship"] .sp-show-download { display: block; }
+
+        /* EA addon card styling */
+        .sp-ea-addon-card {
+            background: linear-gradient(135deg, rgba(245,158,11,0.06) 0%, rgba(245,158,11,0.02) 100%);
+            border: 1px solid rgba(245,158,11,0.18);
+            border-radius: 16px;
+            padding: 28px;
+            margin-top: 16px;
+        }
+        .sp-ea-addon-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #f59e0b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .sp-ea-addon-card h4 { color: #fff; margin: 0 0 8px; font-size: 1.05rem; }
+        .sp-ea-addon-card > p { color: #94a3b8; font-size: 0.85rem; margin: 0 0 16px; line-height: 1.5; }
+        .sp-ea-addon-files { display: flex; flex-direction: column; gap: 10px; }
 
         /* Download Card */
         .sp-download-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 28px; margin-top: 24px; }
@@ -670,6 +697,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="sp-install-step">
                         <div class="sp-install-num">4</div>
                         <div class="sp-install-text">Drag it onto your chart, enable <code>AutoTrading</code>, and configure your risk settings</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EA Addon Card (shown when EA purchased with another product) -->
+            <div class="sp-ea-addon-card sp-show-ea-addon" id="spEaAddonCard">
+                <div class="sp-ea-addon-badge">Bonus Included</div>
+                <h4>SMA Pro Trend EA</h4>
+                <p>Your order includes the SMA Pro Trend EA automated trading system for MetaTrader 5. Download your files below.</p>
+                <div class="sp-ea-addon-files" id="spEaAddonFiles">
+                    <p style="color:#64748b;font-size:0.88rem"><span class="sp-loading-spinner"></span>Loading EA files...</p>
+                </div>
+                <div class="sp-install-guide" style="margin-top:16px;background:rgba(245,158,11,0.04);border-color:rgba(245,158,11,0.12);">
+                    <h4 style="font-size:0.95rem;">MT5 Quick Setup</h4>
+                    <div class="sp-install-steps">
+                        <div class="sp-install-step">
+                            <div class="sp-install-num" style="background:rgba(245,158,11,0.15);color:#f59e0b;">1</div>
+                            <div class="sp-install-text">Open MetaTrader 5 → <code>File → Open Data Folder</code></div>
+                        </div>
+                        <div class="sp-install-step">
+                            <div class="sp-install-num" style="background:rgba(245,158,11,0.15);color:#f59e0b;">2</div>
+                            <div class="sp-install-text">Copy the EA file (.ex5) into <code>MQL5/Experts</code></div>
+                        </div>
+                        <div class="sp-install-step">
+                            <div class="sp-install-num" style="background:rgba(245,158,11,0.15);color:#f59e0b;">3</div>
+                            <div class="sp-install-text">Restart MT5, drag the EA onto your chart, and enable <code>AutoTrading</code></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -899,6 +953,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         var ref = params.get('ref') || params.get('tx_ref');
         var tid = params.get('tid') || params.get('transaction_id');
         var status = params.get('status');
+        var eaParam = params.get('ea');
 
         var productNames = {
             'forex-101': "Forex 101: The Trader's Bible",
@@ -927,7 +982,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         // Show basic info immediately from URL params
         if (product && prodEl) {
-            prodEl.textContent = productNames[product] || product;
+            var displayName = productNames[product] || product;
+            if (eaParam === '1' && product !== 'ea-bundle') {
+                displayName += ' + SMA Pro EA';
+            }
+            prodEl.textContent = displayName;
+        }
+
+        // Pre-set EA addon flag from URL param (verified later by backend)
+        if (eaParam === '1' && pageEl && product !== 'ea-bundle') {
+            pageEl.setAttribute('data-has-ea-addon', 'true');
         }
         if (ref && refEl) {
             refEl.textContent = 'Ref: ' + ref + (tid ? ' | Txn: ' + tid : '');
@@ -1030,7 +1094,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             }
                         }
 
-                        console.log('[Payment] Verified:', data.product.name);
+                        // Handle EA addon
+                        if (data.hasEaAddon && data.product.type !== 'ea') {
+                            if (pageEl) pageEl.setAttribute('data-has-ea-addon', 'true');
+                            renderEaAddon(data);
+                            // Update product label to show addon
+                            if (prodEl) {
+                                prodEl.textContent = data.product.name + ' + SMA Pro EA';
+                            }
+                        }
+
+                        console.log('[Payment] Verified:', data.product.name, data.hasEaAddon ? '(+EA addon)' : '');
                     }
                 })
                 .catch(function(err) {
@@ -1064,6 +1138,51 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         '<div class="sp-file-meta">' + escapeHtml(f.type || '').toUpperCase() + (sizeStr ? ' &middot; ' + sizeStr : '') + '</div></div>' +
                     '</div>' +
                     '<a href="' + downloadUrl + '" class="sp-file-download" target="_blank" rel="noopener">' +
+                        '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
+                        'Download</a>' +
+                    '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function renderEaAddon(data) {
+            var container = document.getElementById('spEaAddonFiles');
+            if (!container) return;
+
+            var eaFiles = data.eaFiles || [];
+            var eaToken = data.eaDownloadToken;
+
+            if (eaFiles.length === 0 && eaToken) {
+                // No files in storage, show MQL5 link as fallback
+                container.innerHTML =
+                    '<div class="sp-file-item" style="border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.06)">' +
+                        '<div class="sp-file-info">' +
+                            '<div class="sp-file-icon" style="background:rgba(245,158,11,0.15)"><svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" stroke="#f59e0b" fill="none" stroke-width="2"></path><polyline points="13 2 13 9 20 9" stroke="#f59e0b" fill="none" stroke-width="2"></polyline></svg></div>' +
+                            '<div><div class="sp-file-name">SMA Pro Trend EA</div>' +
+                            '<div class="sp-file-meta">EX5 &middot; MetaTrader 5</div></div>' +
+                        '</div>' +
+                        '<a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="sp-file-download" style="background:#f59e0b;color:#0f172a">' +
+                            'Download from MQL5</a>' +
+                    '</div>';
+                return;
+            }
+
+            if (eaFiles.length === 0 && !eaToken) {
+                container.innerHTML = '<p style="color:#94a3b8;font-size:0.85rem">EA files will be delivered via email. You can also download from <a href="https://www.mql5.com/en/market/product/174970" style="color:#f59e0b" target="_blank">MQL5 Market</a>.</p>';
+                return;
+            }
+
+            var html = '';
+            eaFiles.forEach(function(f) {
+                var sizeStr = f.size ? (f.size > 1048576 ? (f.size / 1048576).toFixed(1) + ' MB' : (f.size / 1024).toFixed(0) + ' KB') : '';
+                var downloadUrl = '/api/download?token=' + encodeURIComponent(eaToken) + '&file=' + encodeURIComponent(f.key || f.id);
+                html += '<div class="sp-file-item" style="border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.06)">' +
+                    '<div class="sp-file-info">' +
+                        '<div class="sp-file-icon" style="background:rgba(245,158,11,0.15)"><svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" stroke="#f59e0b" fill="none" stroke-width="2"></path><polyline points="13 2 13 9 20 9" stroke="#f59e0b" fill="none" stroke-width="2"></polyline></svg></div>' +
+                        '<div><div class="sp-file-name">' + escapeHtml(f.name) + '</div>' +
+                        '<div class="sp-file-meta">' + escapeHtml(f.type || '').toUpperCase() + (sizeStr ? ' &middot; ' + sizeStr : '') + '</div></div>' +
+                    '</div>' +
+                    '<a href="' + downloadUrl + '" class="sp-file-download" style="background:#f59e0b;color:#0f172a" target="_blank" rel="noopener">' +
                         '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
                         'Download</a>' +
                     '</div>';

@@ -669,10 +669,14 @@ if (payModalForm) {
                     var successPage = currentPayment.product === 'forex-101'
                         ? 'forex101-access.html'
                         : 'payment-success.html';
-                    window.location.href = successPage + '?product=' +
+                    var successUrl = successPage + '?product=' +
                         encodeURIComponent(currentPayment.product) +
                         '&ref=' + response.tx_ref +
                         '&tid=' + response.transaction_id;
+                    if (includesEA) {
+                        successUrl += '&ea=1';
+                    }
+                    window.location.href = successUrl;
                 },
                 onclose: function(incomplete) {
                     if (submitBtn) {

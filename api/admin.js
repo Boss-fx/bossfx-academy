@@ -37,7 +37,7 @@ async function handleStats(req, res) {
 
     try {
         const [ordersRes, downloadsRes, bookingsRes, recentRes] = await Promise.all([
-            sb.from('orders').select('product_id, amount, currency, status, fulfilled, created_at'),
+            sb.from('orders').select('product_id, amount, currency, status, fulfilled, created_at, meta'),
             sb.from('downloads').select('id', { count: 'exact', head: true }),
             sb.from('mentorship_bookings').select('id, status', { count: 'exact' }),
             sb.from('orders').select('*').order('created_at', { ascending: false }).limit(10)
@@ -46,11 +46,20 @@ async function handleStats(req, res) {
         const orders = ordersRes.data || [];
         const totalRevenue = orders.reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
         const productBreakdown = {};
+        let eaAddonCount = 0;
+        let eaAddonRevenue = 0;
         orders.forEach(function(o) {
             var pid = o.product_id || 'unknown';
             if (!productBreakdown[pid]) productBreakdown[pid] = { count: 0, revenue: 0 };
             productBreakdown[pid].count++;
             productBreakdown[pid].revenue += parseFloat(o.amount) || 0;
+
+            // Track EA addon stats from JSONB meta
+            var meta = o.meta || {};
+            if (meta.has_ea_addon === true || meta.ea_bundle === 'yes') {
+                eaAddonCount++;
+                eaAddonRevenue += meta.ea_addon_price || 15000;
+            }
         });
 
         return res.status(200).json({
@@ -58,6 +67,11 @@ async function handleStats(req, res) {
             totalRevenue,
             totalDownloads: downloadsRes.count || 0,
             totalBookings: bookingsRes.count || 0,
+            eaAddonStats: {
+                count: eaAddonCount,
+                revenue: eaAddonRevenue,
+                conversionRate: orders.length > 0 ? Math.round((eaAddonCount / orders.length) * 100) : 0
+            },
             productBreakdown,
             recentOrders: (recentRes.data || []).map(o => ({
                 id: o.id,
@@ -69,6 +83,7 @@ async function handleStats(req, res) {
                 customerName: o.customer_name,
                 status: o.status,
                 fulfilled: o.fulfilled,
+                hasEaAddon: !!(o.meta && (o.meta.has_ea_addon || o.meta.ea_bundle === 'yes')),
                 createdAt: o.created_at
             }))
         });
@@ -100,6 +115,7 @@ async function handleResend(req, res) {
             tx_ref: order.tx_ref,
             amount: order.amount,
             currency: order.currency,
+            meta: order.meta || {},
             customer: {
                 email: order.customer_email,
                 name: order.customer_name,

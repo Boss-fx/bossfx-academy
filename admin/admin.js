@@ -105,6 +105,12 @@
                 setText('statRevenue', formatCurrency(data.totalRevenue || 0));
                 setText('statDownloads', data.totalDownloads || 0);
                 setText('statBookings', data.totalBookings || 0);
+
+                // EA addon stats
+                var ea = data.eaAddonStats || {};
+                setText('statEaAddons', ea.count || 0);
+                setText('statEaRevenue', formatCurrency(ea.revenue || 0));
+                setText('statEaRate', (ea.conversionRate || 0) + '%');
             })
             .catch(function() {});
     }
@@ -121,10 +127,14 @@
                     return;
                 }
                 tbody.innerHTML = orders.map(function(o) {
+                    var meta = o.meta || {};
+                    var eaTag = (meta.has_ea_addon || meta.ea_bundle === 'yes')
+                        ? ' <span class="adm-badge adm-badge-warning" style="font-size:0.65rem;padding:1px 6px;">+EA</span>'
+                        : '';
                     return '<tr>' +
                         '<td>' + esc(o.tx_ref || '-') + '</td>' +
                         '<td>' + esc(o.customer_email || '-') + '</td>' +
-                        '<td>' + esc(o.product_id || '-') + '</td>' +
+                        '<td>' + esc(o.product_id || '-') + eaTag + '</td>' +
                         '<td>' + formatCurrency(o.amount) + '</td>' +
                         '<td>' + badge(o.status) + '</td>' +
                         '<td>' + formatDate(o.created_at) + '</td>' +
