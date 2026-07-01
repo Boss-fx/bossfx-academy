@@ -767,40 +767,125 @@
     function renderSales() {
         var d = OS.store.get('dashData');
         var s = OS.store.get('sysData');
-        var html = BFX.sectionHeader('Sales', 'Revenue, orders, and product performance');
+        var html = BFX.sectionHeader('Sales', 'Revenue, orders, and product performance',
+            '<a href="https://dashboard.flutterwave.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Flutterwave &rarr;</a>');
 
+        // Quick Actions
+        html += '<div class="fdr-quick-actions">';
+        html += BFX.quickAction('💳', 'Flutterwave', "window.open('https://dashboard.flutterwave.com','_blank')");
+        html += BFX.quickAction('🔄', 'Refresh', 'fdrRefresh()');
+        html += BFX.quickAction('📊', 'CEO View', "fdrNav('ceo')");
+        html += BFX.quickAction('👥', 'Students', "fdrNav('students')");
+        html += '</div>';
+
+        // Revenue metrics
         html += BFX.metricGrid([
             ['Today', BFX.naira(d.revenue.today), 'green'],
             ['This Week', BFX.naira(d.revenue.thisWeek), 'green'],
             ['This Month', BFX.naira(d.revenue.thisMonth), 'green'],
             ['This Quarter', BFX.naira(d.revenue.thisQuarter), 'green'],
             ['All Time', BFX.naira(d.revenue.allTime), 'green'],
-            ['Avg Order Value', BFX.naira(d.metrics.aov)],
+            ['Avg Order Value', BFX.naira(d.metrics.aov), 'blue'],
             ['EA Addon Revenue', BFX.naira(d.eaAddon.revenue), 'amber'],
             ['EA Conv. Rate', BFX.pct(d.eaAddon.rate), 'amber']
         ]);
 
+        // Charts
         html += '<div class="fdr-grid-2">';
+        html += BFX.card('30-Day Revenue Trend', BFX.trendChart(d.revenue.trend));
         html += BFX.card('Revenue by Product', BFX.productBreakdown(d.products));
-        html += BFX.card('30-Day Trend', BFX.trendChart(d.revenue.trend));
         html += '</div>';
 
-        var fwStatus = s.flutterwave || {};
-        html += BFX.card('Flutterwave Payment Gateway',
-            '<div class="fdr-grid-3">' +
-            BFX.settingRow('Gateway Status', null, BFX.statusBadge(fwStatus.status === 'configured' ? 'configured' : 'error')) +
-            BFX.settingRow('Webhook Hash', null, BFX.badge(fwStatus.webhookHash ? 'Verified' : 'Missing', fwStatus.webhookHash ? 'green' : 'red')) +
-            BFX.settingRow('Currency', null, BFX.badge('NGN', 'blue')) +
-            '</div>',
-            null, '<a href="https://dashboard.flutterwave.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Flutterwave Dashboard &rarr;</a>');
+        // Product Performance Cards
+        var productKeys = Object.keys(d.products || {});
+        if (productKeys.length) {
+            var totalRev = productKeys.reduce(function (s, k) { return s + d.products[k].revenue; }, 0);
+            var totalOrders = productKeys.reduce(function (s, k) { return s + d.products[k].count; }, 0);
+            productKeys.sort(function (a, b) { return d.products[b].revenue - d.products[a].revenue; });
 
+            html += BFX.card('Product Performance', '<div class="fdr-grid-2">' +
+                productKeys.map(function (k) {
+                    var p = d.products[k];
+                    var pctRev = totalRev > 0 ? Math.round((p.revenue / totalRev) * 100) : 0;
+                    var pctOrd = totalOrders > 0 ? Math.round((p.count / totalOrders) * 100) : 0;
+                    return '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;">' +
+                        '<div style="font-weight:600;font-size:0.84rem;margin-bottom:10px;">' + BFX.productName(k) + '</div>' +
+                        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">' +
+                            '<div><div style="font-size:0.65rem;color:var(--fdr-dim);text-transform:uppercase;">Revenue</div><div style="font-family:Space Grotesk;font-weight:700;color:var(--fdr-green);">' + BFX.naira(p.revenue) + '</div></div>' +
+                            '<div><div style="font-size:0.65rem;color:var(--fdr-dim);text-transform:uppercase;">Orders</div><div style="font-family:Space Grotesk;font-weight:700;">' + BFX.num(p.count) + '</div></div>' +
+                        '</div>' +
+                        '<div style="display:flex;gap:8px;">' + BFX.badge(pctRev + '% of revenue', 'green') + BFX.badge(pctOrd + '% of orders', 'dim') + '</div>' +
+                    '</div>';
+                }).join('') + '</div>');
+        }
+
+        // EA Addon Performance
+        html += BFX.card('EA Addon Upsell Performance',
+            '<div class="fdr-grid-3">' +
+                '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">EA Addons Sold</div>' +
+                    '<div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-amber);">' + BFX.num(d.eaAddon.count) + '</div></div>' +
+                '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">EA Revenue</div>' +
+                    '<div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-amber);">' + BFX.naira(d.eaAddon.revenue) + '</div></div>' +
+                '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">Conversion Rate</div>' +
+                    '<div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-amber);">' + BFX.pct(d.eaAddon.rate) + '</div></div>' +
+            '</div>' +
+            '<div style="margin-top:12px;font-size:0.78rem;color:var(--fdr-dim);line-height:1.5;">The SMA Pro Trend EA (₦15,000) is offered as an add-on during checkout for any product. ' +
+            d.eaAddon.count + ' of ' + BFX.num(d.orders.allTime) + ' customers added it to their order.</div>');
+
+        // Fulfillment Status
+        var fulfilled = (d.recentOrders || []).filter(function (o) { return o.fulfilled; }).length;
+        var pending = (d.recentOrders || []).length - fulfilled;
+        html += '<div class="fdr-grid-2">';
+        html += BFX.card('Order Fulfillment', '<div style="display:flex;gap:16px;margin-bottom:12px;">' +
+            '<div style="flex:1;padding:14px;background:var(--fdr-green-dim);border-radius:10px;text-align:center;">' +
+                '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;color:var(--fdr-green);">' + fulfilled + '</div>' +
+                '<div style="font-size:0.72rem;color:var(--fdr-green);">Fulfilled</div></div>' +
+            '<div style="flex:1;padding:14px;background:' + (pending > 0 ? 'var(--fdr-amber-dim)' : 'var(--fdr-card)') + ';border-radius:10px;text-align:center;">' +
+                '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;color:' + (pending > 0 ? 'var(--fdr-amber)' : 'var(--fdr-dim)') + ';">' + pending + '</div>' +
+                '<div style="font-size:0.72rem;color:' + (pending > 0 ? 'var(--fdr-amber)' : 'var(--fdr-dim)') + ';">Pending</div></div>' +
+            '</div>' +
+            (pending > 0 ? BFX.alert('warn', pending + ' order' + (pending !== 1 ? 's' : '') + ' awaiting fulfillment. Check the orders table below.') : ''));
+
+        // Flutterwave Gateway Status
+        var fwStatus = s.flutterwave || {};
+        html += BFX.card('Payment Gateway',
+            BFX.settingRow('Gateway', 'Flutterwave', BFX.statusBadge(fwStatus.status === 'configured' ? 'configured' : 'error')) +
+            BFX.settingRow('Webhook', 'Signature verification', BFX.badge(fwStatus.webhookHash ? 'Verified' : 'Missing', fwStatus.webhookHash ? 'green' : 'red')) +
+            BFX.settingRow('Currency', 'Nigerian Naira', BFX.badge('NGN', 'blue')) +
+            BFX.settingRow('Flow', 'Inline checkout → webhook → fulfillment', BFX.badge('Automated', 'green')));
+        html += '</div>';
+
+        // Period Report Tabs
         html += '<div id="salesReportArea">';
         html += BFX.tabs([
             { id: 'today', label: 'Today' }, { id: 'week', label: 'This Week' }, { id: 'month', label: 'This Month' }, { id: 'quarter', label: 'Quarter' }, { id: 'all', label: 'All Time' }
         ], 'today', 'fdrSalesReport');
         html += '</div>';
 
-        html += BFX.card('All Orders', BFX.ordersTable(d.recentOrders, true));
+        // Top Customers
+        var customers = {};
+        (d.recentOrders || []).forEach(function (o) {
+            var key = o.customerEmail || o.customerName || 'Unknown';
+            if (!customers[key]) customers[key] = { name: o.customerName || o.customerEmail || '—', email: o.customerEmail || '', count: 0, total: 0 };
+            customers[key].count++;
+            customers[key].total += Number(o.amount || 0);
+        });
+        var topCustomers = Object.keys(customers).map(function (k) { return customers[k]; })
+            .sort(function (a, b) { return b.total - a.total; }).slice(0, 5);
+
+        if (topCustomers.length) {
+            var custRows = topCustomers.map(function (c) {
+                return [BFX.esc(c.name), BFX.esc(c.email), BFX.num(c.count), BFX.naira(c.total)];
+            });
+            html += BFX.card('Top Customers (Recent)', BFX.table(['Name', 'Email', 'Orders', 'Total Spent'], custRows));
+        }
+
+        // All Orders
+        html += BFX.card('All Orders', BFX.ordersTable(d.recentOrders, true), null,
+            '<span style="font-size:0.72rem;color:var(--fdr-dim);">Last 20 orders</span>');
 
         document.getElementById('sec-sales').innerHTML = html;
         fdrSalesReport('today');
@@ -809,7 +894,7 @@
     window.fdrSalesReport = function (period) {
         var d = OS.store.get('dashData');
         var revMap = { today: d.revenue.today, week: d.revenue.thisWeek, month: d.revenue.thisMonth, quarter: d.revenue.thisQuarter, all: d.revenue.allTime };
-        var ordMap = { today: d.orders.today, week: d.orders.thisWeek, month: d.orders.thisMonth, quarter: d.orders.allTime, all: d.orders.allTime };
+        var ordMap = { today: d.orders.today, week: d.orders.thisWeek, month: d.orders.thisMonth, quarter: d.orders.thisMonth, all: d.orders.allTime };
         var rev = revMap[period] || 0;
         var ord = ordMap[period] || 0;
 
