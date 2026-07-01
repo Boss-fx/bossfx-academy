@@ -25,7 +25,7 @@
         <form id="fdrLoginForm">
             <input type="email" id="fdrEmail" placeholder="Email address" required autocomplete="email">
             <input type="password" id="fdrPassword" placeholder="Password" required autocomplete="current-password">
-            <button type="submit" class="fdr-btn fdr-btn-primary" style="width:100%">Sign In</button>
+            <button type="submit" id="fdrLoginBtn" class="fdr-btn fdr-btn-primary" style="width:100%">Sign In</button>
         </form>
     </div>
 </div>
@@ -155,7 +155,8 @@
                     <span class="fdr-search-kbd">&#8984;K</span>
                 </div>
                 <button class="fdr-theme-btn" id="themeBtn" onclick="fdrToggleTheme()" title="Toggle theme">
-                    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                    <svg id="themeIconMoon" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                    <svg id="themeIconSun" viewBox="0 0 20 20" fill="currentColor" style="display:none"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg>
                 </button>
                 <button class="fdr-notif-btn" id="activityBtn" onclick="fdrToggleActivity()" title="Activity">
                     <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
@@ -180,6 +181,22 @@
             <section id="sec-operations" class="fdr-section"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></section>
             <section id="sec-settings" class="fdr-section"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></section>
         </div>
+        <footer class="fdr-footer">
+            <div class="fdr-footer-left">
+                <span class="fdr-footer-status" id="fdrFooterStatus">
+                    <span class="fdr-status-dot green"></span> Systems Operational
+                </span>
+                <span class="fdr-footer-sep">&middot;</span>
+                <span id="fdrFooterRole">Founder</span>
+                <span class="fdr-footer-sep">&middot;</span>
+                <span id="fdrFooterUptime"></span>
+            </div>
+            <div class="fdr-footer-right">
+                <span>BossFx OS v3.2</span>
+                <span class="fdr-footer-sep">&middot;</span>
+                <span id="fdrFooterSection">CEO Dashboard</span>
+            </div>
+        </footer>
     </main>
 </div>
 

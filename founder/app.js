@@ -96,7 +96,10 @@
         var email = document.getElementById('fdrEmail').value.trim();
         var pw = document.getElementById('fdrPassword').value;
         var errEl = document.getElementById('fdrLoginError');
+        var btn = document.getElementById('fdrLoginBtn');
         errEl.textContent = '';
+        btn.classList.add('fdr-btn-loading');
+        btn.textContent = 'Signing in...';
         try {
             var result = await supabase.auth.signInWithPassword({ email: email, password: pw });
             if (result.error) throw result.error;
@@ -105,6 +108,8 @@
             onLogin();
         } catch (err) {
             errEl.textContent = err.message || 'Login failed';
+            btn.classList.remove('fdr-btn-loading');
+            btn.textContent = 'Sign In';
         }
     });
 
@@ -121,6 +126,7 @@
         document.getElementById('fdrApp').style.display = 'flex';
         document.getElementById('fdrUserEmail').textContent = OS.store.get('session').user.email;
         startClock();
+        startUptime();
         updateBreadcrumbs('ceo');
         loadDashboard();
     }
@@ -152,6 +158,18 @@
         document.getElementById('fdrPageTitle').textContent = SECTIONS[data.section] || data.section;
         updateBreadcrumbs(data.section);
         closeSidebar();
+        history.pushState({ section: data.section }, '', '#' + data.section);
+        var footerSection = document.getElementById('fdrFooterSection');
+        if (footerSection) footerSection.textContent = SECTIONS[data.section] || data.section;
+    });
+
+    window.addEventListener('popstate', function (e) {
+        if (e.state && e.state.section) {
+            OS.nav.go(e.state.section);
+        } else {
+            var hash = location.hash.replace('#', '');
+            if (hash && SECTIONS[hash]) OS.nav.go(hash);
+        }
     });
 
     window.fdrNav = function (section) { OS.nav.go(section); };
@@ -343,8 +361,17 @@
 
     window.fdrToggleTheme = function () {
         OS.theme.toggle();
+        updateThemeIcons();
         OS.activity.log('system', 'Theme changed to ' + OS.theme.current());
     };
+
+    function updateThemeIcons() {
+        var isDark = OS.theme.current() === 'dark';
+        var moon = document.getElementById('themeIconMoon');
+        var sun = document.getElementById('themeIconSun');
+        if (moon) moon.style.display = isDark ? '' : 'none';
+        if (sun) sun.style.display = isDark ? 'none' : '';
+    }
 
     // ================================================================
     // SHORTCUTS MODAL
@@ -434,6 +461,15 @@
             console.error('[BossFx OS] Load error:', err);
             fdrToast('Error loading dashboard: ' + err.message, 'error');
             OS.activity.log('error', 'Dashboard load failed: ' + err.message);
+            var errorHtml = '<div class="fdr-section-error"><div class="fdr-section-error-icon">⚠️</div>' +
+                '<div class="fdr-section-error-title">Failed to load data</div>' +
+                '<div class="fdr-section-error-msg">' + BFX.esc(err.message) + '</div>' +
+                '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" onclick="fdrRefresh()" style="margin-top:12px;">Retry</button></div>';
+            Object.keys(SECTIONS).forEach(function (id) {
+                var el = document.getElementById('sec-' + id);
+                if (el) el.innerHTML = errorHtml;
+            });
+            updateFooterStatus('error', err.message);
         }
         OS.store.set('loading', false);
     }
@@ -1017,9 +1053,56 @@
     };
 
     // ================================================================
+    // STATUS FOOTER
+    // ================================================================
+
+    var sessionStart = null;
+
+    function startUptime() {
+        sessionStart = Date.now();
+        function tick() {
+            var el = document.getElementById('fdrFooterUptime');
+            if (!el || !sessionStart) return;
+            var diff = Math.floor((Date.now() - sessionStart) / 1000);
+            var h = Math.floor(diff / 3600);
+            var m = Math.floor((diff % 3600) / 60);
+            var s = diff % 60;
+            el.textContent = (h > 0 ? h + 'h ' : '') + m + 'm ' + s + 's';
+        }
+        tick();
+        setInterval(tick, 1000);
+    }
+
+    function updateFooterStatus(status, msg) {
+        var el = document.getElementById('fdrFooterStatus');
+        if (!el) return;
+        if (status === 'error') {
+            el.innerHTML = '<span class="fdr-status-dot red"></span> ' + BFX.esc(msg || 'Error');
+        } else {
+            el.innerHTML = '<span class="fdr-status-dot green"></span> Systems Operational';
+        }
+    }
+
+    OS.events.on('dashboard:loaded', function () {
+        var s = OS.store.get('sysData');
+        if (!s) return;
+        var hasError = (s.supabase && s.supabase.status === 'error') || (s.brevo && s.brevo.status === 'error');
+        if (hasError) {
+            updateFooterStatus('error', 'Service degraded');
+        } else {
+            updateFooterStatus('ok');
+        }
+    });
+
+    // ================================================================
     // INIT
     // ================================================================
 
+    updateThemeIcons();
+    var initHash = location.hash.replace('#', '');
+    if (initHash && SECTIONS[initHash]) {
+        OS.events.on('dashboard:loaded', function () { OS.nav.go(initHash); });
+    }
     checkSession();
 
 })();
