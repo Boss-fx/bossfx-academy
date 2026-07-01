@@ -6,6 +6,35 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and [Sem
 
 ---
 
+## [3.1.0] — Unreleased (Pending Deploy)
+
+### Added
+- **BossFx Operating System (Phase 3C)** — complete internal platform at `/founder/`
+  - 10 modular dashboards: CEO, Marketing, Sales, Students, Analytics, AI Control, Automation, Finance, Operations, Settings
+  - Shared component library (`components.js`) with 20+ reusable UI builders
+  - Command palette with keyboard shortcut (Cmd/Ctrl+K) for instant navigation
+  - Notification panel with system alerts and activity tracking
+  - Search bar integrated with command palette
+  - Sectioned sidebar navigation (Command, Growth, Intelligence, Operations, System)
+  - CEO Dashboard: executive KPIs, alerts, goals, revenue trend, product breakdown, AI summary
+  - Marketing Dashboard: social channels, Brevo email lists, analytics platforms, content calendar placeholder
+  - Sales Dashboard: period-filtered revenue reports, Flutterwave gateway status, full order history
+  - Student Dashboard: student directory, downloads, bookings, certificates placeholder, support placeholder
+  - Analytics Dashboard: unified view of GA4, GTM, Meta Pixel, Clarity with external links, bfx-analytics module status
+  - AI Control Center: 13 AI role cards with status, responsibilities, cadence, activity log placeholder
+  - Automation Center: 4 active automations, 6 drip sequences, job queue placeholder, workflow builder placeholder
+  - Finance Dashboard: revenue streams by category, product breakdown, expense/forecast placeholders
+  - Operations Dashboard: system health, env vars, SOP library, goals (monthly/quarterly), project management placeholder
+  - Global Settings: API connections, infrastructure status, quick links, feature flags, security overview
+  - Loading skeletons, empty states, and toast notifications throughout
+  - Full responsive design with collapsible sidebar and mobile overlay
+
+### Changed
+- Upgraded from 9-section monolithic dashboard to 10-module modular architecture
+- Extracted reusable components from inline rendering into shared `components.js` library
+- Sidebar redesigned with section headers and categorized navigation
+- Topbar enhanced with search, notifications, and command palette access
+
 ## [3.0.0] — Unreleased (Pending Deploy)
 
 ### Added
