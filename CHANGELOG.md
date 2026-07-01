@@ -6,6 +6,47 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and [Sem
 
 ---
 
+## [3.2.0] — Unreleased (Pending Deploy)
+
+### Added
+- **BossFx OS Core Infrastructure (Phase 3D)** — full operating system architecture
+  - `core.js` — OS namespace IIFE with 13 subsystems:
+    - Event Bus: pub/sub with wildcard `*` support, `OS.events.on/off/emit`
+    - State Store: centralized state with watchers, `OS.store.get/set/watch`
+    - API Layer: standardized fetch wrappers, `OS.api.dashboard/system/resend/supabase`
+    - Data Adapters: normalize Supabase/Brevo/Flutterwave data
+    - Global Search: multi-module indexing with `OS.search.register/query`
+    - Command Registry: centralized commands with upsert, `OS.commands.register/search/execute`
+    - Notification Service: read/unread/priority/source, `OS.notifications.add/markRead/clear`
+    - Activity Feed: unified timeline (max 200), `OS.activity.log/recent/byType`
+    - Workspace Registry: module registration with per-workspace commands
+    - Permission Architecture: 9 roles (founder→instructor), module ACL
+    - Theme System: dark/light via CSS custom properties + `[data-theme]` attribute
+    - Navigation: history tracking, recents, favorites, localStorage persistence
+    - Keyboard Shortcuts: global keydown handler with mod+shift+alt parsing
+  - 8 new shared UI components in `components.js`: modal, drawer, timeline, breadcrumbs, filterBar, quickAction, searchResult, kbdHint
+  - Light theme CSS with full coverage of all UI elements
+  - Modal system (backdrop blur, 560px container, close-on-outside-click)
+  - Drawer system (480px right slide, responsive to full-width at 768px)
+  - Activity panel (380px right panel with timeline view)
+  - Theme toggle button in topbar
+  - Activity feed button in topbar
+  - Breadcrumb navigation below page title
+  - 12 action commands (refresh, logout, theme, activity, shortcuts, external dashboards)
+  - 4 keyboard shortcuts (⌘K command palette, ⌘⇧A activity, ⌘⇧N notifications, ⌘⇧T theme)
+  - Search indexing for orders, products, AI roles, sections
+  - Workspace registration for all 10 modules
+  - Activity logging at login, data load, refresh, resend, navigation, goals, theme
+
+### Changed
+- `app.js` fully refactored to use OS.* infrastructure instead of inline state/commands/notifications
+- Navigation powered by `OS.nav.go()` + event-driven DOM updates via `OS.events.on('nav:changed')`
+- Command palette powered by `OS.commands.search()` + `OS.search.query()` for unified results
+- Notifications powered by `OS.notifications` with badge auto-update via events
+- All module renderers read from `OS.store.get('dashData')` instead of closure variables
+- API calls use `OS.api.dashboard/system/resend` instead of inline fetch
+- Version badge updated to v3.2
+
 ## [3.1.0] — Unreleased (Pending Deploy)
 
 ### Added

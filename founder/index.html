@@ -55,6 +55,23 @@
         <div id="notifList" class="fdr-notif-list"></div>
     </div>
 
+    <!-- Activity Panel -->
+    <div id="activityPanel" class="fdr-activity-panel">
+        <div class="fdr-activity-panel-header">
+            <span>Activity</span>
+            <button class="fdr-btn fdr-btn-xs fdr-btn-outline" onclick="fdrCloseActivity()">Close</button>
+        </div>
+        <div id="activityList" class="fdr-activity-panel-list"></div>
+    </div>
+
+    <!-- Modal -->
+    <div id="fdrModalBackdrop" class="fdr-modal-backdrop" onclick="if(event.target===this)fdrCloseModal()">
+        <div id="fdrModalContainer" class="fdr-modal-container"></div>
+    </div>
+
+    <!-- Drawer -->
+    <div id="fdrDrawer" class="fdr-drawer"></div>
+
     <!-- Mobile overlay -->
     <div id="fdrOverlay" class="fdr-overlay"></div>
 
@@ -62,7 +79,7 @@
     <aside id="fdrSidebar" class="fdr-sidebar">
         <div class="fdr-sidebar-brand">
             <h1>BossFx <span>OS</span></h1>
-            <small>v3.1</small>
+            <small>v3.2</small>
         </div>
         <nav class="fdr-sidebar-nav">
             <div class="fdr-nav-section">Command</div>
@@ -129,6 +146,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
                 <span class="fdr-topbar-title" id="fdrPageTitle">CEO Dashboard</span>
+                <div id="fdrBreadcrumbs" class="fdr-breadcrumbs"></div>
             </div>
             <div class="fdr-topbar-actions">
                 <div class="fdr-search">
@@ -136,6 +154,12 @@
                     <input type="text" class="fdr-search-input" id="fdrSearchInput" placeholder="Search...">
                     <span class="fdr-search-kbd">&#8984;K</span>
                 </div>
+                <button class="fdr-theme-btn" id="themeBtn" onclick="fdrToggleTheme()" title="Toggle theme">
+                    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                </button>
+                <button class="fdr-notif-btn" id="activityBtn" onclick="fdrToggleActivity()" title="Activity">
+                    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                </button>
                 <button class="fdr-notif-btn" id="notifBtn" onclick="fdrToggleNotifs()">
                     <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
                     <span class="fdr-notif-dot" id="notifDot"></span>
@@ -162,6 +186,7 @@
 <!-- Toast -->
 <div id="fdrToast" class="fdr-toast"></div>
 
+<script src="/founder/core.js"></script>
 <script src="/founder/components.js"></script>
 <script src="/founder/app.js"></script>
 </body>
