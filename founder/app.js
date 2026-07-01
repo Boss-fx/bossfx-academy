@@ -509,39 +509,132 @@
     // MODULE 1: CEO DASHBOARD
     // ================================================================
 
+    function computeHealthScore() {
+        var s = OS.store.get('sysData');
+        var d = OS.store.get('dashData');
+        var score = 0;
+        if (s.supabase && s.supabase.status === 'healthy') score += 25;
+        if (s.brevo && s.brevo.status === 'healthy') score += 25;
+        if (s.flutterwave && s.flutterwave.status === 'configured') score += 20;
+        if (s.vercel && s.vercel.functionsUsed < s.vercel.functionsLimit) score += 10;
+        if (d.orders.thisMonth > 0) score += 10;
+        if (d.students.thisMonth > 0) score += 10;
+        return score;
+    }
+
+    function computeGrowth(current, trend) {
+        if (!trend || trend.length < 15) return null;
+        var half = Math.floor(trend.length / 2);
+        var first = trend.slice(0, half).reduce(function (s, t) { return s + t.revenue; }, 0);
+        var second = trend.slice(half).reduce(function (s, t) { return s + t.revenue; }, 0);
+        if (first === 0) return second > 0 ? 100 : 0;
+        return Math.round(((second - first) / first) * 100);
+    }
+
+    function buildExecutiveSummary() {
+        var d = OS.store.get('dashData');
+        var s = OS.store.get('sysData');
+        var parts = [];
+
+        if (d.revenue.today > 0) {
+            parts.push('Generated <strong>' + BFX.naira(d.revenue.today) + '</strong> today across ' + d.orders.today + ' order' + (d.orders.today !== 1 ? 's' : '') + '.');
+        } else {
+            parts.push('No revenue recorded today yet.');
+        }
+
+        parts.push('Month-to-date revenue is <strong>' + BFX.naira(d.revenue.thisMonth) + '</strong> with ' + BFX.num(d.orders.thisMonth) + ' orders.');
+
+        if (d.students.thisMonth > 0) {
+            parts.push(BFX.num(d.students.thisMonth) + ' new student' + (d.students.thisMonth !== 1 ? 's' : '') + ' enrolled this month, bringing total to ' + BFX.num(d.students.total) + '.');
+        }
+
+        if (d.bookings.pending > 0) {
+            parts.push('<span style="color:var(--fdr-amber)">' + d.bookings.pending + ' mentorship booking' + (d.bookings.pending !== 1 ? 's' : '') + ' pending review.</span>');
+        }
+
+        var sysOk = (!s.supabase || s.supabase.status === 'healthy') && (!s.brevo || s.brevo.status === 'healthy');
+        parts.push(sysOk ? 'All systems operational.' : '<span style="color:var(--fdr-red)">System issues detected — check Operations.</span>');
+
+        return parts.join(' ');
+    }
+
     function renderCEO() {
         var d = OS.store.get('dashData');
+        var s = OS.store.get('sysData');
         var html = BFX.sectionHeader('CEO Dashboard', 'Executive overview of BossFx Academy');
+
+        // Quick Actions
+        html += '<div class="fdr-quick-actions">';
+        html += BFX.quickAction('🔄', 'Refresh Data', 'fdrRefresh()');
+        html += BFX.quickAction('💳', 'Flutterwave', "window.open('https://dashboard.flutterwave.com','_blank')");
+        html += BFX.quickAction('📧', 'Brevo', "window.open('https://app.brevo.com','_blank')");
+        html += BFX.quickAction('📊', 'Analytics', "window.open('https://analytics.google.com','_blank')");
+        html += BFX.quickAction('⌨️', 'Shortcuts', 'showShortcutsModal()');
+        html += BFX.quickAction('🕐', 'Activity', 'fdrToggleActivity()');
+        html += '</div>';
+
+        // Health Score
+        var healthScore = computeHealthScore();
+        var healthColor = healthScore >= 80 ? 'green' : healthScore >= 50 ? 'amber' : 'red';
+        var growth = computeGrowth(d.revenue.thisMonth, d.revenue.trend);
+        var growthLabel = growth !== null ? (growth >= 0 ? '+' + growth + '%' : growth + '%') : '—';
 
         html += BFX.metricGrid([
             ['Revenue Today', BFX.naira(d.revenue.today), 'green'],
             ['Revenue This Month', BFX.naira(d.revenue.thisMonth), 'green'],
+            ['30-Day Growth', growthLabel, growth >= 0 ? 'green' : 'red'],
+            ['Health Score', healthScore + '/100', healthColor],
             ['Orders Today', BFX.num(d.orders.today)],
             ['Total Students', BFX.num(d.students.total), 'blue'],
-            ['Downloads', BFX.num(d.downloads.total)],
-            ['Bookings', BFX.num(d.bookings.total)],
             ['EA Addon Rate', BFX.pct(d.eaAddon.rate), 'amber'],
             ['Email Subscribers', d.brevo ? BFX.num(d.brevo.totalSubscribers) : 'N/A', 'purple']
         ]);
 
+        // Alerts
         var alerts = buildAlerts();
         if (alerts.length) html += alerts.map(function (a) { return BFX.alert(a.type, a.text); }).join('');
 
+        // AI Executive Summary
+        html += BFX.card('AI Executive Summary', '<div style="font-size:0.84rem;line-height:1.7;color:var(--fdr-muted);">' + buildExecutiveSummary() + '</div>', BFX.badge('Auto-generated', 'dim'));
+
+        // Charts
         html += '<div class="fdr-grid-2">';
         html += BFX.card('30-Day Revenue Trend', BFX.trendChart(d.revenue.trend));
         html += BFX.card('Revenue by Product', BFX.productBreakdown(d.products));
         html += '</div>';
 
+        // Priorities
         html += '<div class="fdr-grid-2">';
         html += BFX.goalsCard("Today's Priorities", 'daily');
         html += BFX.goalsCard('Weekly Goals', 'weekly');
         html += '</div>';
 
+        // Recent Orders + Recent Activity side by side
+        html += '<div class="fdr-grid-2">';
         html += BFX.card('Recent Orders', BFX.ordersTable(d.recentOrders, false), null, '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" onclick="fdrNav(\'sales\')">View All</button>');
+        html += BFX.card('Recent Activity', BFX.timeline(OS.activity.recent(10)), null, '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" onclick="fdrToggleActivity()">Full Feed</button>');
+        html += '</div>';
 
-        html += BFX.card('AI Team Summary', '<div style="display:flex;flex-wrap:wrap;gap:8px;">' + AI_ROLES.map(function (r) {
+        // AI Team Summary
+        html += BFX.card('AI Team Overview', '<div style="display:flex;flex-wrap:wrap;gap:8px;">' + AI_ROLES.map(function (r) {
             return BFX.badge(r.title, r.color);
         }).join('') + '</div><p style="margin-top:12px;font-size:0.8rem;color:var(--fdr-dim);">13 AI roles active across all business functions. <a href="#" onclick="fdrNav(\'ai-control\');return false;">Manage AI Team &rarr;</a></p>');
+
+        // Key Metrics Breakdown
+        html += BFX.card('Revenue Breakdown', '<div class="fdr-grid-3">' +
+            '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">This Week</div>' +
+                '<div style="font-family:Space Grotesk;font-size:1.1rem;font-weight:700;color:var(--fdr-green);">' + BFX.naira(d.revenue.thisWeek) + '</div>' +
+                '<div style="font-size:0.7rem;color:var(--fdr-dim);margin-top:2px;">' + BFX.num(d.orders.thisWeek) + ' orders</div></div>' +
+            '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">This Quarter</div>' +
+                '<div style="font-family:Space Grotesk;font-size:1.1rem;font-weight:700;color:var(--fdr-green);">' + BFX.naira(d.revenue.thisQuarter) + '</div>' +
+                '<div style="font-size:0.7rem;color:var(--fdr-dim);margin-top:2px;">Quarter to date</div></div>' +
+            '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">All Time</div>' +
+                '<div style="font-family:Space Grotesk;font-size:1.1rem;font-weight:700;color:var(--fdr-green);">' + BFX.naira(d.revenue.allTime) + '</div>' +
+                '<div style="font-size:0.7rem;color:var(--fdr-dim);margin-top:2px;">' + BFX.num(d.orders.allTime) + ' total orders</div></div>' +
+            '</div>');
 
         document.getElementById('sec-ceo').innerHTML = html;
         renderGoalsInto('daily');
@@ -552,8 +645,8 @@
         var alerts = [];
         var d = OS.store.get('dashData');
         var s = OS.store.get('sysData');
-        if (d.orders.today > 0) alerts.push({ type: 'success', text: d.orders.today + ' order' + (d.orders.today > 1 ? 's' : '') + ' today — ' + BFX.naira(d.revenue.today) + ' revenue' });
-        if (d.bookings.pending > 0) alerts.push({ type: 'warn', text: d.bookings.pending + ' pending mentorship booking' + (d.bookings.pending > 1 ? 's' : '') + ' require attention' });
+        if (d.orders.today > 0) alerts.push({ type: 'success', text: d.orders.today + ' order' + (d.orders.today !== 1 ? 's' : '') + ' today — ' + BFX.naira(d.revenue.today) + ' revenue' });
+        if (d.bookings.pending > 0) alerts.push({ type: 'warn', text: d.bookings.pending + ' pending mentorship booking' + (d.bookings.pending !== 1 ? 's' : '') + ' require attention' });
         if (s.supabase && s.supabase.status === 'error') alerts.push({ type: 'error', text: 'Supabase: ' + (s.supabase.message || 'Error') });
         if (s.brevo && s.brevo.status === 'error') alerts.push({ type: 'error', text: 'Brevo: ' + (s.brevo.message || 'Error') });
         if (s.vercel && s.vercel.functionsUsed >= s.vercel.functionsLimit) alerts.push({ type: 'error', text: 'Serverless function limit reached' });
@@ -568,50 +661,103 @@
     function renderMarketing() {
         var d = OS.store.get('dashData');
         var b = d.brevo;
-        var html = BFX.sectionHeader('Marketing', 'Channels, campaigns, and audience growth');
+        var html = BFX.sectionHeader('Marketing', 'Channels, campaigns, and audience growth',
+            '<a href="https://app.brevo.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Open Brevo &rarr;</a>');
 
         html += BFX.metricGrid([
             ['Email Subscribers', b ? BFX.num(b.totalSubscribers) : 'N/A', 'purple'],
-            ['Blog Posts', '11'],
+            ['Social Channels', '6', 'blue'],
+            ['Blog Posts', '11', 'green'],
             ['Resource Tools', '8'],
-            ['Lead Capture Points', '6']
+            ['Lead Capture Points', '6', 'amber'],
+            ['Drip Sequences', '6', 'purple'],
+            ['Tracking Platforms', '4', 'blue'],
+            ['Custom Analytics', '11 modules', 'cyan']
         ]);
 
+        // Analytics Platforms — prominent at the top
+        html += BFX.card('Analytics & Tracking Platforms', '<div class="fdr-grid-2">' +
+            '<div>' +
+                BFX.settingRow('Google Analytics 4', 'G-ZFQ9P5KFSJ', '<a href="https://analytics.google.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-xs">Open &rarr;</a>') +
+                '<div style="padding:12px 16px;font-size:0.78rem;color:var(--fdr-muted);line-height:1.5;margin-bottom:6px;">Traffic, sessions, conversions, user behavior. Installed via GTM and config.js dual integration.</div>' +
+                BFX.settingRow('Google Tag Manager', 'GTM-T3R88HZB', '<a href="https://tagmanager.google.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-xs">Open &rarr;</a>') +
+                '<div style="padding:12px 16px;font-size:0.78rem;color:var(--fdr-muted);line-height:1.5;">Tag container managing GA4, Pixel, Clarity, and custom event tags.</div>' +
+            '</div>' +
+            '<div>' +
+                BFX.settingRow('Meta Pixel', '804009589230621', '<a href="https://business.facebook.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-xs">Open &rarr;</a>') +
+                '<div style="padding:12px 16px;font-size:0.78rem;color:var(--fdr-muted);line-height:1.5;margin-bottom:6px;">PageView, Lead, Purchase events for Facebook/Instagram ad targeting and retargeting.</div>' +
+                BFX.settingRow('Microsoft Clarity', 'wnde2od79f', '<a href="https://clarity.microsoft.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-xs">Open &rarr;</a>') +
+                '<div style="padding:12px 16px;font-size:0.78rem;color:var(--fdr-muted);line-height:1.5;">Session recordings, heatmaps, dead click detection, scroll depth.</div>' +
+            '</div>' +
+            '</div>');
+
+        // Funnel Overview
+        html += BFX.card('Marketing Funnel', '<div style="display:flex;flex-direction:column;gap:2px;">' +
+            buildFunnelStep('1', 'Awareness', 'Blog (11 posts) + Resources (8 tools) + Social Media (6 channels)', 'blue', '100%') +
+            buildFunnelStep('2', 'Capture', 'Exit intent popups + Newsletter forms + Webinar registration + Resource downloads', 'purple', '80%') +
+            buildFunnelStep('3', 'Nurture', '6 drip sequences via Brevo (welcome, webinar, resource, mentorship, exit intent, re-engagement)', 'amber', '60%') +
+            buildFunnelStep('4', 'Convert', 'Product pages + Flutterwave checkout + EA addon upsell', 'green', '40%') +
+            buildFunnelStep('5', 'Retain', 'Fulfillment email + Telegram community + Mentorship booking', 'cyan', '30%') +
+            '</div>');
+
+        // Email + Social side by side
         html += '<div class="fdr-grid-2">';
 
         var listsHtml = '';
         if (b && b.lists && b.lists.length) {
-            listsHtml = b.lists.map(function (l) { return BFX.settingRow(l.name, 'List #' + l.id, BFX.badge(BFX.num(l.subscribers) + ' subscribers', 'purple')); }).join('');
+            listsHtml = b.lists.map(function (l) { return BFX.settingRow(l.name, 'List #' + l.id, BFX.badge(BFX.num(l.subscribers) + ' subs', 'purple')); }).join('');
         } else {
             listsHtml = BFX.emptyState('📧', 'No Brevo Data', 'Email list data will appear when Brevo is connected.');
         }
-        html += BFX.card('Email Lists (Brevo)', listsHtml);
+        html += BFX.card('Email Lists (Brevo)', listsHtml, null,
+            '<a href="https://app.brevo.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-xs">Manage Lists &rarr;</a>');
 
         var socials = [
-            ['Instagram', 'https://www.instagram.com/bossfx_academy', '@bossfx_academy'],
-            ['TikTok', 'https://www.tiktok.com/@bossfx1', '@bossfx1'],
-            ['YouTube', 'https://youtube.com/@bossfx-tradingcommunity', '@bossfx-tradingcommunity'],
-            ['X (Twitter)', 'https://x.com/teebossx', '@teebossx'],
-            ['Telegram', 'https://t.me/qD_fBeaziqE5YzU8', 'Community Group'],
-            ['LinkedIn', 'https://linkedin.com', 'Coming Soon']
+            ['Instagram', 'https://www.instagram.com/bossfx_academy', '@bossfx_academy', 'pink'],
+            ['TikTok', 'https://www.tiktok.com/@bossfx1', '@bossfx1', 'cyan'],
+            ['YouTube', 'https://youtube.com/@bossfx-tradingcommunity', '@bossfx-tradingcommunity', 'red'],
+            ['X (Twitter)', 'https://x.com/teebossx', '@teebossx', 'blue'],
+            ['Telegram', 'https://t.me/qD_fBeaziqE5YzU8', 'Community Group', 'blue'],
+            ['LinkedIn', 'https://linkedin.com', 'Coming Soon', 'dim']
         ];
         var socialHtml = socials.map(function (s) {
-            return '<a href="' + BFX.esc(s[1]) + '" target="_blank" rel="noopener" class="fdr-setting-row" style="text-decoration:none;color:inherit;"><span>' + BFX.esc(s[0]) + '</span>' + BFX.badge('Active', 'green') + '</a>';
+            return '<a href="' + BFX.esc(s[1]) + '" target="_blank" rel="noopener" class="fdr-setting-row" style="text-decoration:none;color:inherit;">' +
+                '<span><strong>' + BFX.esc(s[0]) + '</strong> <small style="color:var(--fdr-dim)">' + BFX.esc(s[2]) + '</small></span>' +
+                BFX.badge('Active', s[3]) + '</a>';
         }).join('');
         html += BFX.card('Social Media Channels', socialHtml);
         html += '</div>';
 
-        html += BFX.card('Analytics & Tracking', '<div class="fdr-grid-2">' +
-            BFX.serviceLink('Google Analytics 4', 'G-ZFQ9P5KFSJ', 'https://analytics.google.com', 'var(--fdr-blue-dim)', '📊') +
-            BFX.serviceLink('Google Tag Manager', 'GTM-T3R88HZB', 'https://tagmanager.google.com', 'var(--fdr-blue-dim)', '🏷️') +
-            BFX.serviceLink('Meta Pixel', '804009589230621', 'https://business.facebook.com', 'var(--fdr-blue-dim)', '📱') +
-            BFX.serviceLink('Microsoft Clarity', 'wnde2od79f', 'https://clarity.microsoft.com', 'var(--fdr-purple-dim)', '🔍') +
+        // Content assets
+        html += BFX.card('Content Assets', '<div class="fdr-grid-3">' +
+            buildContentStat('Blog Posts', '11', 'Published articles on forex trading, prop firms, and education', 'green') +
+            buildContentStat('Resource Tools', '8', 'Interactive calculators, checklists, journals, and guides', 'blue') +
+            buildContentStat('Lead Magnets', '4', 'Exit intent, newsletter, webinar reg, resource download forms', 'amber') +
             '</div>');
 
-        html += BFX.card('Content Calendar', BFX.emptyState('📅', 'Content Calendar', 'Plan and schedule content across all channels. Connect in Phase 4.', '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" disabled>Coming Soon</button>'));
-        html += BFX.card('Campaign Performance', BFX.emptyState('📈', 'Campaign Analytics', 'Track campaign ROI, click-through rates, and conversions. Connect marketing tools in Phase 4.', '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" disabled>Coming Soon</button>'));
+        // BossFx Analytics Engine
+        html += BFX.card('BossFx Analytics Engine', '<div style="margin-bottom:8px;font-size:0.78rem;color:var(--fdr-muted);">Custom 11-module analytics system (bfx-analytics.js) tracking every visitor touchpoint.</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;">' +
+            ['UTM Attribution', 'Engagement Scoring', 'Conversion Tracking', 'Session Intelligence', 'Ecommerce Module', 'Mobile Intelligence', 'Scroll Depth', 'Content Analytics', 'Social Tracking', 'Performance Monitor', 'Error Tracking'].map(function (m) {
+                return '<div style="padding:8px 12px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;font-size:0.75rem;display:flex;align-items:center;justify-content:space-between;">' +
+                    '<span>' + m + '</span>' + BFX.badge('On', 'green') + '</div>';
+            }).join('') + '</div>');
 
         document.getElementById('sec-marketing').innerHTML = html;
+    }
+
+    function buildFunnelStep(num, label, desc, color, width) {
+        return '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;">' +
+            '<div style="width:28px;height:28px;border-radius:8px;background:var(--fdr-' + color + '-dim);color:var(--fdr-' + color + ');display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;flex-shrink:0;">' + num + '</div>' +
+            '<div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:0.84rem;margin-bottom:2px;">' + BFX.esc(label) + '</div>' +
+            '<div style="font-size:0.75rem;color:var(--fdr-dim);line-height:1.4;">' + BFX.esc(desc) + '</div></div></div>';
+    }
+
+    function buildContentStat(title, count, desc, color) {
+        return '<div style="padding:18px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+            '<div style="font-family:Space Grotesk;font-size:1.5rem;font-weight:700;color:var(--fdr-' + color + ');margin-bottom:4px;">' + count + '</div>' +
+            '<div style="font-weight:600;font-size:0.84rem;margin-bottom:4px;">' + BFX.esc(title) + '</div>' +
+            '<div style="font-size:0.72rem;color:var(--fdr-dim);line-height:1.4;">' + BFX.esc(desc) + '</div></div>';
     }
 
     // ================================================================
