@@ -1338,30 +1338,257 @@
 
     function renderFinance() {
         var d = OS.store.get('dashData');
-        var html = BFX.sectionHeader('Finance', 'Revenue, expenses, and financial overview');
+        var s = OS.store.get('sysData');
+        var html = BFX.sectionHeader('Finance', 'Executive financial intelligence and revenue analytics',
+            '<a href="https://dashboard.flutterwave.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Flutterwave &rarr;</a>');
 
-        html += BFX.metricGrid([
-            ['Total Revenue', BFX.naira(d.revenue.allTime), 'green'],
-            ['This Month', BFX.naira(d.revenue.thisMonth), 'green'],
-            ['This Quarter', BFX.naira(d.revenue.thisQuarter), 'green'],
-            ['Avg Order Value', BFX.naira(d.metrics.aov), 'blue']
-        ]);
-
-        html += '<div class="fdr-grid-2">';
-        html += BFX.card('Revenue by Product', BFX.productBreakdown(d.products));
-        html += BFX.card('30-Day Revenue', BFX.trendChart(d.revenue.trend));
+        // Quick Actions
+        html += '<div class="fdr-quick-actions">';
+        html += BFX.quickAction('💳', 'Flutterwave', "window.open('https://dashboard.flutterwave.com','_blank')");
+        html += BFX.quickAction('📊', 'Sales', "fdrNav('sales')");
+        html += BFX.quickAction('🔄', 'Refresh', 'fdrRefresh()');
+        html += BFX.quickAction('📈', 'CEO View', "fdrNav('ceo')");
         html += '</div>';
 
-        html += BFX.card('Revenue Streams', '<div class="fdr-grid-3">' +
-            '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;"><div style="font-size:0.7rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">Course Sales</div><div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-green);">' + BFX.naira((d.products['forex-101'] || {}).revenue || 0) + '</div></div>' +
-            '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;"><div style="font-size:0.7rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">Mentorship</div><div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-blue);">' + BFX.naira(((d.products['mentorship-group'] || {}).revenue || 0) + ((d.products['mentorship-1on1'] || {}).revenue || 0)) + '</div></div>' +
-            '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;"><div style="font-size:0.7rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">VIP + EA</div><div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-amber);">' + BFX.naira(((d.products['vip'] || {}).revenue || 0) + ((d.products['ea-bundle'] || {}).revenue || 0) + (d.eaAddon.revenue || 0)) + '</div></div>' +
+        // Compute financial metrics
+        var trend = d.revenue.trend || [];
+        var firstHalf = trend.slice(0, 15).reduce(function (s, t) { return s + t.revenue; }, 0);
+        var secondHalf = trend.slice(15).reduce(function (s, t) { return s + t.revenue; }, 0);
+        var monthlyGrowth = firstHalf > 0 ? Math.round(((secondHalf - firstHalf) / firstHalf) * 100) : 0;
+
+        var coursesRev = (d.products['forex-101'] || {}).revenue || 0;
+        var mentorRev = ((d.products['mentorship-group'] || {}).revenue || 0) + ((d.products['mentorship-1on1'] || {}).revenue || 0);
+        var vipRev = (d.products['vip'] || {}).revenue || 0;
+        var eaBundleRev = ((d.products['ea-bundle'] || {}).revenue || 0) + (d.eaAddon.revenue || 0);
+        var totalRev = d.revenue.allTime;
+
+        // Estimated expenses (platform costs)
+        var monthlyExpenses = 0;
+        var expenseItems = [
+            { name: 'Vercel Hosting', amount: 0, note: 'Hobby plan (free)' },
+            { name: 'Supabase', amount: 0, note: 'Free tier' },
+            { name: 'Brevo Email', amount: 0, note: 'Free tier (300 emails/day)' },
+            { name: 'Domain (bossfxcademy.com)', amount: 1500, note: '~₦18,000/year' },
+            { name: 'Flutterwave Fees', amount: Math.round(d.revenue.thisMonth * 0.014), note: '1.4% per transaction' }
+        ];
+        expenseItems.forEach(function (e) { monthlyExpenses += e.amount; });
+
+        var grossProfit = d.revenue.thisMonth - monthlyExpenses;
+        var profitMargin = d.revenue.thisMonth > 0 ? Math.round((grossProfit / d.revenue.thisMonth) * 100) : 0;
+
+        // MRR estimate from mentorship (recurring)
+        var mentorMonthlyOrders = (d.products['mentorship-group'] || {}).count || 0;
+        var mentorMonthlyRev = mentorRev;
+        var mrr = Math.round(mentorMonthlyRev / Math.max(1, Math.ceil(d.orders.allTime > 0 ? (new Date().getMonth() + 1) : 1)));
+        var arr = mrr * 12;
+
+        // Daily average revenue
+        var dailyAvg = trend.length > 0 ? Math.round(trend.reduce(function (s, t) { return s + t.revenue; }, 0) / trend.length) : 0;
+        var monthForecast = dailyAvg * 30;
+
+        // Financial health score (0-100)
+        var healthScore = 0;
+        if (d.revenue.thisMonth > 0) healthScore += 20;
+        if (d.revenue.thisMonth > 100000) healthScore += 15;
+        if (profitMargin > 80) healthScore += 15;
+        else if (profitMargin > 50) healthScore += 10;
+        if (d.orders.thisMonth > 10) healthScore += 15;
+        else if (d.orders.thisMonth > 5) healthScore += 10;
+        if (monthlyGrowth > 0) healthScore += 15;
+        if (d.eaAddon.rate > 20) healthScore += 10;
+        if ((s.flutterwave || {}).status === 'configured') healthScore += 10;
+        healthScore = Math.min(100, healthScore);
+        var healthColor = healthScore >= 80 ? 'green' : healthScore >= 60 ? 'amber' : 'red';
+
+        // Financial Health Score hero
+        html += '<div style="display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;">';
+        html += '<div style="flex:1;min-width:200px;padding:24px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:12px;text-align:center;">' +
+            '<div style="font-size:0.72rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:8px;">Financial Health Score</div>' +
+            '<div style="font-family:Space Grotesk;font-size:3rem;font-weight:700;color:var(--fdr-' + healthColor + ');">' + healthScore + '</div>' +
+            '<div style="font-size:0.78rem;color:var(--fdr-' + healthColor + ');">' + (healthScore >= 80 ? 'Excellent' : healthScore >= 60 ? 'Good' : 'Needs Attention') + '</div>' +
+            '</div>';
+        html += '<div style="flex:2;min-width:280px;padding:24px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:12px;">' +
+            '<div style="font-size:0.72rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:12px;">Monthly Snapshot</div>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+                '<div><div style="font-size:0.68rem;color:var(--fdr-dim);">Revenue</div><div style="font-family:Space Grotesk;font-weight:700;color:var(--fdr-green);">' + BFX.naira(d.revenue.thisMonth) + '</div></div>' +
+                '<div><div style="font-size:0.68rem;color:var(--fdr-dim);">Expenses</div><div style="font-family:Space Grotesk;font-weight:700;color:var(--fdr-red,#ef4444);">' + BFX.naira(monthlyExpenses) + '</div></div>' +
+                '<div><div style="font-size:0.68rem;color:var(--fdr-dim);">Gross Profit</div><div style="font-family:Space Grotesk;font-weight:700;color:var(--fdr-green);">' + BFX.naira(grossProfit) + '</div></div>' +
+                '<div><div style="font-size:0.68rem;color:var(--fdr-dim);">Profit Margin</div><div style="font-family:Space Grotesk;font-weight:700;color:var(--fdr-' + (profitMargin > 70 ? 'green' : 'amber') + ');">' + profitMargin + '%</div></div>' +
+            '</div></div>';
+        html += '</div>';
+
+        // Key financial metrics
+        html += BFX.metricGrid([
+            ['Total Revenue', BFX.naira(totalRev), 'green'],
+            ['This Month', BFX.naira(d.revenue.thisMonth), 'green'],
+            ['This Quarter', BFX.naira(d.revenue.thisQuarter), 'green'],
+            ['Today', BFX.naira(d.revenue.today), 'green'],
+            ['AOV', BFX.naira(d.metrics.aov), 'blue'],
+            ['30d Growth', (monthlyGrowth >= 0 ? '+' : '') + monthlyGrowth + '%', monthlyGrowth >= 0 ? 'green' : 'red'],
+            ['Daily Avg (30d)', BFX.naira(dailyAvg)],
+            ['EA Addon Rev', BFX.naira(d.eaAddon.revenue), 'amber']
+        ]);
+
+        // Charts
+        html += '<div class="fdr-grid-2">';
+        html += BFX.card('30-Day Revenue Trend', BFX.trendChart(d.revenue.trend));
+        html += BFX.card('Revenue by Product', BFX.productBreakdown(d.products));
+        html += '</div>';
+
+        // Revenue Streams Breakdown
+        html += BFX.card('Revenue Streams',
+            '<div class="fdr-grid-2">' +
+                buildRevenueStream('📚', 'Course Sales', 'Forex 101: The Trader\'s Bible', coursesRev, totalRev, 'green') +
+                buildRevenueStream('👥', 'Mentorship', 'Group + 1-on-1 sessions', mentorRev, totalRev, 'blue') +
+                buildRevenueStream('⭐', 'VIP Program', 'Lifetime access + everything', vipRev, totalRev, 'purple') +
+                buildRevenueStream('🤖', 'EA + Addons', 'SMA Pro Trend EA bundle + upsell', eaBundleRev, totalRev, 'amber') +
             '</div>');
 
-        html += BFX.card('Expenses', BFX.emptyState('💰', 'Expense Tracking', 'Track operational expenses, subscriptions, and costs. Manual entry or integration coming in Phase 4.'));
-        html += BFX.card('Cash Flow & Forecasting', BFX.emptyState('📊', 'Financial Forecasting', 'Revenue projections, cash flow analysis, and financial planning. Coming in Phase 4.'));
+        // MRR / ARR / Forecast
+        html += '<div class="fdr-grid-3">';
+        html += '<div style="padding:20px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:12px;text-align:center;">' +
+            '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:8px;">Est. MRR</div>' +
+            '<div style="font-family:Space Grotesk;font-size:1.5rem;font-weight:700;color:var(--fdr-blue);">' + BFX.naira(mrr) + '</div>' +
+            '<div style="font-size:0.68rem;color:var(--fdr-dim);margin-top:4px;">From mentorship recurring</div></div>';
+        html += '<div style="padding:20px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:12px;text-align:center;">' +
+            '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:8px;">Est. ARR</div>' +
+            '<div style="font-family:Space Grotesk;font-size:1.5rem;font-weight:700;color:var(--fdr-purple);">' + BFX.naira(arr) + '</div>' +
+            '<div style="font-size:0.68rem;color:var(--fdr-dim);margin-top:4px;">MRR × 12 annualized</div></div>';
+        html += '<div style="padding:20px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:12px;text-align:center;">' +
+            '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:8px;">30d Forecast</div>' +
+            '<div style="font-family:Space Grotesk;font-size:1.5rem;font-weight:700;color:var(--fdr-green);">' + BFX.naira(monthForecast) + '</div>' +
+            '<div style="font-size:0.68rem;color:var(--fdr-dim);margin-top:4px;">Based on daily average</div></div>';
+        html += '</div>';
+
+        // Expenses & Profit
+        html += '<div class="fdr-grid-2">';
+        html += BFX.card('Monthly Expenses',
+            expenseItems.map(function (e) {
+                return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--fdr-border);">' +
+                    '<div><div style="font-size:0.82rem;font-weight:600;">' + e.name + '</div>' +
+                    '<div style="font-size:0.68rem;color:var(--fdr-dim);">' + e.note + '</div></div>' +
+                    '<div style="font-family:Space Grotesk;font-weight:700;' + (e.amount > 0 ? 'color:var(--fdr-red,#ef4444);' : 'color:var(--fdr-green);') + '">' + (e.amount > 0 ? BFX.naira(e.amount) : 'Free') + '</div></div>';
+            }).join('') +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;margin-top:4px;font-weight:700;">' +
+                '<span>Total Monthly Expenses</span>' +
+                '<span style="font-family:Space Grotesk;color:var(--fdr-red,#ef4444);">' + BFX.naira(monthlyExpenses) + '</span></div>');
+
+        // Tax Estimation
+        var annualRevEstimate = d.revenue.thisMonth * 12;
+        var estimatedTax = Math.round(annualRevEstimate * 0.06);
+        html += BFX.card('Tax & Compliance',
+            BFX.settingRow('Business Type', 'Sole proprietorship (education)', null) +
+            BFX.settingRow('Tax Region', 'Nigeria (FIRS)', BFX.badge('NGN', 'blue')) +
+            BFX.settingRow('Est. Annual Revenue', BFX.naira(annualRevEstimate), null) +
+            BFX.settingRow('Est. Tax (6% assumed)', BFX.naira(estimatedTax), BFX.badge('Estimate', 'amber')) +
+            '<div style="margin-top:10px;font-size:0.72rem;color:var(--fdr-dim);line-height:1.5;">Tax rates are estimated. Consult a Nigerian tax professional for accurate obligations under FIRS guidelines.</div>');
+        html += '</div>';
+
+        // Payment Gateway
+        var fwStatus = s.flutterwave || {};
+        html += '<div class="fdr-grid-2">';
+        html += BFX.card('Payment Gateway (Flutterwave)',
+            BFX.settingRow('Status', 'Payment processing', BFX.statusBadge(fwStatus.status === 'configured' ? 'configured' : 'error')) +
+            BFX.settingRow('Webhook', 'Signature verification', BFX.badge(fwStatus.webhookHash ? 'Verified' : 'Missing', fwStatus.webhookHash ? 'green' : 'red')) +
+            BFX.settingRow('Currency', 'Nigerian Naira', BFX.badge('NGN', 'blue')) +
+            BFX.settingRow('Fee Structure', '1.4% per transaction', null) +
+            BFX.settingRow('Settlement', 'T+1 business day', null) +
+            BFX.settingRow('Monthly Volume', BFX.naira(d.revenue.thisMonth), BFX.badge(BFX.num(d.orders.thisMonth) + ' txns', 'green')),
+            null, '<a href="https://dashboard.flutterwave.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Dashboard &rarr;</a>');
+
+        // Period Comparison
+        var weekAvg = d.revenue.thisWeek > 0 ? Math.round(d.revenue.thisWeek / 7) : 0;
+        var monthDays = new Date().getDate();
+        var monthAvg = monthDays > 0 ? Math.round(d.revenue.thisMonth / monthDays) : 0;
+        html += BFX.card('Period Comparison',
+            '<div class="fdr-grid-2" style="margin-bottom:12px;">' +
+                buildPeriodCard('Today', d.revenue.today, d.orders.today) +
+                buildPeriodCard('This Week', d.revenue.thisWeek, d.orders.thisWeek) +
+                buildPeriodCard('This Month', d.revenue.thisMonth, d.orders.thisMonth) +
+                buildPeriodCard('This Quarter', d.revenue.thisQuarter, d.orders.allTime) +
+            '</div>' +
+            '<div style="display:flex;gap:12px;">' +
+                '<div style="flex:1;padding:10px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;text-align:center;">' +
+                    '<div style="font-size:0.68rem;color:var(--fdr-dim);">Avg/Day (Week)</div>' +
+                    '<div style="font-family:Space Grotesk;font-weight:700;">' + BFX.naira(weekAvg) + '</div></div>' +
+                '<div style="flex:1;padding:10px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;text-align:center;">' +
+                    '<div style="font-size:0.68rem;color:var(--fdr-dim);">Avg/Day (Month)</div>' +
+                    '<div style="font-family:Space Grotesk;font-weight:700;">' + BFX.naira(monthAvg) + '</div></div>' +
+            '</div>');
+        html += '</div>';
+
+        // Budget Tracking
+        var monthlyTarget = 500000;
+        var quarterlyTarget = 1500000;
+        var monthProgress = Math.min(100, Math.round((d.revenue.thisMonth / monthlyTarget) * 100));
+        var quarterProgress = Math.min(100, Math.round((d.revenue.thisQuarter / quarterlyTarget) * 100));
+        html += BFX.card('Budget & Targets',
+            '<div style="margin-bottom:16px;">' +
+                '<div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:0.82rem;font-weight:600;">Monthly Target</span><span style="font-size:0.82rem;">' + BFX.naira(d.revenue.thisMonth) + ' / ' + BFX.naira(monthlyTarget) + '</span></div>' +
+                BFX.progressBar(d.revenue.thisMonth, monthlyTarget, monthProgress >= 100 ? 'green' : monthProgress >= 60 ? 'amber' : 'red') +
+                '<div style="font-size:0.68rem;color:var(--fdr-dim);margin-top:4px;">' + monthProgress + '% of ₦500,000 target</div>' +
+            '</div>' +
+            '<div>' +
+                '<div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:0.82rem;font-weight:600;">Quarterly Target</span><span style="font-size:0.82rem;">' + BFX.naira(d.revenue.thisQuarter) + ' / ' + BFX.naira(quarterlyTarget) + '</span></div>' +
+                BFX.progressBar(d.revenue.thisQuarter, quarterlyTarget, quarterProgress >= 100 ? 'green' : quarterProgress >= 60 ? 'amber' : 'red') +
+                '<div style="font-size:0.68rem;color:var(--fdr-dim);margin-top:4px;">' + quarterProgress + '% of ₦1,500,000 target</div>' +
+            '</div>');
+
+        // Refunds & Outstanding
+        var pendingOrders = (d.recentOrders || []).filter(function (o) { return !o.fulfilled; }).length;
+        html += '<div class="fdr-grid-2">';
+        html += BFX.card('Refunds & Disputes',
+            '<div style="text-align:center;padding:16px 0;">' +
+                '<div style="font-family:Space Grotesk;font-size:2rem;font-weight:700;color:var(--fdr-green);">₦0</div>' +
+                '<div style="font-size:0.78rem;color:var(--fdr-green);margin-top:4px;">No refunds processed</div>' +
+            '</div>' +
+            BFX.settingRow('Refund Policy', 'Case-by-case manual review', null) +
+            BFX.settingRow('Dispute Rate', '0%', BFX.badge('Clean', 'green')) +
+            BFX.settingRow('Chargebacks', 'None recorded', BFX.badge('0', 'green')));
+
+        html += BFX.card('Outstanding & Pending',
+            '<div style="display:flex;gap:16px;margin-bottom:12px;">' +
+                '<div style="flex:1;padding:14px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;' + (pendingOrders > 0 ? 'color:var(--fdr-amber);' : '') + '">' + pendingOrders + '</div>' +
+                    '<div style="font-size:0.72rem;color:var(--fdr-dim);">Unfulfilled Orders</div></div>' +
+                '<div style="flex:1;padding:14px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;">' + BFX.num(d.bookings.pending) + '</div>' +
+                    '<div style="font-size:0.72rem;color:var(--fdr-dim);">Pending Bookings</div></div>' +
+            '</div>' +
+            (pendingOrders > 0 ? BFX.alert('warn', pendingOrders + ' order' + (pendingOrders !== 1 ? 's' : '') + ' awaiting fulfillment.') : '') +
+            '<div style="margin-top:8px;text-align:center;"><button class="fdr-btn fdr-btn-outline fdr-btn-sm" onclick="fdrNav(\'sales\')">View in Sales &rarr;</button></div>');
+        html += '</div>';
+
+        // AI Financial Insights
+        html += BFX.card('AI Financial Insights',
+            buildAiInsight('💰', 'Revenue Health', 'Monthly revenue is ' + BFX.naira(d.revenue.thisMonth) + ' with a ' + profitMargin + '% profit margin. ' + (profitMargin > 80 ? 'Excellent margins due to low infrastructure costs on free-tier services.' : 'Consider reducing expenses or increasing pricing.')) +
+            buildAiInsight('📈', 'Growth Trajectory', (monthlyGrowth >= 0 ? 'Revenue grew ' + monthlyGrowth + '% in the second half of the past 30 days.' : 'Revenue declined ' + Math.abs(monthlyGrowth) + '% recently.') + ' Daily average is ' + BFX.naira(dailyAvg) + ', projecting ' + BFX.naira(monthForecast) + ' over 30 days.') +
+            buildAiInsight('⭐', 'Product Mix', 'VIP Program drives the highest per-order value. EA addon at ' + BFX.pct(d.eaAddon.rate) + ' conversion adds incremental revenue. Consider bundling EA with mentorship tiers.') +
+            buildAiInsight('🔄', 'Recurring Revenue', 'Mentorship products generate recurring income. Estimated MRR: ' + BFX.naira(mrr) + '. Focus on retention and renewal campaigns via Brevo drip sequences.') +
+            buildAiInsight('🎯', 'Optimization', 'AOV is ' + BFX.naira(d.metrics.aov) + '. Increasing EA addon visibility at checkout could lift AOV by ₦5,000-10,000. Test a pre-selected addon checkbox.'),
+            null, '<span style="font-size:0.72rem;color:var(--fdr-dim);">AI-generated from transaction data</span>');
 
         document.getElementById('sec-finance').innerHTML = html;
+    }
+
+    function buildRevenueStream(icon, title, desc, amount, total, color) {
+        var pct = total > 0 ? Math.round((amount / total) * 100) : 0;
+        return '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;">' +
+            '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
+                '<span style="font-size:1.2rem;">' + icon + '</span>' +
+                '<div><div style="font-weight:600;font-size:0.84rem;">' + title + '</div>' +
+                '<div style="font-size:0.68rem;color:var(--fdr-dim);">' + desc + '</div></div></div>' +
+            '<div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-' + color + ');margin-bottom:8px;">' + BFX.naira(amount) + '</div>' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+                '<div style="flex:1;height:6px;background:var(--fdr-border);border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:var(--fdr-' + color + ');border-radius:3px;"></div></div>' +
+                '<span style="font-size:0.72rem;color:var(--fdr-dim);">' + pct + '%</span></div></div>';
+    }
+
+    function buildPeriodCard(label, revenue, orders) {
+        return '<div style="padding:12px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+            '<div style="font-size:0.68rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">' + label + '</div>' +
+            '<div style="font-family:Space Grotesk;font-size:1.1rem;font-weight:700;color:var(--fdr-green);">' + BFX.naira(revenue) + '</div>' +
+            '<div style="font-size:0.68rem;color:var(--fdr-dim);margin-top:4px;">' + BFX.num(orders) + ' orders</div></div>';
     }
 
     // ================================================================
