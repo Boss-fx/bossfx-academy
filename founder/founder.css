@@ -469,9 +469,32 @@ table.fdr-table{width:100%;border-collapse:collapse;font-size:0.8rem;}
 .fdr-theme-btn:hover{border-color:var(--fdr-green);color:var(--fdr-text);}
 .fdr-theme-btn svg{width:14px;height:14px;}
 
+/* ===== Status Footer ===== */
+.fdr-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 24px;border-top:1px solid var(--fdr-border);font-size:0.68rem;color:var(--fdr-dim);background:var(--fdr-bg2);position:sticky;bottom:0;z-index:10;}
+.fdr-footer-left,.fdr-footer-right{display:flex;align-items:center;gap:8px;}
+.fdr-footer-sep{opacity:0.4;}
+.fdr-footer-status{display:inline-flex;align-items:center;gap:5px;}
+.fdr-footer-status .fdr-status-dot{width:6px;height:6px;}
+
+/* ===== Login Loading ===== */
+.fdr-btn-loading{pointer-events:none;opacity:0.7;position:relative;}
+.fdr-btn-loading::after{content:'';width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:fdr-spin .6s linear infinite;margin-left:8px;}
+
+/* ===== Section Error State ===== */
+.fdr-section-error{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;text-align:center;color:var(--fdr-dim);}
+.fdr-section-error-icon{font-size:2rem;margin-bottom:12px;opacity:0.5;}
+.fdr-section-error-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.95rem;color:var(--fdr-text);margin-bottom:6px;}
+.fdr-section-error-msg{font-size:0.82rem;max-width:400px;line-height:1.5;margin-bottom:16px;}
+
+/* ===== App Fade In ===== */
+.fdr-app{animation:fdr-fadeIn .3s ease;}
+@keyframes fdr-fadeIn{from{opacity:0}to{opacity:1}}
+
 /* ===== Responsive additions ===== */
 @media(max-width:768px){
     .fdr-drawer{width:100vw;}
     .fdr-activity-panel{width:100vw;}
     .fdr-breadcrumbs{display:none;}
+    .fdr-footer{padding:8px 16px;flex-wrap:wrap;gap:4px;}
+    .fdr-footer-right{display:none;}
 }
