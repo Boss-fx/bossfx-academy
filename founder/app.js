@@ -1,19 +1,16 @@
 // ================================================================
 // BossFx OS — Application Logic
-// Modular dashboard with 10 modules, command palette, notifications
-// Auth flow, API calls, and data model preserved from Phase 3B
+// Powered by OS core (event bus, state, API, commands, search)
+// Auth flow, module renderers, and data model preserved
 // ================================================================
 
 (function () {
     'use strict';
 
-    // --- Supabase init (UNCHANGED) ---
+    // --- Supabase init (for session management only) ---
     var sbUrl = document.querySelector('meta[name="supabase-url"]').content;
     var sbKey = document.querySelector('meta[name="supabase-anon-key"]').content;
     var supabase = window.supabase.createClient(sbUrl, sbKey);
-    var session = null;
-    var dashData = null;
-    var sysData = null;
 
     // --- AI Team definitions ---
     var AI_ROLES = [
@@ -46,8 +43,52 @@
         'settings': 'Settings'
     };
 
+    var SECTION_CATEGORIES = {
+        ceo: 'Command', marketing: 'Growth', sales: 'Growth', students: 'Growth',
+        analytics: 'Intelligence', 'ai-control': 'Intelligence',
+        automation: 'Operations', finance: 'Operations', operations: 'Operations',
+        settings: 'System'
+    };
+
     // ================================================================
-    // AUTH (UNCHANGED from Phase 3B)
+    // WORKSPACE & COMMAND REGISTRATION
+    // ================================================================
+
+    Object.keys(SECTIONS).forEach(function (id) {
+        OS.workspaces.register(id, {
+            label: SECTIONS[id],
+            category: SECTION_CATEGORIES[id] || 'general',
+            commands: [{
+                id: 'nav:' + id, label: 'Go to ' + SECTIONS[id], type: 'nav',
+                keywords: SECTIONS[id].toLowerCase(),
+                action: function () { OS.nav.go(id); }
+            }]
+        });
+    });
+
+    OS.commands.register([
+        { id: 'action:refresh', label: 'Refresh Dashboard', type: 'action', keywords: 'reload update data', action: function () { fdrRefresh(); } },
+        { id: 'action:logout', label: 'Sign Out', type: 'action', keywords: 'logout signout exit', action: function () { fdrLogout(); } },
+        { id: 'action:theme', label: 'Toggle Theme (Dark/Light)', type: 'action', keywords: 'dark light mode theme', action: function () { fdrToggleTheme(); } },
+        { id: 'action:activity', label: 'View Activity Feed', type: 'action', keywords: 'history timeline events', action: function () { fdrToggleActivity(); } },
+        { id: 'action:shortcuts', label: 'Keyboard Shortcuts', type: 'action', keywords: 'keys hotkeys help', action: function () { showShortcutsModal(); } },
+        { id: 'action:flutterwave', label: 'Open Flutterwave Dashboard', type: 'action', keywords: 'payments gateway', action: function () { window.open('https://dashboard.flutterwave.com', '_blank'); } },
+        { id: 'action:supabase', label: 'Open Supabase Dashboard', type: 'action', keywords: 'database db', action: function () { window.open('https://supabase.com/dashboard', '_blank'); } },
+        { id: 'action:brevo', label: 'Open Brevo Dashboard', type: 'action', keywords: 'email crm marketing', action: function () { window.open('https://app.brevo.com', '_blank'); } },
+        { id: 'action:vercel', label: 'Open Vercel Dashboard', type: 'action', keywords: 'hosting deploy', action: function () { window.open('https://vercel.com', '_blank'); } },
+        { id: 'action:ga4', label: 'Open Google Analytics', type: 'action', keywords: 'analytics traffic', action: function () { window.open('https://analytics.google.com', '_blank'); } },
+        { id: 'action:clarity', label: 'Open Microsoft Clarity', type: 'action', keywords: 'heatmaps recordings', action: function () { window.open('https://clarity.microsoft.com', '_blank'); } },
+        { id: 'action:admin', label: 'Open Legacy Admin Dashboard', type: 'action', keywords: 'admin old', action: function () { window.open('/admin/', '_blank'); } }
+    ]);
+
+    // Register keyboard shortcuts
+    OS.shortcuts.register('mod+k', function () { cmdOpen ? closeCmd() : openCmd(); }, 'Command Palette');
+    OS.shortcuts.register('mod+shift+a', function () { fdrToggleActivity(); }, 'Activity Feed');
+    OS.shortcuts.register('mod+shift+n', function () { fdrToggleNotifs(); }, 'Notifications');
+    OS.shortcuts.register('mod+shift+t', function () { fdrToggleTheme(); }, 'Toggle Theme');
+
+    // ================================================================
+    // AUTH (UNCHANGED — wired to OS.store)
     // ================================================================
 
     document.getElementById('fdrLoginForm').addEventListener('submit', async function (e) {
@@ -59,7 +100,8 @@
         try {
             var result = await supabase.auth.signInWithPassword({ email: email, password: pw });
             if (result.error) throw result.error;
-            session = result.data.session;
+            OS.store.set('session', result.data.session);
+            OS.activity.log('login', 'Founder signed in');
             onLogin();
         } catch (err) {
             errEl.textContent = err.message || 'Login failed';
@@ -69,7 +111,7 @@
     async function checkSession() {
         var result = await supabase.auth.getSession();
         if (result.data && result.data.session) {
-            session = result.data.session;
+            OS.store.set('session', result.data.session);
             onLogin();
         }
     }
@@ -77,61 +119,73 @@
     function onLogin() {
         document.getElementById('fdrLogin').style.display = 'none';
         document.getElementById('fdrApp').style.display = 'flex';
-        document.getElementById('fdrUserEmail').textContent = session.user.email;
+        document.getElementById('fdrUserEmail').textContent = OS.store.get('session').user.email;
         startClock();
+        updateBreadcrumbs('ceo');
         loadDashboard();
     }
 
     window.fdrLogout = async function () {
         await supabase.auth.signOut();
-        session = null;
-        dashData = null;
-        sysData = null;
+        OS.store.set('session', null);
+        OS.store.set('dashData', null);
+        OS.store.set('sysData', null);
+        OS.activity.log('login', 'Founder signed out');
         document.getElementById('fdrLogin').style.display = 'flex';
         document.getElementById('fdrApp').style.display = 'none';
     };
 
     // ================================================================
-    // NAVIGATION
+    // NAVIGATION — Powered by OS.nav + event-driven DOM updates
     // ================================================================
 
     var navItems = document.querySelectorAll('.fdr-nav-item');
     navItems.forEach(function (btn) {
-        btn.addEventListener('click', function () { fdrNav(btn.dataset.section); });
+        btn.addEventListener('click', function () { OS.nav.go(btn.dataset.section); });
     });
 
-    window.fdrNav = function (section) {
-        navItems.forEach(function (b) { b.classList.toggle('active', b.dataset.section === section); });
+    OS.events.on('nav:changed', function (data) {
+        navItems.forEach(function (b) { b.classList.toggle('active', b.dataset.section === data.section); });
         document.querySelectorAll('.fdr-section').forEach(function (s) { s.classList.remove('active'); });
-        var target = document.getElementById('sec-' + section);
+        var target = document.getElementById('sec-' + data.section);
         if (target) target.classList.add('active');
-        document.getElementById('fdrPageTitle').textContent = SECTIONS[section] || section;
+        document.getElementById('fdrPageTitle').textContent = SECTIONS[data.section] || data.section;
+        updateBreadcrumbs(data.section);
         closeSidebar();
-    };
+    });
+
+    window.fdrNav = function (section) { OS.nav.go(section); };
+
+    function updateBreadcrumbs(section) {
+        var el = document.getElementById('fdrBreadcrumbs');
+        if (el) el.innerHTML = BFX.breadcrumbs([
+            { label: 'BossFx OS', action: "fdrNav('ceo')" },
+            { label: SECTION_CATEGORIES[section] || 'System' },
+            { label: SECTIONS[section] || section }
+        ]);
+    }
 
     // --- Mobile sidebar ---
     var hamburger = document.getElementById('fdrHamburger');
     var sidebar = document.getElementById('fdrSidebar');
-    var overlay = document.getElementById('fdrOverlay');
+    var mobileOverlay = document.getElementById('fdrOverlay');
     hamburger.addEventListener('click', function () {
         sidebar.classList.toggle('open');
-        overlay.classList.toggle('show');
+        mobileOverlay.classList.toggle('show');
     });
-    overlay.addEventListener('click', closeSidebar);
+    mobileOverlay.addEventListener('click', closeSidebar);
     function closeSidebar() {
         sidebar.classList.remove('open');
-        overlay.classList.remove('show');
+        mobileOverlay.classList.remove('show');
     }
 
     // ================================================================
-    // COMMAND PALETTE
+    // COMMAND PALETTE — Powered by OS.commands + OS.search
     // ================================================================
 
     var cmdOpen = false;
     var cmdIdx = 0;
-    var cmdItems = Object.keys(SECTIONS).map(function (k) { return { id: k, label: SECTIONS[k], type: 'nav' }; });
-    cmdItems.push({ id: 'refresh', label: 'Refresh Dashboard', type: 'action' });
-    cmdItems.push({ id: 'logout', label: 'Sign Out', type: 'action' });
+    var cmdFiltered = [];
 
     function openCmd() {
         cmdOpen = true;
@@ -149,104 +203,162 @@
     }
 
     function renderCmd(query) {
-        var q = query.toLowerCase();
-        var filtered = cmdItems.filter(function (item) { return item.label.toLowerCase().indexOf(q) >= 0; });
-        if (cmdIdx >= filtered.length) cmdIdx = 0;
-        var html = filtered.map(function (item, i) {
-            var icon = item.type === 'nav' ? '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>' : '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>';
-            return '<div class="fdr-cmd-item' + (i === cmdIdx ? ' active' : '') + '" data-idx="' + i + '" data-id="' + item.id + '" data-type="' + item.type + '">' + icon + '<span class="fdr-cmd-item-label">' + BFX.esc(item.label) + '</span><span class="fdr-cmd-item-hint">' + item.type + '</span></div>';
+        cmdFiltered = OS.commands.search(query);
+        if (query && query.length >= 2) {
+            var searchResults = OS.search.query(query);
+            searchResults.forEach(function (sr) {
+                cmdFiltered.push({
+                    id: 'search:' + sr.module + ':' + sr.id,
+                    label: sr.label, type: sr.type,
+                    detail: sr.detail,
+                    action: sr.action
+                });
+            });
+        }
+        if (cmdIdx >= cmdFiltered.length) cmdIdx = 0;
+
+        var navIcon = '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>';
+        var actionIcon = '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>';
+        var searchIcon = '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>';
+
+        var html = cmdFiltered.map(function (item, i) {
+            var icon = item.type === 'nav' ? navIcon : (item.id && item.id.indexOf('search:') === 0 ? searchIcon : actionIcon);
+            return '<div class="fdr-cmd-item' + (i === cmdIdx ? ' active' : '') + '" data-idx="' + i + '">' +
+                icon + '<span class="fdr-cmd-item-label">' + BFX.esc(item.label) + '</span>' +
+                '<span class="fdr-cmd-item-hint">' + BFX.esc(item.type || '') + '</span></div>';
         }).join('');
         document.getElementById('cmdResults').innerHTML = html || '<div style="padding:20px;text-align:center;color:var(--fdr-dim)">No results</div>';
 
-        document.querySelectorAll('.fdr-cmd-item').forEach(function (el) {
-            el.addEventListener('click', function () { executeCmd(el.dataset.id, el.dataset.type); });
+        document.querySelectorAll('.fdr-cmd-item').forEach(function (el, idx) {
+            el.addEventListener('click', function () { executeCmdAtIndex(idx); });
         });
     }
 
-    function executeCmd(id, type) {
+    function executeCmdAtIndex(idx) {
+        var item = cmdFiltered[idx];
+        if (!item) return;
         closeCmd();
-        if (type === 'nav') fdrNav(id);
-        else if (id === 'refresh') fdrRefresh();
-        else if (id === 'logout') fdrLogout();
+        if (item.action) item.action();
     }
 
     document.getElementById('cmdInput').addEventListener('input', function (e) { renderCmd(e.target.value); });
     document.getElementById('cmdInput').addEventListener('keydown', function (e) {
-        var items = document.querySelectorAll('.fdr-cmd-item');
-        if (e.key === 'ArrowDown') { e.preventDefault(); cmdIdx = Math.min(cmdIdx + 1, items.length - 1); renderCmd(this.value); }
+        if (e.key === 'ArrowDown') { e.preventDefault(); cmdIdx = Math.min(cmdIdx + 1, cmdFiltered.length - 1); renderCmd(this.value); }
         else if (e.key === 'ArrowUp') { e.preventDefault(); cmdIdx = Math.max(cmdIdx - 1, 0); renderCmd(this.value); }
-        else if (e.key === 'Enter') { e.preventDefault(); var active = items[cmdIdx]; if (active) executeCmd(active.dataset.id, active.dataset.type); }
+        else if (e.key === 'Enter') { e.preventDefault(); executeCmdAtIndex(cmdIdx); }
         else if (e.key === 'Escape') { closeCmd(); }
     });
 
     document.getElementById('cmdPalette').addEventListener('click', function (e) { if (e.target === this) closeCmd(); });
-
-    document.addEventListener('keydown', function (e) {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); cmdOpen ? closeCmd() : openCmd(); }
-        if (e.key === 'Escape' && cmdOpen) closeCmd();
-    });
-
     document.getElementById('fdrSearchInput').addEventListener('focus', function () { this.blur(); openCmd(); });
 
     // ================================================================
-    // NOTIFICATIONS
+    // NOTIFICATIONS — Powered by OS.notifications
     // ================================================================
 
-    var notifications = [];
-
     window.fdrToggleNotifs = function () {
+        document.getElementById('activityPanel').classList.remove('open');
         var panel = document.getElementById('notifPanel');
         panel.classList.toggle('open');
         if (panel.classList.contains('open')) renderNotifs();
     };
 
     window.fdrClearNotifs = function () {
-        notifications = [];
+        OS.notifications.clear();
         document.getElementById('notifDot').classList.remove('show');
         renderNotifs();
     };
 
-    function addNotification(title, body, type) {
-        notifications.unshift({ title: title, body: body, type: type || 'info', time: new Date().toISOString(), read: false });
-        if (notifications.length > 50) notifications.pop();
-        document.getElementById('notifDot').classList.add('show');
-    }
-
     function renderNotifs() {
         var list = document.getElementById('notifList');
-        if (!notifications.length) {
+        var notifs = OS.notifications.all();
+        if (!notifs.length) {
             list.innerHTML = '<div class="fdr-notif-empty"><span style="font-size:1.5rem">🔔</span><span>No notifications</span></div>';
             return;
         }
-        list.innerHTML = notifications.map(function (n) {
-            return '<div class="fdr-notif-item' + (n.read ? '' : ' unread') + '"><div class="fdr-notif-item-title">' + BFX.esc(n.title) + '</div><div class="fdr-notif-item-body">' + BFX.esc(n.body) + '</div><div class="fdr-notif-item-time">' + BFX.timeAgo(n.time) + '</div></div>';
+        list.innerHTML = notifs.map(function (n) {
+            return '<div class="fdr-notif-item' + (n.read ? '' : ' unread') + '" onclick="OS.notifications.markRead(' + n.id + ')">' +
+                '<div class="fdr-notif-item-title">' + BFX.esc(n.title) + '</div>' +
+                '<div class="fdr-notif-item-body">' + BFX.esc(n.body) + '</div>' +
+                '<div class="fdr-notif-item-time">' + BFX.timeAgo(n.time) + '</div></div>';
         }).join('');
     }
 
+    OS.events.on('notification:added', function () {
+        document.getElementById('notifDot').classList.add('show');
+        if (document.getElementById('notifPanel').classList.contains('open')) renderNotifs();
+    });
+    OS.events.on('notification:cleared', function () {
+        document.getElementById('notifDot').classList.remove('show');
+    });
+
     // ================================================================
-    // API (UNCHANGED)
+    // ACTIVITY PANEL
     // ================================================================
 
-    function authHeaders() {
-        return { 'Authorization': 'Bearer ' + (session ? session.access_token : ''), 'Content-Type': 'application/json' };
+    window.fdrToggleActivity = function () {
+        document.getElementById('notifPanel').classList.remove('open');
+        var panel = document.getElementById('activityPanel');
+        panel.classList.toggle('open');
+        if (panel.classList.contains('open')) renderActivity();
+    };
+
+    window.fdrCloseActivity = function () {
+        document.getElementById('activityPanel').classList.remove('open');
+    };
+
+    function renderActivity() {
+        document.getElementById('activityList').innerHTML = BFX.timeline(OS.activity.recent(30));
     }
 
-    async function fetchFounderData() {
-        var resp = await fetch('/api/admin?action=founder', { headers: authHeaders() });
-        if (!resp.ok) throw new Error('Failed to load dashboard: ' + resp.status);
-        return resp.json();
-    }
+    OS.events.on('activity:logged', function () {
+        if (document.getElementById('activityPanel').classList.contains('open')) renderActivity();
+    });
 
-    async function fetchSystemData() {
-        var resp = await fetch('/api/admin?action=system', { headers: authHeaders() });
-        if (!resp.ok) throw new Error('Failed to load system: ' + resp.status);
-        return resp.json();
-    }
+    // ================================================================
+    // MODAL & DRAWER
+    // ================================================================
 
-    function getAuthClient() {
-        return window.supabase.createClient(sbUrl, sbKey, {
-            global: { headers: { Authorization: 'Bearer ' + session.access_token } }
+    window.fdrOpenModal = function (title, contentHtml, footerHtml) {
+        document.getElementById('fdrModalContainer').innerHTML = BFX.modal(title, contentHtml, footerHtml);
+        document.getElementById('fdrModalBackdrop').classList.add('open');
+    };
+
+    window.fdrCloseModal = function () {
+        document.getElementById('fdrModalBackdrop').classList.remove('open');
+    };
+
+    window.fdrOpenDrawer = function (title, contentHtml) {
+        document.getElementById('fdrDrawer').innerHTML = BFX.drawer(title, contentHtml);
+        document.getElementById('fdrDrawer').classList.add('open');
+    };
+
+    window.fdrCloseDrawer = function () {
+        document.getElementById('fdrDrawer').classList.remove('open');
+    };
+
+    // ================================================================
+    // THEME TOGGLE
+    // ================================================================
+
+    window.fdrToggleTheme = function () {
+        OS.theme.toggle();
+        OS.activity.log('system', 'Theme changed to ' + OS.theme.current());
+    };
+
+    // ================================================================
+    // SHORTCUTS MODAL
+    // ================================================================
+
+    function showShortcutsModal() {
+        var sc = OS.shortcuts.all();
+        var html = '<div style="display:grid;gap:8px;">';
+        Object.keys(sc).forEach(function (combo) {
+            var display = combo.replace('mod+', '⌘/Ctrl+').replace('shift+', 'Shift+').replace('alt+', 'Alt+');
+            html += BFX.settingRow(sc[combo].label, null, '<kbd class="fdr-kbd" style="font-size:0.78rem;padding:3px 8px;">' + BFX.esc(display) + '</kbd>');
         });
+        html += '</div>';
+        fdrOpenModal('Keyboard Shortcuts', html);
     }
 
     // ================================================================
@@ -262,7 +374,7 @@
     }
 
     // ================================================================
-    // TOAST + REFRESH (UNCHANGED)
+    // TOAST + REFRESH + RESEND
     // ================================================================
 
     window.fdrToast = function (msg, type) {
@@ -274,6 +386,7 @@
 
     window.fdrRefresh = async function () {
         fdrToast('Refreshing data...');
+        OS.activity.log('data', 'Dashboard refresh started');
         await loadDashboard();
         fdrToast('Dashboard updated', 'success');
     };
@@ -281,10 +394,13 @@
     window.fdrResend = async function (orderId) {
         if (!confirm('Resend fulfillment email for this order?')) return;
         try {
-            var resp = await fetch('/api/admin?action=resend', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ orderId: orderId }) });
-            var data = await resp.json();
-            if (data.success) fdrToast('Email resent successfully', 'success');
-            else fdrToast(data.error || 'Resend failed', 'error');
+            var data = await OS.api.resend(orderId);
+            if (data.success) {
+                fdrToast('Email resent successfully', 'success');
+                OS.activity.log('order', 'Resent fulfillment email for order ' + orderId);
+            } else {
+                fdrToast(data.error || 'Resend failed', 'error');
+            }
         } catch (e) { fdrToast('Resend failed: ' + e.message, 'error'); }
     };
 
@@ -293,10 +409,11 @@
     // ================================================================
 
     async function loadDashboard() {
+        OS.store.set('loading', true);
         try {
-            var results = await Promise.all([fetchFounderData(), fetchSystemData()]);
-            dashData = results[0];
-            sysData = results[1];
+            var results = await Promise.all([OS.api.dashboard(), OS.api.system()]);
+            OS.store.set('dashData', results[0]);
+            OS.store.set('sysData', results[1]);
 
             renderCEO();
             renderMarketing();
@@ -310,22 +427,46 @@
             renderSettings();
 
             generateNotifications();
+            buildSearchIndex();
+            OS.activity.log('data', 'Dashboard data loaded');
+            OS.events.emit('dashboard:loaded');
         } catch (err) {
             console.error('[BossFx OS] Load error:', err);
             fdrToast('Error loading dashboard: ' + err.message, 'error');
+            OS.activity.log('error', 'Dashboard load failed: ' + err.message);
         }
+        OS.store.set('loading', false);
     }
 
     function generateNotifications() {
-        notifications = [];
-        var d = dashData;
-        if (d.orders.today > 0) addNotification('New Orders', d.orders.today + ' order' + (d.orders.today > 1 ? 's' : '') + ' today — ' + BFX.naira(d.revenue.today), 'success');
-        if (d.bookings.pending > 0) addNotification('Pending Bookings', d.bookings.pending + ' mentorship booking' + (d.bookings.pending > 1 ? 's' : '') + ' need attention', 'warn');
-        var s = sysData;
-        if (s.supabase && s.supabase.status === 'error') addNotification('Supabase Error', s.supabase.message || 'Database connection issue', 'error');
-        if (s.brevo && s.brevo.status === 'error') addNotification('Brevo Error', s.brevo.message || 'Email service issue', 'error');
-        if (s.vercel && s.vercel.functionsUsed >= s.vercel.functionsLimit) addNotification('Function Limit', 'Serverless function limit reached (' + s.vercel.functionsUsed + '/' + s.vercel.functionsLimit + ')', 'error');
-        if (notifications.length) document.getElementById('notifDot').classList.add('show');
+        OS.notifications.clear();
+        var d = OS.store.get('dashData');
+        var s = OS.store.get('sysData');
+        if (d.orders.today > 0) OS.notifications.add('New Orders', d.orders.today + ' order' + (d.orders.today > 1 ? 's' : '') + ' today — ' + BFX.naira(d.revenue.today), 'success', { source: 'sales' });
+        if (d.bookings.pending > 0) OS.notifications.add('Pending Bookings', d.bookings.pending + ' mentorship booking' + (d.bookings.pending > 1 ? 's' : '') + ' need attention', 'warn', { source: 'students', priority: 'high' });
+        if (s.supabase && s.supabase.status === 'error') OS.notifications.add('Supabase Error', s.supabase.message || 'Database connection issue', 'error', { source: 'system', priority: 'critical' });
+        if (s.brevo && s.brevo.status === 'error') OS.notifications.add('Brevo Error', s.brevo.message || 'Email service issue', 'error', { source: 'system', priority: 'critical' });
+        if (s.vercel && s.vercel.functionsUsed >= s.vercel.functionsLimit) OS.notifications.add('Function Limit', 'Serverless function limit reached (' + s.vercel.functionsUsed + '/' + s.vercel.functionsLimit + ')', 'error', { source: 'system', priority: 'critical' });
+    }
+
+    function buildSearchIndex() {
+        var d = OS.store.get('dashData');
+        if (d.recentOrders) {
+            OS.search.register('orders', d.recentOrders.map(function (o) {
+                return { id: o.id, label: o.customerEmail || o.customerName || 'Order', detail: BFX.productName(o.productId) + ' — ' + BFX.naira(o.amount), type: 'order', action: function () { OS.nav.go('sales'); } };
+            }));
+        }
+        if (d.products) {
+            OS.search.register('products', Object.keys(d.products).map(function (k) {
+                return { id: k, label: BFX.productName(k), detail: BFX.naira(d.products[k].revenue) + ' revenue', type: 'product', action: function () { OS.nav.go('sales'); } };
+            }));
+        }
+        OS.search.register('ai', AI_ROLES.map(function (r) {
+            return { id: r.id, label: r.title + ' — ' + r.subtitle, detail: r.purpose, type: 'ai-role', action: function () { OS.nav.go('ai-control'); } };
+        }));
+        OS.search.register('sections', Object.keys(SECTIONS).map(function (k) {
+            return { id: k, label: SECTIONS[k], type: 'page', action: function () { OS.nav.go(k); } };
+        }));
     }
 
     // ================================================================
@@ -333,7 +474,7 @@
     // ================================================================
 
     function renderCEO() {
-        var d = dashData;
+        var d = OS.store.get('dashData');
         var html = BFX.sectionHeader('CEO Dashboard', 'Executive overview of BossFx Academy');
 
         html += BFX.metricGrid([
@@ -347,26 +488,21 @@
             ['Email Subscribers', d.brevo ? BFX.num(d.brevo.totalSubscribers) : 'N/A', 'purple']
         ]);
 
-        // Alerts
         var alerts = buildAlerts();
         if (alerts.length) html += alerts.map(function (a) { return BFX.alert(a.type, a.text); }).join('');
 
-        // Trend + Products
         html += '<div class="fdr-grid-2">';
         html += BFX.card('30-Day Revenue Trend', BFX.trendChart(d.revenue.trend));
         html += BFX.card('Revenue by Product', BFX.productBreakdown(d.products));
         html += '</div>';
 
-        // Goals
         html += '<div class="fdr-grid-2">';
         html += BFX.goalsCard("Today's Priorities", 'daily');
         html += BFX.goalsCard('Weekly Goals', 'weekly');
         html += '</div>';
 
-        // Recent Orders
         html += BFX.card('Recent Orders', BFX.ordersTable(d.recentOrders, false), null, '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" onclick="fdrNav(\'sales\')">View All</button>');
 
-        // AI Summary
         html += BFX.card('AI Team Summary', '<div style="display:flex;flex-wrap:wrap;gap:8px;">' + AI_ROLES.map(function (r) {
             return BFX.badge(r.title, r.color);
         }).join('') + '</div><p style="margin-top:12px;font-size:0.8rem;color:var(--fdr-dim);">13 AI roles active across all business functions. <a href="#" onclick="fdrNav(\'ai-control\');return false;">Manage AI Team &rarr;</a></p>');
@@ -378,8 +514,8 @@
 
     function buildAlerts() {
         var alerts = [];
-        var d = dashData;
-        var s = sysData;
+        var d = OS.store.get('dashData');
+        var s = OS.store.get('sysData');
         if (d.orders.today > 0) alerts.push({ type: 'success', text: d.orders.today + ' order' + (d.orders.today > 1 ? 's' : '') + ' today — ' + BFX.naira(d.revenue.today) + ' revenue' });
         if (d.bookings.pending > 0) alerts.push({ type: 'warn', text: d.bookings.pending + ' pending mentorship booking' + (d.bookings.pending > 1 ? 's' : '') + ' require attention' });
         if (s.supabase && s.supabase.status === 'error') alerts.push({ type: 'error', text: 'Supabase: ' + (s.supabase.message || 'Error') });
@@ -394,7 +530,7 @@
     // ================================================================
 
     function renderMarketing() {
-        var d = dashData;
+        var d = OS.store.get('dashData');
         var b = d.brevo;
         var html = BFX.sectionHeader('Marketing', 'Channels, campaigns, and audience growth');
 
@@ -407,7 +543,6 @@
 
         html += '<div class="fdr-grid-2">';
 
-        // Email Lists
         var listsHtml = '';
         if (b && b.lists && b.lists.length) {
             listsHtml = b.lists.map(function (l) { return BFX.settingRow(l.name, 'List #' + l.id, BFX.badge(BFX.num(l.subscribers) + ' subscribers', 'purple')); }).join('');
@@ -416,7 +551,6 @@
         }
         html += BFX.card('Email Lists (Brevo)', listsHtml);
 
-        // Social Channels
         var socials = [
             ['Instagram', 'https://www.instagram.com/bossfx_academy', '@bossfx_academy'],
             ['TikTok', 'https://www.tiktok.com/@bossfx1', '@bossfx1'],
@@ -431,7 +565,6 @@
         html += BFX.card('Social Media Channels', socialHtml);
         html += '</div>';
 
-        // Analytics Platforms
         html += BFX.card('Analytics & Tracking', '<div class="fdr-grid-2">' +
             BFX.serviceLink('Google Analytics 4', 'G-ZFQ9P5KFSJ', 'https://analytics.google.com', 'var(--fdr-blue-dim)', '📊') +
             BFX.serviceLink('Google Tag Manager', 'GTM-T3R88HZB', 'https://tagmanager.google.com', 'var(--fdr-blue-dim)', '🏷️') +
@@ -439,10 +572,7 @@
             BFX.serviceLink('Microsoft Clarity', 'wnde2od79f', 'https://clarity.microsoft.com', 'var(--fdr-purple-dim)', '🔍') +
             '</div>');
 
-        // Content Calendar
         html += BFX.card('Content Calendar', BFX.emptyState('📅', 'Content Calendar', 'Plan and schedule content across all channels. Connect in Phase 4.', '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" disabled>Coming Soon</button>'));
-
-        // Campaign Performance
         html += BFX.card('Campaign Performance', BFX.emptyState('📈', 'Campaign Analytics', 'Track campaign ROI, click-through rates, and conversions. Connect marketing tools in Phase 4.', '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" disabled>Coming Soon</button>'));
 
         document.getElementById('sec-marketing').innerHTML = html;
@@ -453,7 +583,8 @@
     // ================================================================
 
     function renderSales() {
-        var d = dashData;
+        var d = OS.store.get('dashData');
+        var s = OS.store.get('sysData');
         var html = BFX.sectionHeader('Sales', 'Revenue, orders, and product performance');
 
         html += BFX.metricGrid([
@@ -472,8 +603,7 @@
         html += BFX.card('30-Day Trend', BFX.trendChart(d.revenue.trend));
         html += '</div>';
 
-        // Flutterwave Overview
-        var fwStatus = sysData.flutterwave || {};
+        var fwStatus = s.flutterwave || {};
         html += BFX.card('Flutterwave Payment Gateway',
             '<div class="fdr-grid-3">' +
             BFX.settingRow('Gateway Status', null, BFX.statusBadge(fwStatus.status === 'configured' ? 'configured' : 'error')) +
@@ -482,14 +612,12 @@
             '</div>',
             null, '<a href="https://dashboard.flutterwave.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Flutterwave Dashboard &rarr;</a>');
 
-        // Report tabs
         html += '<div id="salesReportArea">';
         html += BFX.tabs([
             { id: 'today', label: 'Today' }, { id: 'week', label: 'This Week' }, { id: 'month', label: 'This Month' }, { id: 'quarter', label: 'Quarter' }, { id: 'all', label: 'All Time' }
         ], 'today', 'fdrSalesReport');
         html += '</div>';
 
-        // Orders
         html += BFX.card('All Orders', BFX.ordersTable(d.recentOrders, true));
 
         document.getElementById('sec-sales').innerHTML = html;
@@ -497,7 +625,7 @@
     }
 
     window.fdrSalesReport = function (period) {
-        var d = dashData;
+        var d = OS.store.get('dashData');
         var revMap = { today: d.revenue.today, week: d.revenue.thisWeek, month: d.revenue.thisMonth, quarter: d.revenue.thisQuarter, all: d.revenue.allTime };
         var ordMap = { today: d.orders.today, week: d.orders.thisWeek, month: d.orders.thisMonth, quarter: d.orders.allTime, all: d.orders.allTime };
         var rev = revMap[period] || 0;
@@ -521,7 +649,7 @@
     // ================================================================
 
     function renderStudents() {
-        var d = dashData;
+        var d = OS.store.get('dashData');
         var html = BFX.sectionHeader('Students', 'Student directory, downloads, and mentorship');
 
         html += BFX.metricGrid([
@@ -533,18 +661,11 @@
 
         html += '<div class="fdr-grid-2">';
         html += BFX.card('Students by Product', BFX.productBreakdown(d.products));
-
-        // Certificates
         html += BFX.card('Certificates', BFX.emptyState('🎓', 'Certificate System', 'Issue and track course completion certificates. Coming in Phase 4.'));
         html += '</div>';
 
-        // Downloads table
         html += BFX.card('Recent Downloads', '<div id="studentDownloads"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></div>');
-
-        // Bookings table
         html += BFX.card('Mentorship Bookings', '<div id="studentBookings"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></div>');
-
-        // Support Tickets
         html += BFX.card('Support Tickets', BFX.emptyState('🎫', 'Support System', 'Track and resolve student support requests. Connect support channels in Phase 4.'));
 
         document.getElementById('sec-students').innerHTML = html;
@@ -554,7 +675,7 @@
 
     async function loadStudentDownloads() {
         try {
-            var sb = getAuthClient();
+            var sb = OS.api.supabase();
             var res = await sb.from('downloads').select('*').order('downloaded_at', { ascending: false }).limit(20);
             var rows = (res.data || []).map(function (r) {
                 return [BFX.esc(r.customer_email), BFX.productName(r.product_id), BFX.shortDate(r.downloaded_at)];
@@ -567,7 +688,7 @@
 
     async function loadStudentBookings() {
         try {
-            var sb = getAuthClient();
+            var sb = OS.api.supabase();
             var res = await sb.from('mentorship_bookings').select('*').order('created_at', { ascending: false }).limit(20);
             var rows = (res.data || []).map(function (r) {
                 return [BFX.esc(r.customer_name || '—'), BFX.esc(r.customer_email || '—'), BFX.productName(r.product_id), BFX.statusBadge(r.status || 'pending'), BFX.shortDate(r.created_at)];
@@ -592,7 +713,6 @@
             ['Data Quality', 'Active', 'green']
         ]);
 
-        // Platform cards
         html += '<div class="fdr-grid-2">';
         html += BFX.card('Google Analytics 4', '<div style="margin-bottom:12px;">' +
             BFX.settingRow('Property ID', 'G-ZFQ9P5KFSJ', BFX.badge('Active', 'green')) +
@@ -619,13 +739,11 @@
             BFX.emptyState('🔍', 'View Clarity Insights', 'Session recordings, heatmaps, and user behavior analysis.', '<a href="https://clarity.microsoft.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-primary fdr-btn-sm">Open Clarity &rarr;</a>'));
         html += '</div>';
 
-        // Custom Analytics Engine
         html += BFX.card('BossFx Analytics Engine (bfx-analytics.js)', '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;">' +
             ['UTM Attribution', 'Engagement Scoring', 'Conversion Tracking', 'Session Intelligence', 'Ecommerce Module', 'Mobile Intelligence', 'Scroll Depth', 'Content Analytics', 'Social Tracking', 'Performance Monitor', 'Error Tracking'].map(function (m) {
                 return BFX.settingRow(m, null, BFX.badge('Active', 'green'));
             }).join('') + '</div>');
 
-        // Conversion Funnels
         html += BFX.card('Conversion Funnels', BFX.emptyState('🔄', 'Funnel Analysis', 'Visualize visitor-to-customer conversion paths. Data aggregation coming in Phase 4.'));
 
         document.getElementById('sec-analytics').innerHTML = html;
@@ -651,7 +769,6 @@
         AI_ROLES.forEach(function (role) { html += BFX.aiCard(role); });
         html += '</div>';
 
-        // Activity Log
         html += '<div style="margin-top:20px;">';
         html += BFX.card('AI Activity Log', BFX.emptyState('📋', 'Activity Tracking', 'AI role activity and task completion logs will be tracked here. Connect in Phase 5.'));
         html += '</div>';
@@ -675,7 +792,6 @@
 
         html += BFX.alert('info', 'Phase 3C provides the automation management interface. Workflow builder and advanced automation will be enabled in Phase 4.');
 
-        // Active Automations
         html += BFX.card('Active Automations',
             BFX.autoCard('Payment Webhook Fulfillment', 'Processes Flutterwave webhooks: verify payment, create order, generate tokens, send email, notify admin.', 'active', 'On webhook trigger', 'Continuous') +
             BFX.autoCard('Daily Re-engagement Cron', 'Processes drip sequences and sends re-engagement emails to inactive leads.', 'active', 'Daily at 09:00 UTC', 'Today') +
@@ -683,7 +799,6 @@
             BFX.autoCard('Download Token System', 'Generates HMAC-SHA256 tokens for secure file access with automatic expiry.', 'active', 'On purchase', 'Continuous')
         );
 
-        // Drip Sequences
         html += BFX.card('Email Drip Sequences', '<div class="fdr-grid-2">' +
             ['Welcome Series', 'Webinar Funnel', 'Resource Follow-up', 'Mentorship Nurture', 'Exit Intent Recovery', 'Re-engagement'].map(function (name, i) {
                 var steps = [5, 4, 3, 4, 3, 3];
@@ -692,10 +807,7 @@
                     '<div style="font-size:0.75rem;color:var(--fdr-dim);">' + steps[i] + ' steps &middot; Managed by Brevo</div></div>';
             }).join('') + '</div>');
 
-        // Job Queue
         html += BFX.card('Job Queue', BFX.emptyState('⚡', 'Job Queue', 'Real-time job monitoring and queue management. Available in Phase 4.'));
-
-        // Workflow Builder
         html += BFX.card('Workflow Builder', BFX.emptyState('🔧', 'Visual Workflow Builder', 'Design custom automation workflows with triggers, conditions, and actions. Coming in Phase 4.', '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" disabled>Coming in Phase 4</button>'));
 
         document.getElementById('sec-automation').innerHTML = html;
@@ -706,7 +818,7 @@
     // ================================================================
 
     function renderFinance() {
-        var d = dashData;
+        var d = OS.store.get('dashData');
         var html = BFX.sectionHeader('Finance', 'Revenue, expenses, and financial overview');
 
         html += BFX.metricGrid([
@@ -717,25 +829,17 @@
         ]);
 
         html += '<div class="fdr-grid-2">';
-
-        // Revenue Breakdown
         html += BFX.card('Revenue by Product', BFX.productBreakdown(d.products));
-
-        // Monthly Revenue
         html += BFX.card('30-Day Revenue', BFX.trendChart(d.revenue.trend));
         html += '</div>';
 
-        // Revenue Streams
         html += BFX.card('Revenue Streams', '<div class="fdr-grid-3">' +
             '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;"><div style="font-size:0.7rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">Course Sales</div><div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-green);">' + BFX.naira((d.products['forex-101'] || {}).revenue || 0) + '</div></div>' +
             '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;"><div style="font-size:0.7rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">Mentorship</div><div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-blue);">' + BFX.naira(((d.products['mentorship-group'] || {}).revenue || 0) + ((d.products['mentorship-1on1'] || {}).revenue || 0)) + '</div></div>' +
             '<div style="padding:16px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;"><div style="font-size:0.7rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">VIP + EA</div><div style="font-family:Space Grotesk;font-size:1.2rem;font-weight:700;color:var(--fdr-amber);">' + BFX.naira(((d.products['vip'] || {}).revenue || 0) + ((d.products['ea-bundle'] || {}).revenue || 0) + (d.eaAddon.revenue || 0)) + '</div></div>' +
             '</div>');
 
-        // Expenses
         html += BFX.card('Expenses', BFX.emptyState('💰', 'Expense Tracking', 'Track operational expenses, subscriptions, and costs. Manual entry or integration coming in Phase 4.'));
-
-        // Cash Flow
         html += BFX.card('Cash Flow & Forecasting', BFX.emptyState('📊', 'Financial Forecasting', 'Revenue projections, cash flow analysis, and financial planning. Coming in Phase 4.'));
 
         document.getElementById('sec-finance').innerHTML = html;
@@ -746,10 +850,9 @@
     // ================================================================
 
     function renderOperations() {
-        var s = sysData;
+        var s = OS.store.get('sysData');
         var html = BFX.sectionHeader('Operations', 'System health, projects, and business processes');
 
-        // System Health
         var services = [
             { name: 'Supabase', status: s.supabase.status, detail: s.supabase.status === 'healthy' ? (s.supabase.orderCount || 0) + ' orders tracked' : (s.supabase.message || 'Not configured') },
             { name: 'Brevo', status: s.brevo.status, detail: s.brevo.status === 'healthy' ? 'Plan: ' + s.brevo.plan : (s.brevo.message || 'Not configured') },
@@ -760,29 +863,22 @@
         html += BFX.card('System Health', '<div class="fdr-health-grid">' +
             services.map(function (svc) { return BFX.healthCard(svc.name, svc.status, svc.detail); }).join('') + '</div>');
 
-        // Environment Variables
         var envVars = s.envVars || {};
         html += BFX.card('Environment Variables', Object.keys(envVars).map(function (key) {
             return BFX.settingRow(key, null, BFX.badge(envVars[key] ? 'Set' : 'Missing', envVars[key] ? 'green' : 'red'));
         }).join(''));
 
         html += '<div class="fdr-grid-2">';
-
-        // Decision Log (goals)
         html += BFX.goalsCard('Monthly Goals', 'monthly');
         html += BFX.goalsCard('Quarterly Objectives', 'quarterly');
         html += '</div>';
 
-        // SOP Library
         html += BFX.card('SOP Library', '<div class="fdr-grid-2">' +
             [['Deployment Process', 'sop/deployment.md'], ['Customer Support', 'sop/customer-support.md'], ['Payment Issues', 'sop/payment-issues.md'], ['Content Publishing', 'sop/content-publishing.md'], ['Lead Management', 'sop/lead-management.md'], ['Security Incidents', 'sop/security-incidents.md']].map(function (s) {
                 return BFX.settingRow(s[0], s[1], BFX.badge('Available', 'green'));
             }).join('') + '</div>');
 
-        // Projects
         html += BFX.card('Projects & Tasks', BFX.emptyState('📋', 'Project Management', 'Track projects, tasks, and milestones. Integration with Linear or custom task system coming in Phase 4.'));
-
-        // Calendar
         html += BFX.card('Company Calendar', BFX.emptyState('📅', 'Business Calendar', 'Weekly reviews, quarterly planning, and key dates. Calendar integration coming in Phase 4.'));
 
         document.getElementById('sec-operations').innerHTML = html;
@@ -795,12 +891,11 @@
     // ================================================================
 
     function renderSettings() {
-        var s = sysData;
+        var s = OS.store.get('sysData');
         var html = BFX.sectionHeader('Settings', 'System configuration, integrations, and security');
 
         html += '<div class="fdr-grid-2">';
 
-        // API Connections
         var apis = [
             { name: 'Supabase', status: s.supabase.status, detail: s.supabase.status === 'healthy' ? 'Connected' : 'Error' },
             { name: 'Brevo', status: s.brevo.status, detail: s.brevo.status === 'healthy' ? 'Plan: ' + s.brevo.plan : (s.brevo.message || 'Not configured') },
@@ -823,9 +918,12 @@
             BFX.settingRow('Domain', 'www.bossfxcademy.com', BFX.badge('Active', 'green')) +
             BFX.settingRow('SSL', 'Auto-managed by Vercel', BFX.badge('Active', 'green')) +
             '</div>';
+
+        html += '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Display</div>' +
+            BFX.settingRow('Theme', OS.theme.current() === 'dark' ? 'Dark Mode' : 'Light Mode', '<button class="fdr-btn fdr-btn-outline fdr-btn-xs" onclick="fdrToggleTheme()">' + (OS.theme.current() === 'dark' ? 'Switch to Light' : 'Switch to Dark') + '</button>') +
+            '</div>';
         html += '</div>';
 
-        // Quick Links + Docs
         html += '<div>';
         html += '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Quick Links</div>' +
             BFX.serviceLink('Vercel Dashboard', 'Hosting & deployments', 'https://vercel.com', 'var(--fdr-blue-dim)', '▲') +
@@ -845,16 +943,13 @@
 
         html += '</div>';
 
-        // User Management
         html += BFX.card('User Management', BFX.emptyState('👤', 'User Management', 'Manage admin users, roles, and permissions. Currently using ADMIN_EMAILS whitelist. Advanced RBAC coming in Phase 5.'));
 
-        // Feature Flags
         html += BFX.card('Feature Flags', '<div class="fdr-grid-2">' +
             [['EA Addon Upsell', true], ['Drip Sequences', true], ['BossFx Mirror Chatbot', true], ['VIP Portal', true], ['Re-engagement Cron', true], ['Founder OS', true]].map(function (f) {
                 return BFX.settingRow(f[0], null, BFX.badge(f[1] ? 'Enabled' : 'Disabled', f[1] ? 'green' : 'dim'));
             }).join('') + '</div>');
 
-        // Security
         html += BFX.card('Security', '<div>' +
             BFX.settingRow('Authentication', 'Supabase Auth + JWT', BFX.badge('Active', 'green')) +
             BFX.settingRow('Admin Whitelist', 'ADMIN_EMAILS env var', BFX.badge('Configured', 'green')) +
@@ -864,6 +959,13 @@
             BFX.settingRow('RLS (Row Level Security)', 'All Supabase tables', BFX.badge('Enforced', 'green')) +
             BFX.settingRow('CORS', 'Admin endpoints', BFX.badge('Review', 'amber')) +
             '</div>');
+
+        html += BFX.card('Keyboard Shortcuts', '<div>' +
+            Object.keys(OS.shortcuts.all()).map(function (combo) {
+                var sc = OS.shortcuts.all()[combo];
+                var display = combo.replace('mod+', '⌘/Ctrl+').replace('shift+', 'Shift+').replace('alt+', 'Alt+');
+                return BFX.settingRow(sc.label, null, '<kbd class="fdr-kbd" style="font-size:0.76rem;padding:2px 8px;">' + BFX.esc(display) + '</kbd>');
+            }).join('') + '</div>');
 
         document.getElementById('sec-settings').innerHTML = html;
     }
@@ -897,6 +999,7 @@
         saveGoals(period, goals);
         input.value = '';
         renderGoalsInto(period);
+        OS.activity.log('system', 'Added ' + period + ' goal: ' + text);
     };
 
     window.fdrToggleGoal = function (period, idx) {

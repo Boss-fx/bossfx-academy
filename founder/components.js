@@ -212,6 +212,69 @@ var BFX = (function () {
         return '<div class="fdr-card"><div class="fdr-card-header"><span class="fdr-card-title">' + esc(title) + '</span></div><div id="goals-' + period + '"></div><div class="fdr-goal-add"><input type="text" id="goalInput-' + period + '" placeholder="Add ' + period + ' goal..."><button class="fdr-btn fdr-btn-primary fdr-btn-sm" onclick="fdrAddGoal(\'' + period + '\')">Add</button></div></div>';
     }
 
+    // --- Component: Modal ---
+    function modal(title, contentHtml, footerHtml) {
+        return '<div class="fdr-modal-header"><span class="fdr-modal-title">' + esc(title) + '</span>' +
+            '<button class="fdr-modal-close" onclick="fdrCloseModal()">&times;</button></div>' +
+            '<div class="fdr-modal-body">' + contentHtml + '</div>' +
+            (footerHtml ? '<div class="fdr-modal-footer">' + footerHtml + '</div>' : '');
+    }
+
+    // --- Component: Drawer ---
+    function drawer(title, contentHtml) {
+        return '<div class="fdr-drawer-header"><span class="fdr-drawer-title">' + esc(title) + '</span>' +
+            '<button class="fdr-drawer-close" onclick="fdrCloseDrawer()">&times;</button></div>' +
+            '<div class="fdr-drawer-body">' + contentHtml + '</div>';
+    }
+
+    // --- Component: Timeline ---
+    function timeline(items) {
+        if (!items || !items.length) return '<div class="fdr-timeline-empty">No activity yet</div>';
+        var colors = { order: 'green', download: 'blue', login: 'purple', system: 'amber', error: 'red', command: 'cyan', nav: 'dim', data: 'green' };
+        return '<ul class="fdr-timeline">' + items.map(function (item) {
+            var c = colors[item.type] || 'dim';
+            return '<li class="fdr-timeline-item"><span class="fdr-timeline-dot" style="background:var(--fdr-' + c + ')"></span>' +
+                '<div class="fdr-timeline-content"><div class="fdr-timeline-text">' + esc(item.text) + '</div>' +
+                '<div class="fdr-timeline-time">' + timeAgo(item.time) + '</div></div></li>';
+        }).join('') + '</ul>';
+    }
+
+    // --- Component: Breadcrumbs ---
+    function breadcrumbs(items) {
+        return '<nav class="fdr-breadcrumbs">' + items.map(function (item, i) {
+            var sep = i < items.length - 1 ? '<span class="fdr-crumb-sep">/</span>' : '';
+            if (item.action) return '<a class="fdr-crumb" href="#" onclick="' + item.action + ';return false;">' + esc(item.label) + '</a>' + sep;
+            return '<span class="fdr-crumb active">' + esc(item.label) + '</span>';
+        }).join('') + '</nav>';
+    }
+
+    // --- Component: Filter Bar ---
+    function filterBar(filters, activeId, onclickFn) {
+        return '<div class="fdr-filters">' + filters.map(function (f) {
+            return '<button class="fdr-filter' + (f.id === activeId ? ' active' : '') + '" onclick="' + onclickFn + '(\'' + f.id + '\')">' +
+                esc(f.label) + (f.count !== undefined ? ' <span class="fdr-filter-count">' + f.count + '</span>' : '') + '</button>';
+        }).join('') + '</div>';
+    }
+
+    // --- Component: Quick Action ---
+    function quickAction(icon, label, onclick) {
+        return '<button class="fdr-quick-action" onclick="' + onclick + '">' +
+            '<span class="fdr-quick-icon">' + icon + '</span><span class="fdr-quick-label">' + esc(label) + '</span></button>';
+    }
+
+    // --- Component: Search Result ---
+    function searchResult(item) {
+        return '<div class="fdr-search-result" data-id="' + esc(item.id || '') + '" data-module="' + esc(item.module || '') + '">' +
+            '<div class="fdr-search-result-badge">' + badge(item.type || 'item', 'dim') + '</div>' +
+            '<div class="fdr-search-result-content"><div class="fdr-search-result-label">' + esc(item.label) + '</div>' +
+            (item.detail ? '<div class="fdr-search-result-detail">' + esc(item.detail) + '</div>' : '') + '</div></div>';
+    }
+
+    // --- Component: Keyboard Hint ---
+    function kbdHint(key) {
+        return '<kbd class="fdr-kbd">' + esc(key) + '</kbd>';
+    }
+
     // Public API
     return {
         esc: esc, naira: naira, num: num, pct: pct, shortDate: shortDate, timeAgo: timeAgo,
@@ -222,6 +285,8 @@ var BFX = (function () {
         ordersTable: ordersTable, emptyState: emptyState, serviceLink: serviceLink,
         settingRow: settingRow, healthCard: healthCard, aiCard: aiCard,
         alert: alert, activityItem: activityItem, autoCard: autoCard,
-        tabs: tabs, progressBar: progressBar, goalsList: goalsList, goalsCard: goalsCard
+        tabs: tabs, progressBar: progressBar, goalsList: goalsList, goalsCard: goalsCard,
+        modal: modal, drawer: drawer, timeline: timeline, breadcrumbs: breadcrumbs,
+        filterBar: filterBar, quickAction: quickAction, searchResult: searchResult, kbdHint: kbdHint
     };
 })();
