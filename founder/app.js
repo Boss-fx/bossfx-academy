@@ -917,23 +917,97 @@
 
     function renderStudents() {
         var d = OS.store.get('dashData');
-        var html = BFX.sectionHeader('Students', 'Student directory, downloads, and mentorship');
+        var html = BFX.sectionHeader('Students', 'Student directory, downloads, and mentorship',
+            '<a href="https://app.brevo.com/contact" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Brevo CRM &rarr;</a>');
 
-        html += BFX.metricGrid([
-            ['Total Students', BFX.num(d.students.total), 'blue'],
-            ['New This Month', BFX.num(d.students.thisMonth)],
-            ['Total Downloads', BFX.num(d.downloads.total)],
-            ['Mentorship Bookings', BFX.num(d.bookings.total)]
-        ]);
-
-        html += '<div class="fdr-grid-2">';
-        html += BFX.card('Students by Product', BFX.productBreakdown(d.products));
-        html += BFX.card('Certificates', BFX.emptyState('🎓', 'Certificate System', 'Issue and track course completion certificates. Coming in Phase 4.'));
+        // Quick Actions
+        html += '<div class="fdr-quick-actions">';
+        html += BFX.quickAction('💬', 'Telegram', "window.open('https://t.me/qD_fBeaziqE5YzU8','_blank')");
+        html += BFX.quickAction('📧', 'Brevo', "window.open('https://app.brevo.com/contact','_blank')");
+        html += BFX.quickAction('🔄', 'Refresh', 'fdrRefresh()');
+        html += BFX.quickAction('💰', 'Sales', "fdrNav('sales')");
         html += '</div>';
 
-        html += BFX.card('Recent Downloads', '<div id="studentDownloads"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></div>');
-        html += BFX.card('Mentorship Bookings', '<div id="studentBookings"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></div>');
-        html += BFX.card('Support Tickets', BFX.emptyState('🎫', 'Support System', 'Track and resolve student support requests. Connect support channels in Phase 4.'));
+        // Metrics
+        var growthPct = d.students.total > 0 ? Math.round((d.students.thisMonth / d.students.total) * 100) : 0;
+        html += BFX.metricGrid([
+            ['Total Students', BFX.num(d.students.total), 'blue'],
+            ['New This Month', BFX.num(d.students.thisMonth), 'green'],
+            ['Growth Rate', growthPct + '%', growthPct > 10 ? 'green' : 'amber'],
+            ['Total Downloads', BFX.num(d.downloads.total)],
+            ['Downloads This Month', BFX.num(d.downloads.thisMonth), 'green'],
+            ['Total Bookings', BFX.num(d.bookings.total)],
+            ['Pending Bookings', BFX.num(d.bookings.pending), d.bookings.pending > 0 ? 'amber' : 'dim'],
+            ['EA Addon Students', BFX.num(d.eaAddon.count), 'amber']
+        ]);
+
+        // Alerts
+        if (d.bookings.pending > 0) {
+            html += BFX.alert('warn', d.bookings.pending + ' mentorship booking' + (d.bookings.pending !== 1 ? 's' : '') + ' pending confirmation. Review in the bookings table below.');
+        }
+
+        // Students by Product + Mentorship Summary
+        html += '<div class="fdr-grid-2">';
+        html += BFX.card('Students by Product', BFX.productBreakdown(d.products));
+
+        var mentorshipProducts = ['mentorship-group', 'mentorship-1on1', 'vip'];
+        var mentorTotal = 0;
+        mentorshipProducts.forEach(function (pid) {
+            if (d.products[pid]) mentorTotal += d.products[pid].count;
+        });
+        html += BFX.card('Mentorship Overview',
+            '<div style="display:flex;gap:16px;margin-bottom:16px;">' +
+                '<div style="flex:1;padding:14px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;color:var(--fdr-blue);">' + mentorTotal + '</div>' +
+                    '<div style="font-size:0.72rem;color:var(--fdr-dim);">Active Mentees</div></div>' +
+                '<div style="flex:1;padding:14px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;color:var(--fdr-green);">' + BFX.num(d.bookings.thisMonth) + '</div>' +
+                    '<div style="font-size:0.72rem;color:var(--fdr-dim);">Bookings This Month</div></div>' +
+                '<div style="flex:1;padding:14px;background:' + (d.bookings.pending > 0 ? 'var(--fdr-amber-dim)' : 'var(--fdr-card)') + ';border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;color:' + (d.bookings.pending > 0 ? 'var(--fdr-amber)' : 'var(--fdr-dim)') + ';">' + d.bookings.pending + '</div>' +
+                    '<div style="font-size:0.72rem;color:' + (d.bookings.pending > 0 ? 'var(--fdr-amber)' : 'var(--fdr-dim)') + ';">Pending</div></div>' +
+            '</div>' +
+            '<div style="margin-top:8px;">' +
+                mentorshipProducts.map(function (pid) {
+                    var p = d.products[pid];
+                    if (!p) return '';
+                    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--fdr-border);">' +
+                        '<span style="font-size:0.82rem;">' + BFX.productName(pid) + '</span>' +
+                        '<span>' + BFX.badge(BFX.num(p.count) + ' students', 'blue') + '</span></div>';
+                }).join('') +
+            '</div>');
+        html += '</div>';
+
+        // Download Stats
+        html += '<div class="fdr-grid-2">';
+        html += BFX.card('Download Activity',
+            '<div style="display:flex;gap:16px;margin-bottom:16px;">' +
+                '<div style="flex:1;padding:14px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;">' + BFX.num(d.downloads.total) + '</div>' +
+                    '<div style="font-size:0.72rem;color:var(--fdr-dim);">Total Downloads</div></div>' +
+                '<div style="flex:1;padding:14px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;color:var(--fdr-green);">' + BFX.num(d.downloads.thisMonth) + '</div>' +
+                    '<div style="font-size:0.72rem;color:var(--fdr-dim);">This Month</div></div>' +
+                '<div style="flex:1;padding:14px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:10px;text-align:center;">' +
+                    '<div style="font-family:Space Grotesk;font-size:1.3rem;font-weight:700;">' + (d.students.total > 0 ? (d.downloads.total / d.students.total).toFixed(1) : '0') + '</div>' +
+                    '<div style="font-size:0.72rem;color:var(--fdr-dim);">Avg per Student</div></div>' +
+            '</div>');
+
+        // Community
+        html += BFX.card('Community',
+            BFX.settingRow('Telegram Group', 'Post-purchase community access', '<a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Open &rarr;</a>') +
+            BFX.settingRow('Email Lists', 'Brevo CRM contacts', BFX.badge(BFX.num((d.brevo && d.brevo.totalSubscribers) || 0) + ' subscribers', 'blue')) +
+            BFX.settingRow('Delivery', 'Digital downloads + Telegram invite', BFX.badge('Automated', 'green')));
+        html += '</div>';
+
+        // Live tables
+        html += BFX.card('Recent Downloads', '<div id="studentDownloads"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></div>',
+            null, '<span style="font-size:0.72rem;color:var(--fdr-dim);">Last 20 downloads</span>');
+        html += BFX.card('Mentorship Bookings', '<div id="studentBookings"><div class="fdr-loading"><div class="fdr-spinner"></div>Loading...</div></div>',
+            null, '<span style="font-size:0.72rem;color:var(--fdr-dim);">Last 20 bookings</span>');
+
+        // Certificates placeholder
+        html += BFX.card('Certificates & Achievements', BFX.emptyState('🎓', 'Certificate System', 'Issue and track course completion certificates. Track student milestones and achievements.'));
 
         document.getElementById('sec-students').innerHTML = html;
         loadStudentDownloads();
