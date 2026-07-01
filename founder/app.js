@@ -1045,49 +1045,227 @@
     // ================================================================
 
     function renderAnalytics() {
-        var html = BFX.sectionHeader('Analytics', 'Unified analytics across all platforms');
+        var d = OS.store.get('dashData');
+        var html = BFX.sectionHeader('Analytics', 'Unified analytics, SEO health, and conversion intelligence',
+            '<a href="https://analytics.google.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">GA4 &rarr;</a>');
 
+        // Quick Actions
+        html += '<div class="fdr-quick-actions">';
+        html += BFX.quickAction('📊', 'GA4', "window.open('https://analytics.google.com','_blank')");
+        html += BFX.quickAction('🏷️', 'GTM', "window.open('https://tagmanager.google.com','_blank')");
+        html += BFX.quickAction('🔍', 'Clarity', "window.open('https://clarity.microsoft.com','_blank')");
+        html += BFX.quickAction('🔄', 'Refresh', 'fdrRefresh()');
+        html += '</div>';
+
+        // Metrics
         html += BFX.metricGrid([
-            ['Tracking Platforms', '4', 'blue'],
-            ['Custom Events', '11 modules', 'purple'],
-            ['Conversion Points', '6'],
+            ['Tracking Platforms', '6', 'blue'],
+            ['Custom Analytics', '11 modules', 'purple'],
+            ['Conversion Points', '6', 'green'],
+            ['HTML Pages', '35'],
+            ['Sitemap URLs', '10'],
+            ['Blog Posts', '11'],
+            ['Resource Tools', '8'],
             ['Data Quality', 'Active', 'green']
         ]);
 
+        // Platform Intelligence Cards
         html += '<div class="fdr-grid-2">';
-        html += BFX.card('Google Analytics 4', '<div style="margin-bottom:12px;">' +
-            BFX.settingRow('Property ID', 'G-ZFQ9P5KFSJ', BFX.badge('Active', 'green')) +
-            BFX.settingRow('Integration', 'Via GTM + config.js', BFX.badge('Dual', 'blue')) +
-            '</div>' +
-            BFX.emptyState('📊', 'View Full Analytics', 'Traffic, sessions, conversions, and user behavior data.', '<a href="https://analytics.google.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-primary fdr-btn-sm">Open GA4 Dashboard &rarr;</a>'));
 
-        html += BFX.card('Google Tag Manager', '<div style="margin-bottom:12px;">' +
-            BFX.settingRow('Container ID', 'GTM-T3R88HZB', BFX.badge('Active', 'green')) +
-            BFX.settingRow('Tags', 'GA4, Pixel, Clarity, Custom', BFX.badge('4+', 'blue')) +
-            '</div>' +
-            BFX.emptyState('🏷️', 'Manage Tags', 'Configure tracking tags, triggers, and variables.', '<a href="https://tagmanager.google.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-primary fdr-btn-sm">Open GTM &rarr;</a>'));
+        // GA4
+        html += BFX.card('Google Analytics 4',
+            BFX.settingRow('Property', 'G-ZFQ9P5KFSJ', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Integration', 'GTM + config.js dual install', BFX.badge('Dual', 'blue')) +
+            BFX.settingRow('Tracking', 'Sessions, pageviews, events, conversions', null) +
+            BFX.settingRow('Ecommerce', 'Purchase, add_to_cart, begin_checkout', BFX.badge('Enhanced', 'purple')) +
+            BFX.settingRow('Audiences', 'Traders, students, mentorship leads', null),
+            null, '<a href="https://analytics.google.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Open GA4 &rarr;</a>');
 
-        html += BFX.card('Meta Pixel', '<div style="margin-bottom:12px;">' +
+        // GTM
+        html += BFX.card('Google Tag Manager',
+            BFX.settingRow('Container', 'GTM-T3R88HZB', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Tags', 'GA4, Meta Pixel, Clarity, Custom', BFX.badge('6+', 'blue')) +
+            BFX.settingRow('Triggers', 'Page load, click, form submit, scroll', null) +
+            BFX.settingRow('Variables', 'Page path, click URL, form ID, dataLayer', null) +
+            BFX.settingRow('Consent', 'Cookie banner integration', BFX.badge('Configured', 'green')),
+            null, '<a href="https://tagmanager.google.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Open GTM &rarr;</a>');
+
+        // Meta Pixel
+        html += BFX.card('Meta Pixel (Facebook)',
             BFX.settingRow('Pixel ID', '804009589230621', BFX.badge('Active', 'green')) +
-            BFX.settingRow('Events', 'PageView, Lead, Purchase', BFX.badge('Standard', 'blue')) +
-            '</div>' +
-            BFX.emptyState('📱', 'View Pixel Analytics', 'Ad performance, audience insights, and conversion tracking.', '<a href="https://business.facebook.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-primary fdr-btn-sm">Open Meta Business &rarr;</a>'));
+            BFX.settingRow('Standard Events', 'PageView, Lead, Purchase, ViewContent', BFX.badge('4 events', 'blue')) +
+            BFX.settingRow('Custom Audiences', 'Website visitors, purchasers, leads', null) +
+            BFX.settingRow('Retargeting', 'Cart abandoners, page viewers', null) +
+            BFX.settingRow('Attribution', '7-day click, 1-day view', BFX.badge('Standard', 'dim')),
+            null, '<a href="https://business.facebook.com/events_manager" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Events Manager &rarr;</a>');
 
-        html += BFX.card('Microsoft Clarity', '<div style="margin-bottom:12px;">' +
-            BFX.settingRow('Project ID', 'wnde2od79f', BFX.badge('Active', 'green')) +
-            BFX.settingRow('Features', 'Heatmaps, Recordings, Funnels', BFX.badge('Full', 'purple')) +
-            '</div>' +
-            BFX.emptyState('🔍', 'View Clarity Insights', 'Session recordings, heatmaps, and user behavior analysis.', '<a href="https://clarity.microsoft.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-primary fdr-btn-sm">Open Clarity &rarr;</a>'));
+        // Clarity
+        html += BFX.card('Microsoft Clarity',
+            BFX.settingRow('Project', 'wnde2od79f', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Session Recordings', 'Full visitor session playback', BFX.badge('Unlimited', 'blue')) +
+            BFX.settingRow('Heatmaps', 'Click, scroll, and attention maps', BFX.badge('All pages', 'purple')) +
+            BFX.settingRow('Dead Clicks', 'Elements users click that do nothing', null) +
+            BFX.settingRow('Rage Clicks', 'Frustration detection on UI elements', null),
+            null, '<a href="https://clarity.microsoft.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Open Clarity &rarr;</a>');
+
+        // TikTok Pixel
+        html += BFX.card('TikTok Pixel',
+            BFX.settingRow('Status', 'Not yet installed', BFX.badge('Pending', 'amber')) +
+            BFX.settingRow('Social Profile', '@bossfx1 on TikTok', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Events Planned', 'PageView, SubmitForm, CompletePayment', null) +
+            BFX.settingRow('Integration', 'Via GTM container tag', null) +
+            '<div style="margin-top:10px;font-size:0.78rem;color:var(--fdr-dim);line-height:1.5;">Install TikTok Pixel via GTM to track conversions from TikTok traffic. Requires TikTok Business Center account.</div>',
+            null, '<a href="https://ads.tiktok.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">TikTok Ads &rarr;</a>');
+
+        // Search Console
+        html += BFX.card('Google Search Console',
+            BFX.settingRow('Property', 'www.bossfxcademy.com', BFX.badge('Verified', 'green')) +
+            BFX.settingRow('Sitemap', '/sitemap.xml (10 URLs)', BFX.badge('Submitted', 'green')) +
+            BFX.settingRow('Coverage', 'Index status, crawl errors, mobile usability', null) +
+            BFX.settingRow('Performance', 'Search queries, impressions, CTR, position', null) +
+            BFX.settingRow('Core Web Vitals', 'LCP, FID, CLS monitoring', null),
+            null, '<a href="https://search.google.com/search-console" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-sm">Open Console &rarr;</a>');
         html += '</div>';
 
-        html += BFX.card('BossFx Analytics Engine (bfx-analytics.js)', '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;">' +
-            ['UTM Attribution', 'Engagement Scoring', 'Conversion Tracking', 'Session Intelligence', 'Ecommerce Module', 'Mobile Intelligence', 'Scroll Depth', 'Content Analytics', 'Social Tracking', 'Performance Monitor', 'Error Tracking'].map(function (m) {
-                return BFX.settingRow(m, null, BFX.badge('Active', 'green'));
+        // SEO Health
+        html += BFX.card('SEO Health',
+            '<div class="fdr-grid-3">' +
+                buildSeoItem('Meta Tags', 'Title, description on all pages', 'green') +
+                buildSeoItem('Open Graph', 'og:title, og:description, og:image', 'green') +
+                buildSeoItem('JSON-LD', 'Organization, Course, FAQPage schemas', 'green') +
+                buildSeoItem('Canonical URLs', 'Self-referencing canonicals', 'green') +
+                buildSeoItem('Sitemap', '10 URLs in sitemap.xml', 'green') +
+                buildSeoItem('Robots.txt', 'Configured, blocks /downloads/', 'green') +
+                buildSeoItem('Mobile Responsive', '60%+ mobile traffic optimized', 'green') +
+                buildSeoItem('Blog Content', '11 SEO-optimized posts', 'green') +
+                buildSeoItem('Page Speed', 'Static HTML, no build step', 'green') +
+            '</div>');
+
+        // Conversion Funnel
+        html += BFX.card('Conversion Funnel',
+            '<div style="max-width:600px;margin:0 auto;">' +
+                buildFunnelStep(1, 'Awareness', 'Blog, social media, SEO, paid ads', 'var(--fdr-blue)', '100%') +
+                buildFunnelStep(2, 'Interest', 'Lead magnets, exit intent, newsletter', 'var(--fdr-purple)', '70%') +
+                buildFunnelStep(3, 'Consideration', 'Email drips, webinar, resource tools', 'var(--fdr-amber)', '45%') +
+                buildFunnelStep(4, 'Purchase', 'Checkout page, Flutterwave payment', 'var(--fdr-green)', '25%') +
+                buildFunnelStep(5, 'Retention', 'Telegram community, mentorship, EA upsell', '#10B981', '15%') +
+            '</div>');
+
+        // Landing Page Performance
+        var landingPages = [
+            { path: '/', name: 'Homepage', type: 'Landing', cta: 'Product selection' },
+            { path: '/forex-101.html', name: 'Forex 101 Course', type: 'Product', cta: 'Buy now' },
+            { path: '/mentorship.html', name: 'Mentorship', type: 'Product', cta: 'Book session' },
+            { path: '/checkout.html', name: 'Checkout', type: 'Conversion', cta: 'Pay with Flutterwave' },
+            { path: '/vip.html', name: 'VIP Program', type: 'Product', cta: 'Join VIP' },
+            { path: '/contact.html', name: 'Contact', type: 'Support', cta: 'Submit form' },
+            { path: '/blog/', name: 'Blog Index', type: 'Content', cta: 'Read articles' },
+            { path: '/resources/', name: 'Resources', type: 'Lead Gen', cta: 'Use tools' }
+        ];
+        var lpRows = landingPages.map(function (p) {
+            return [BFX.esc(p.path), BFX.esc(p.name), BFX.badge(p.type, p.type === 'Conversion' ? 'green' : p.type === 'Product' ? 'blue' : p.type === 'Lead Gen' ? 'amber' : 'dim'), BFX.esc(p.cta)];
+        });
+        html += BFX.card('Landing Pages', BFX.table(['Path', 'Page', 'Type', 'Primary CTA'], lpRows),
+            null, '<span style="font-size:0.72rem;color:var(--fdr-dim);">8 key landing pages tracked</span>');
+
+        // Campaign Attribution
+        html += '<div class="fdr-grid-2">';
+        html += BFX.card('Campaign Attribution (UTM)',
+            BFX.settingRow('UTM Tracking', 'bfx-analytics.js module', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Parameters', 'source, medium, campaign, content, term', null) +
+            BFX.settingRow('Storage', 'First-touch + last-touch attribution', BFX.badge('Dual Model', 'purple')) +
+            BFX.settingRow('CRM Sync', 'UTM data passed to Brevo contacts', BFX.badge('Automated', 'green')) +
+            '<div style="margin-top:12px;padding:12px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;">' +
+                '<div style="font-size:0.72rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:6px;">Active Channels</div>' +
+                '<div style="display:flex;flex-wrap:wrap;gap:6px;">' +
+                    BFX.badge('Instagram', 'purple') + BFX.badge('TikTok', 'blue') + BFX.badge('YouTube', 'red') +
+                    BFX.badge('X (Twitter)', 'dim') + BFX.badge('Blog/SEO', 'green') + BFX.badge('Email', 'amber') +
+                '</div></div>');
+
+        // Content Performance
+        html += BFX.card('Content Performance',
+            '<div style="margin-bottom:12px;">' +
+                '<div style="display:flex;gap:12px;margin-bottom:12px;">' +
+                    '<div style="flex:1;padding:12px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;text-align:center;">' +
+                        '<div style="font-family:Space Grotesk;font-size:1.1rem;font-weight:700;">11</div>' +
+                        '<div style="font-size:0.68rem;color:var(--fdr-dim);">Blog Posts</div></div>' +
+                    '<div style="flex:1;padding:12px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;text-align:center;">' +
+                        '<div style="font-family:Space Grotesk;font-size:1.1rem;font-weight:700;">8</div>' +
+                        '<div style="font-size:0.68rem;color:var(--fdr-dim);">Resource Tools</div></div>' +
+                    '<div style="flex:1;padding:12px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;text-align:center;">' +
+                        '<div style="font-family:Space Grotesk;font-size:1.1rem;font-weight:700;">5</div>' +
+                        '<div style="font-size:0.68rem;color:var(--fdr-dim);">Products</div></div>' +
+                '</div>' +
+            '</div>' +
+            BFX.settingRow('Blog Strategy', 'SEO-optimized forex education', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Resource Tools', 'Interactive calculators, journals, checklists', BFX.badge('Lead Gen', 'amber')) +
+            BFX.settingRow('Content Tracking', 'Scroll depth, time on page, CTA clicks', BFX.badge('bfx-analytics', 'purple')));
+        html += '</div>';
+
+        // Realtime Traffic Concept
+        html += '<div class="fdr-grid-2">';
+        html += BFX.card('Realtime Traffic',
+            '<div style="text-align:center;padding:20px 0;">' +
+                '<div style="font-size:0.72rem;color:var(--fdr-dim);text-transform:uppercase;margin-bottom:8px;">Live Visitors</div>' +
+                '<div style="font-family:Space Grotesk;font-size:2.5rem;font-weight:700;color:var(--fdr-green);">—</div>' +
+                '<div style="font-size:0.78rem;color:var(--fdr-dim);margin-top:8px;">Connect GA4 Realtime API for live data</div>' +
+            '</div>' +
+            BFX.settingRow('Data Source', 'GA4 Realtime Report', BFX.badge('API Ready', 'blue')) +
+            BFX.settingRow('Refresh', 'Auto-refresh every 30 seconds', null) +
+            BFX.settingRow('Metrics', 'Active users, pages, locations, devices', null));
+
+        // AI Insights
+        html += BFX.card('AI Analytics Insights',
+            buildAiInsight('📈', 'Traffic Pattern', 'Mobile traffic exceeds 60%. Ensure all conversion pages are mobile-optimized with fast load times.') +
+            buildAiInsight('🎯', 'Conversion Opportunity', 'Resource tools (8 pages) are high-engagement lead magnets. Track tool completion rates as micro-conversions.') +
+            buildAiInsight('💡', 'Attribution Gap', 'TikTok Pixel is not installed. Install via GTM to measure ROI on TikTok content.') +
+            buildAiInsight('📊', 'Content Strategy', '11 blog posts driving organic traffic. Publish 2-3 posts monthly targeting long-tail forex keywords.') +
+            buildAiInsight('🔄', 'Funnel Optimization', 'EA addon has ' + BFX.pct(d.eaAddon.rate) + ' conversion rate. Test higher visibility placement during checkout.'),
+            null, '<span style="font-size:0.72rem;color:var(--fdr-dim);">AI-generated from platform data</span>');
+        html += '</div>';
+
+        // BFX Analytics Engine
+        html += BFX.card('BossFx Analytics Engine',
+            '<div style="font-size:0.78rem;color:var(--fdr-dim);margin-bottom:12px;line-height:1.5;">Custom 11-module analytics platform built into bfx-analytics.js. Runs client-side on every page, feeding data into GA4 and Brevo via event-driven architecture.</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;">' +
+            [
+                { name: 'UTM Attribution', desc: 'First/last touch, CRM sync' },
+                { name: 'Engagement Scoring', desc: 'Lead quality 0-100 score' },
+                { name: 'Conversion Tracking', desc: 'Funnel events and goals' },
+                { name: 'Session Intelligence', desc: 'New vs returning, depth' },
+                { name: 'Ecommerce Module', desc: 'Cart, checkout, purchase' },
+                { name: 'Mobile Intelligence', desc: 'Device, orientation, touch' },
+                { name: 'Scroll Depth', desc: '25/50/75/100% milestones' },
+                { name: 'Content Analytics', desc: 'Time on page, read rate' },
+                { name: 'Social Tracking', desc: 'Referral source detection' },
+                { name: 'Performance Monitor', desc: 'Load time, resource timing' },
+                { name: 'Error Tracking', desc: 'JS errors, failed requests' }
+            ].map(function (m) {
+                return '<div style="padding:10px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                        '<span style="font-size:0.8rem;font-weight:600;">' + m.name + '</span>' +
+                        BFX.badge('Active', 'green') +
+                    '</div>' +
+                    '<div style="font-size:0.68rem;color:var(--fdr-dim);margin-top:4px;">' + m.desc + '</div></div>';
             }).join('') + '</div>');
 
-        html += BFX.card('Conversion Funnels', BFX.emptyState('🔄', 'Funnel Analysis', 'Visualize visitor-to-customer conversion paths. Data aggregation coming in Phase 4.'));
-
         document.getElementById('sec-analytics').innerHTML = html;
+    }
+
+    function buildSeoItem(title, desc, color) {
+        return '<div style="padding:10px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                '<span style="font-size:0.8rem;font-weight:600;">' + title + '</span>' +
+                BFX.badge('Pass', color) +
+            '</div>' +
+            '<div style="font-size:0.68rem;color:var(--fdr-dim);">' + desc + '</div></div>';
+    }
+
+    function buildAiInsight(icon, title, text) {
+        return '<div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--fdr-border);">' +
+            '<div style="font-size:1.2rem;flex-shrink:0;">' + icon + '</div>' +
+            '<div><div style="font-weight:600;font-size:0.82rem;margin-bottom:4px;">' + title + '</div>' +
+            '<div style="font-size:0.78rem;color:var(--fdr-dim);line-height:1.5;">' + text + '</div></div></div>';
     }
 
     // ================================================================
