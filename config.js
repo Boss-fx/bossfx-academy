@@ -33,17 +33,15 @@ BFX.config = {
         price: '$49.99'
     },
 
-    // Email provider (frontend subscribe forms — backend Brevo is separate)
-    // Set provider to 'brevo' and add list IDs when Brevo lists are created
+    // Email provider (frontend subscribe forms)
+    // 'server' routes through /api/lead-capture → Brevo (secure, no API key exposure)
     email: {
-        provider: 'none', // 'brevo' | 'convertkit' | 'mailchimp'
-        apiEndpoint: '',
-        publicKey: '',
+        provider: 'server',
         lists: {
-            general: '',
-            webinar: '',
-            mentorship: '',
-            resource: ''
+            general: 2,
+            webinar: 3,
+            mentorship: 5,
+            resource: 6
         }
     },
 

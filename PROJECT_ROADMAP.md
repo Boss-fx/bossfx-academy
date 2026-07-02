@@ -13,9 +13,9 @@ Critical fixes and foundation items that should ship before any feature work.
 | # | Item | Priority | Difficulty | Business Impact | Status | Dependencies | Owner |
 |---|---|---|---|---|---|---|---|
 | 0.1 | Commit and deploy EA addon (10 files, 296 lines) | Critical | Low | Revenue: enables ₦15K upsell on every checkout | Not Started | None | Engineering |
-| 0.2 | Add package-lock.json to git | High | Low | Reliability: prevents dependency drift across environments | Not Started | None | Engineering |
-| 0.3 | Fix admin API CORS (change `*` to production domain) | Critical | Low | Security: prevents cross-origin abuse of admin endpoints | Not Started | None | Engineering |
-| 0.4 | Add Content Security Policy header to vercel.json | High | Low | Security: blocks XSS script injection | Not Started | None | Engineering |
+| 0.2 | Add package-lock.json to git | High | Low | Reliability: prevents dependency drift across environments | Completed | None | Engineering |
+| 0.3 | Fix admin API CORS (change `*` to production domain) | Critical | Low | Security: prevents cross-origin abuse of admin endpoints | Completed | None | Engineering |
+| 0.4 | Add Content Security Policy header to vercel.json | High | Low | Security: blocks XSS script injection | Completed | None | Engineering |
 | 0.5 | Create CLAUDE.md and documentation system | High | Medium | Maintainability: enables self-documenting repository | In Progress | None | Engineering |
 
 ---
@@ -29,10 +29,10 @@ Reliability and visibility improvements that reduce operational risk.
 | 1.1 | Add error monitoring (Sentry free tier or Telegram webhook) | Critical | Medium | Reliability: gain visibility into production failures | Not Started | Telegram Bot API or Sentry account | Engineering |
 | 1.2 | Fix sitemap.xml (add all 30+ pages, add blog posts, resources) | High | Low | SEO: 20+ pages invisible to Google crawlers | Not Started | None | Engineering |
 | 1.3 | Remove legacy /api/download-forex101.js endpoint | Medium | Low | Architecture: frees 1 of 12 function slots, removes code duplication | Not Started | Verify no active links to legacy endpoint | Engineering |
-| 1.4 | Wire frontend email subscriptions to Brevo (fix config.js emailProvider) | High | Medium | Revenue: newsletter subscribers currently don't reach CRM | Not Started | Brevo list IDs configured | Engineering |
+| 1.4 | Wire frontend email subscriptions to Brevo (fix config.js emailProvider) | High | Medium | Revenue: newsletter subscribers currently don't reach CRM | Completed | Brevo list IDs configured | Engineering |
 | 1.5 | Add OG tags to blog/index.html | Medium | Low | SEO: blog listing page missing social sharing metadata | Not Started | None | Engineering |
 | 1.6 | Write environment variable documentation | Medium | Low | Maintainability: new developers can't set up the project | Completed | None | Engineering |
-| 1.7 | Add Permissions-Policy header to vercel.json | Medium | Low | Security: controls browser feature access | Not Started | None | Engineering |
+| 1.7 | Add Permissions-Policy header to vercel.json | Medium | Low | Security: controls browser feature access | Completed | None | Engineering |
 
 ---
 

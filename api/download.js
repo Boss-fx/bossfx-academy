@@ -8,9 +8,10 @@ const path = require('path');
 const { verifyAccessToken, getProductFiles, getSignedDownloadUrl, recordDownload } = require('../lib/files');
 const { getOrderByFlwId } = require('../lib/orders');
 const { applyRateLimit } = require('../lib/rate-limit');
+const { setCors } = require('../lib/cors');
 
 module.exports = async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    setCors(req, res);
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
