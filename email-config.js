@@ -22,11 +22,13 @@ BFX.email = (function() {
     // ----- Subscribe -----
     function subscribe(email, source, meta) {
         var config = BFX.config && BFX.config.email;
-        if (!config || config.provider === 'none') {
-            return fallbackSubscribe(email, source, meta);
+        var listKey = listMap[source] || 'general';
+
+        // Default: route through server-side /api/lead-capture (secure, no API key exposure)
+        if (!config || config.provider === 'none' || config.provider === 'server') {
+            return serverSubscribe(email, source, listKey, meta);
         }
 
-        var listKey = listMap[source] || 'general';
         var listId = config.lists[listKey] || config.lists.general;
 
         var payload = {
@@ -39,7 +41,6 @@ BFX.email = (function() {
             meta: meta || {}
         };
 
-        // Route to provider
         switch (config.provider) {
             case 'brevo':
                 return brevoSubscribe(payload, config);
@@ -48,8 +49,43 @@ BFX.email = (function() {
             case 'mailchimp':
                 return mailchimpSubscribe(payload, config);
             default:
-                return fallbackSubscribe(email, source, meta);
+                return serverSubscribe(email, source, listKey, meta);
         }
+    }
+
+    // ----- Server-side (via /api/lead-capture — preferred, keeps API keys server-side) -----
+    function serverSubscribe(email, source, listKey, meta) {
+        var payload = {
+            email: email,
+            source: source || 'newsletter',
+            list: listKey || 'general',
+            timestamp: new Date().toISOString(),
+            page: window.location.pathname,
+            meta: meta || {}
+        };
+
+        // Enrich with BFX analytics attribution if available
+        if (window.BFX && BFX.analytics && BFX.analytics.getAttribution) {
+            try {
+                var attr = BFX.analytics.getAttribution();
+                if (attr) {
+                    payload._bfx_utm_source = attr.utm_source || '';
+                    payload._bfx_utm_medium = attr.utm_medium || '';
+                    payload._bfx_utm_campaign = attr.utm_campaign || '';
+                    payload._bfx_source = attr.source || '';
+                    payload._bfx_channel = attr.channel || '';
+                    payload._bfx_landing_page = attr.landing_page || '';
+                    payload._bfx_referrer = attr.referrer || '';
+                    payload._bfx_device = attr.device || '';
+                }
+            } catch (e) {}
+        }
+
+        return fetch('/api/lead-capture', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).then(handleResponse);
     }
 
     // ----- Brevo (Sendinblue) -----
