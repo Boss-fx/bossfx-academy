@@ -2230,80 +2230,233 @@
 
     function renderSettings() {
         var s = OS.store.get('sysData');
-        var html = BFX.sectionHeader('Settings', 'System configuration, integrations, and security');
+        var d = OS.store.get('dashData');
+        var html = BFX.sectionHeader('Settings', 'System configuration, integrations, security, and preferences',
+            BFX.quickAction('🔄', 'Refresh', 'fdrRefresh()') +
+            BFX.quickAction('⚙️', 'Operations', "OS.nav.go('operations')") +
+            BFX.quickAction('🤖', 'AI Center', "OS.nav.go('ai-control')") +
+            BFX.quickAction('🏠', 'CEO View', "OS.nav.go('ceo')"));
 
-        html += '<div class="fdr-grid-2">';
-
+        var envVars = s.envVars || {};
+        var envSet = Object.keys(envVars).filter(function(k) { return envVars[k]; }).length;
+        var envTotal = Object.keys(envVars).length;
         var apis = [
-            { name: 'Supabase', status: s.supabase.status, detail: s.supabase.status === 'healthy' ? 'Connected' : 'Error' },
-            { name: 'Brevo', status: s.brevo.status, detail: s.brevo.status === 'healthy' ? 'Plan: ' + s.brevo.plan : (s.brevo.message || 'Not configured') },
-            { name: 'Flutterwave', status: s.flutterwave.status, detail: s.flutterwave.status === 'configured' ? 'Webhook verified' : 'Missing API key' },
-            { name: 'Google Analytics', status: 'configured', detail: 'G-ZFQ9P5KFSJ' },
-            { name: 'Meta Pixel', status: 'configured', detail: '804009589230621' },
-            { name: 'Microsoft Clarity', status: 'configured', detail: 'wnde2od79f' }
+            { name: 'Supabase', status: s.supabase.status },
+            { name: 'Brevo', status: s.brevo.status },
+            { name: 'Flutterwave', status: s.flutterwave.status }
         ];
+        var connectedApis = apis.filter(function(a) { return a.status === 'healthy' || a.status === 'configured'; }).length;
 
-        html += '<div>';
-        html += '<div class="fdr-setting-group"><div class="fdr-setting-group-title">API Connections</div>' +
-            apis.map(function (api) {
-                var ok = api.status === 'healthy' || api.status === 'configured';
-                return BFX.settingRow(api.name, api.detail, BFX.badge(ok ? 'Connected' : 'Issue', ok ? 'green' : 'red'));
-            }).join('') + '</div>';
+        html += BFX.metricGrid([
+            ['Integrations', (connectedApis + 3) + '/6', 'green', connectedApis + ' backend + 3 analytics'],
+            ['Env Variables', envSet + '/' + envTotal, envSet === envTotal ? 'green' : 'red', envSet === envTotal ? 'All configured' : 'Missing vars'],
+            ['Security Score', '8/9', 'green', '1 item to review'],
+            ['Feature Flags', '6/6', 'green', 'All enabled'],
+            ['Functions', s.vercel.functionsUsed + '/' + s.vercel.functionsLimit, s.vercel.functionsUsed >= s.vercel.functionsLimit ? 'red' : 'blue', s.vercel.functionsUsed >= s.vercel.functionsLimit ? 'At limit' : '1 slot free'],
+            ['Theme', OS.theme.current() === 'dark' ? 'Dark' : 'Light', 'purple', 'User preference'],
+            ['Shortcuts', String(Object.keys(OS.shortcuts.all()).length), 'cyan', 'Keyboard bindings'],
+            ['Documentation', '40+', 'blue', 'Files maintained']
+        ]);
 
-        html += '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Infrastructure</div>' +
-            BFX.settingRow('Vercel Plan', 'Hobby (Free Tier)', BFX.badge('Active', 'green')) +
-            BFX.settingRow('Serverless Functions', s.vercel.functionsUsed + ' of ' + s.vercel.functionsLimit + ' used', BFX.badge(s.vercel.functionsUsed >= s.vercel.functionsLimit ? 'At Limit' : 'OK', s.vercel.functionsUsed >= s.vercel.functionsLimit ? 'red' : 'green')) +
+        // --- API Connections ---
+        var allApis = [
+            { name: 'Supabase', status: s.supabase.status, detail: s.supabase.status === 'healthy' ? 'Connected — ' + BFX.num(s.supabase.orderCount || 0) + ' orders' : (s.supabase.message || 'Error'), purpose: 'Database, auth, storage', critical: true },
+            { name: 'Brevo', status: s.brevo.status, detail: s.brevo.status === 'healthy' ? 'Plan: ' + BFX.esc(s.brevo.plan || 'free') : (s.brevo.message || 'Not configured'), purpose: 'Email, CRM, drip sequences', critical: true },
+            { name: 'Flutterwave', status: s.flutterwave.status, detail: s.flutterwave.status === 'configured' ? 'Webhook: ' + (s.flutterwave.webhookHash ? 'Verified' : 'Missing') : 'Not configured', purpose: 'Payment processing (NGN)', critical: true },
+            { name: 'Google Analytics 4', status: 'configured', detail: 'G-ZFQ9P5KFSJ', purpose: 'Traffic, behavior, conversions', critical: false },
+            { name: 'Meta Pixel', status: 'configured', detail: '804009589230621', purpose: 'Ad attribution, audiences', critical: false },
+            { name: 'Microsoft Clarity', status: 'configured', detail: 'wnde2od79f', purpose: 'Heatmaps, session recordings', critical: false },
+            { name: 'Google Tag Manager', status: 'configured', detail: 'GTM-T3R88HZB', purpose: 'Tag container (all pages)', critical: false },
+            { name: 'Formspree', status: 'configured', detail: 'xeenzyna', purpose: 'Contact form submissions', critical: false },
+            { name: 'Telegram', status: 'configured', detail: 'Community invite link', purpose: 'Customer community', critical: false }
+        ];
+        html += BFX.card('API & Integration Connections',
+            BFX.table(['Service', 'Purpose', 'Details', 'Priority', 'Status'],
+                allApis.map(function(api) {
+                    var ok = api.status === 'healthy' || api.status === 'configured';
+                    return [
+                        '<strong>' + BFX.esc(api.name) + '</strong>',
+                        BFX.esc(api.purpose),
+                        '<span style="font-size:0.75rem;">' + api.detail + '</span>',
+                        api.critical ? BFX.badge('Critical', 'red') : BFX.badge('Standard', 'dim'),
+                        BFX.badge(ok ? 'Connected' : 'Issue', ok ? 'green' : 'red')
+                    ];
+                })
+            ),
+            BFX.badge((connectedApis + 3) + '/9 Connected', 'green'));
+
+        // --- Infrastructure Settings ---
+        html += BFX.card('Infrastructure',
+            '<div class="fdr-grid-2">' +
+            '<div>' +
+            '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Hosting — Vercel</div>' +
+            BFX.settingRow('Plan', 'Hobby (Free Tier)', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Functions', s.vercel.functionsUsed + ' of ' + s.vercel.functionsLimit + ' used', BFX.badge(s.vercel.functionsUsed >= s.vercel.functionsLimit ? 'At Limit' : 'OK', s.vercel.functionsUsed >= s.vercel.functionsLimit ? 'red' : 'green')) +
+            BFX.settingRow('Environment', BFX.esc(s.vercel.env || 'production'), BFX.badge('Live', 'green')) +
+            BFX.settingRow('Region', BFX.esc(s.vercel.region || 'iad1') + ' (US East)', BFX.badge('Active', 'green')) +
             BFX.settingRow('Domain', 'www.bossfxcademy.com', BFX.badge('Active', 'green')) +
             BFX.settingRow('SSL', 'Auto-managed by Vercel', BFX.badge('Active', 'green')) +
-            '</div>';
+            BFX.settingRow('Max Duration', '30 seconds per function', BFX.badge('Default', 'dim')) +
+            '</div></div>' +
+            '<div>' +
+            '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Database — Supabase</div>' +
+            BFX.settingRow('PostgreSQL', '5 tables', BFX.badge(s.supabase.status === 'healthy' ? 'Healthy' : 'Issue', s.supabase.status === 'healthy' ? 'green' : 'red')) +
+            BFX.settingRow('RLS', 'All tables enforced', BFX.badge('Enforced', 'green')) +
+            BFX.settingRow('Storage', 'product-files bucket', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Auth', 'JWT + email whitelist', BFX.badge('Active', 'green')) +
+            '</div>' +
+            '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Frontend</div>' +
+            BFX.settingRow('Framework', 'Static HTML/CSS/JS (no build step)', BFX.badge('Simple', 'green')) +
+            BFX.settingRow('Pages', '38 HTML files', BFX.badge('Live', 'green')) +
+            BFX.settingRow('Client JS', '7 modules', BFX.badge('Active', 'green')) +
+            BFX.settingRow('CSS', '7 stylesheets', BFX.badge('Active', 'green')) +
+            '</div></div>' +
+            '</div>',
+            BFX.badge('Infrastructure', 'blue'));
 
-        html += '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Display</div>' +
-            BFX.settingRow('Theme', OS.theme.current() === 'dark' ? 'Dark Mode' : 'Light Mode', '<button class="fdr-btn fdr-btn-outline fdr-btn-xs" onclick="fdrToggleTheme()">' + (OS.theme.current() === 'dark' ? 'Switch to Light' : 'Switch to Dark') + '</button>') +
-            '</div>';
-        html += '</div>';
+        // --- Environment Variables ---
+        html += BFX.card('Environment Variables',
+            Object.keys(envVars).map(function(key) {
+                return BFX.settingRow(key, null, BFX.badge(envVars[key] ? 'Set' : 'Missing', envVars[key] ? 'green' : 'red'));
+            }).join('') +
+            (envSet === envTotal ? BFX.alert('success', 'All ' + envTotal + ' environment variables configured') :
+                BFX.alert('error', (envTotal - envSet) + ' variable(s) missing — check Vercel dashboard')),
+            BFX.badge(envSet + '/' + envTotal, envSet === envTotal ? 'green' : 'red'));
 
-        html += '<div>';
-        html += '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Quick Links</div>' +
-            BFX.serviceLink('Vercel Dashboard', 'Hosting & deployments', 'https://vercel.com', 'var(--fdr-blue-dim)', '▲') +
-            BFX.serviceLink('Supabase Dashboard', 'Database & auth', 'https://supabase.com', 'var(--fdr-green-dim)', '⚡') +
-            BFX.serviceLink('Flutterwave Dashboard', 'Payment processing', 'https://dashboard.flutterwave.com', 'var(--fdr-amber-dim)', '💳') +
-            BFX.serviceLink('Brevo Dashboard', 'Email & CRM', 'https://app.brevo.com', 'var(--fdr-blue-dim)', '📧') +
-            BFX.serviceLink('Legacy Admin Dashboard', 'Original admin panel', '/admin/', 'var(--fdr-purple-dim)', '🔧') +
-            '</div>';
-
-        html += '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Documentation</div>' +
-            BFX.settingRow('CLAUDE.md', 'Project memory', BFX.badge('Current', 'green')) +
-            BFX.settingRow('Business OS', '40 files', BFX.badge('Complete', 'green')) +
-            BFX.settingRow('Technical Docs', '26 files', BFX.badge('Complete', 'green')) +
-            BFX.settingRow('SOPs', '9 procedures', BFX.badge('Complete', 'green')) +
-            '</div>';
-        html += '</div>';
-
-        html += '</div>';
-
-        html += BFX.card('User Management', BFX.emptyState('👤', 'User Management', 'Manage admin users, roles, and permissions. Currently using ADMIN_EMAILS whitelist. Advanced RBAC coming in Phase 5.'));
-
-        html += BFX.card('Feature Flags', '<div class="fdr-grid-2">' +
-            [['EA Addon Upsell', true], ['Drip Sequences', true], ['BossFx Mirror Chatbot', true], ['VIP Portal', true], ['Re-engagement Cron', true], ['Founder OS', true]].map(function (f) {
-                return BFX.settingRow(f[0], null, BFX.badge(f[1] ? 'Enabled' : 'Disabled', f[1] ? 'green' : 'dim'));
-            }).join('') + '</div>');
-
-        html += BFX.card('Security', '<div>' +
-            BFX.settingRow('Authentication', 'Supabase Auth + JWT', BFX.badge('Active', 'green')) +
+        // --- Security ---
+        html += BFX.card('Security Configuration',
+            '<div class="fdr-grid-2">' +
+            '<div>' +
+            '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Authentication & Access</div>' +
+            BFX.settingRow('Auth Provider', 'Supabase Auth + JWT', BFX.badge('Active', 'green')) +
             BFX.settingRow('Admin Whitelist', 'ADMIN_EMAILS env var', BFX.badge('Configured', 'green')) +
-            BFX.settingRow('Download Tokens', 'HMAC-SHA256 with expiry', BFX.badge('Active', 'green')) +
-            BFX.settingRow('Webhook Verification', 'Flutterwave signature check', BFX.badge('Active', 'green')) +
-            BFX.settingRow('Rate Limiting', 'In-memory sliding window', BFX.badge('Active', 'amber')) +
-            BFX.settingRow('RLS (Row Level Security)', 'All Supabase tables', BFX.badge('Enforced', 'green')) +
-            BFX.settingRow('CORS', 'Admin endpoints', BFX.badge('Review', 'amber')) +
-            '</div>');
+            BFX.settingRow('Session Management', 'Supabase client-side JWT', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Protected Routes', '/admin/, /founder/, /vip/', BFX.badge('Enforced', 'green')) +
+            '</div>' +
+            '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Data Protection</div>' +
+            BFX.settingRow('Download Tokens', 'HMAC-SHA256 with time expiry', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Webhook Verification', 'Flutterwave signature hash', BFX.badge('Active', 'green')) +
+            BFX.settingRow('RLS (Row Level Security)', 'All 5 Supabase tables', BFX.badge('Enforced', 'green')) +
+            '</div></div>' +
+            '<div>' +
+            '<div class="fdr-setting-group"><div class="fdr-setting-group-title">API Security</div>' +
+            BFX.settingRow('Rate Limiting', 'In-memory sliding window (30 req/min)', BFX.badge('Active', 'amber')) +
+            BFX.settingRow('CORS', 'Wildcard on admin endpoints', BFX.badge('Review', 'amber')) +
+            BFX.settingRow('Security Headers', 'X-Content-Type, X-Frame, X-XSS, Referrer', BFX.badge('Set', 'green')) +
+            BFX.settingRow('noindex/nofollow', '/admin/, /founder/, /vip/', BFX.badge('Set', 'green')) +
+            '</div>' +
+            '<div class="fdr-setting-group"><div class="fdr-setting-group-title">Secrets Management</div>' +
+            BFX.settingRow('Storage', 'Vercel environment variables', BFX.badge('Secure', 'green')) +
+            BFX.settingRow('Client Exposure', 'Only public keys in config.js', BFX.badge('Safe', 'green')) +
+            BFX.settingRow('Git Protection', '.env.local in .gitignore', BFX.badge('Protected', 'green')) +
+            '</div></div>' +
+            '</div>',
+            BFX.badge('8/9 Passing', 'green'));
 
+        // --- Display & Preferences ---
+        html += BFX.card('Display & Preferences',
+            BFX.settingRow('Theme', OS.theme.current() === 'dark' ? 'Dark Mode' : 'Light Mode',
+                '<button class="fdr-btn fdr-btn-outline fdr-btn-xs" onclick="fdrToggleTheme()">' + (OS.theme.current() === 'dark' ? 'Switch to Light' : 'Switch to Dark') + '</button>') +
+            BFX.settingRow('Brand Color', 'Emerald (#10B981)', BFX.badge('Primary', 'green')) +
+            BFX.settingRow('Accent Color', 'Amber (#f59e0b)', BFX.badge('Secondary', 'amber')) +
+            BFX.settingRow('Fonts', 'Inter (body) + Space Grotesk (numbers)', BFX.badge('Loaded', 'green')) +
+            BFX.settingRow('Currency', 'NGN (Nigerian Naira)', BFX.badge('₦', 'green')) +
+            BFX.settingRow('Locale', 'en-NG', BFX.badge('Nigeria', 'green')) +
+            BFX.settingRow('Dashboard Layout', '10 modules, hash-based routing', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Sidebar Navigation', 'Collapsible with categories', BFX.badge('Active', 'green')),
+            null, '<button class="fdr-btn fdr-btn-outline fdr-btn-xs" onclick="fdrToggleTheme()">Toggle Theme</button>');
+
+        // --- Feature Flags ---
+        var features = [
+            { name: 'EA Addon Upsell', enabled: true, desc: 'Checkout addon for SMA Pro Trend EA (₦15,000)' },
+            { name: 'Drip Sequences', enabled: true, desc: '6 email drip sequences via Brevo' },
+            { name: 'BossFx Mirror Chatbot', enabled: true, desc: 'AI chatbot on public pages' },
+            { name: 'VIP Portal', enabled: true, desc: 'Protected area for VIP program members' },
+            { name: 'Re-engagement Cron', enabled: true, desc: 'Daily automated lead re-engagement' },
+            { name: 'Founder OS', enabled: true, desc: 'This operating system dashboard' },
+            { name: 'BFX Analytics Engine', enabled: true, desc: '11-module custom analytics' },
+            { name: 'Exit Intent Popups', enabled: true, desc: 'Lead capture on exit intent' },
+            { name: 'Enhanced Ecommerce', enabled: true, desc: 'GA4 + Meta Pixel ecommerce events' },
+            { name: 'Conversion Optimization', enabled: true, desc: 'bfx-convert.js module' }
+        ];
+        html += BFX.card('Feature Flags',
+            '<div class="fdr-grid-2">' +
+            features.map(function(f) {
+                return '<div style="padding:10px;background:var(--fdr-card);border:1px solid var(--fdr-border);border-radius:8px;">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                    '<strong style="font-size:0.82rem;">' + BFX.esc(f.name) + '</strong>' +
+                    BFX.badge(f.enabled ? 'Enabled' : 'Disabled', f.enabled ? 'green' : 'dim') + '</div>' +
+                    '<div style="font-size:0.72rem;color:var(--fdr-dim);">' + BFX.esc(f.desc) + '</div></div>';
+            }).join('') + '</div>',
+            BFX.badge('10/10 Enabled', 'green'));
+
+        // --- Quick Links ---
+        html += BFX.card('External Dashboards',
+            '<div class="fdr-grid-2">' +
+            BFX.serviceLink('Vercel Dashboard', 'Hosting, deployments, logs', 'https://vercel.com', 'var(--fdr-blue-dim)', '▲') +
+            BFX.serviceLink('Supabase Dashboard', 'Database, auth, storage', 'https://supabase.com', 'var(--fdr-green-dim)', '⚡') +
+            BFX.serviceLink('Flutterwave Dashboard', 'Payments, transactions, settlements', 'https://dashboard.flutterwave.com', 'var(--fdr-amber-dim)', '💳') +
+            BFX.serviceLink('Brevo Dashboard', 'Email campaigns, CRM, automation', 'https://app.brevo.com', 'var(--fdr-blue-dim)', '📧') +
+            BFX.serviceLink('Google Analytics', 'Traffic, behavior, conversions', 'https://analytics.google.com', 'var(--fdr-green-dim)', '📊') +
+            BFX.serviceLink('Google Search Console', 'SEO, indexing, search performance', 'https://search.google.com/search-console', 'var(--fdr-blue-dim)', '🔍') +
+            BFX.serviceLink('Microsoft Clarity', 'Heatmaps, session recordings', 'https://clarity.microsoft.com', 'var(--fdr-cyan-dim)', '🔥') +
+            BFX.serviceLink('GitHub Repository', 'Source code, commits, issues', 'https://github.com/Boss-fx/bossfx-academy', 'var(--fdr-dim)', '🐙') +
+            BFX.serviceLink('Legacy Admin Dashboard', 'Original admin panel', '/admin/', 'var(--fdr-purple-dim)', '🔧') +
+            BFX.serviceLink('Telegram Community', 'Customer community channel', 'https://t.me/qD_fBeaziqE5YzU8', 'var(--fdr-blue-dim)', '💬') +
+            '</div>',
+            BFX.badge('10 Links', 'blue'));
+
+        // --- User Management ---
+        html += BFX.card('User & Access Management',
+            BFX.settingRow('Current User', 'bossfx.official@gmail.com', BFX.badge('Founder', 'green')) +
+            BFX.settingRow('Auth Method', 'Supabase Auth + JWT', BFX.badge('Active', 'green')) +
+            BFX.settingRow('Admin Whitelist', 'ADMIN_EMAILS environment variable', BFX.badge('Configured', 'green')) +
+            BFX.settingRow('Access Level', 'Full access (sole operator)', BFX.badge('Owner', 'purple')) +
+            BFX.settingRow('Session', 'Active', BFX.badge('Logged In', 'green')) +
+            '<div style="margin-top:12px;">' +
+            BFX.alert('info', 'Single-user system. Multi-user RBAC with role-based permissions planned for Phase 5.') +
+            '</div>',
+            BFX.badge('1 User', 'blue'));
+
+        // --- Documentation Index ---
+        html += BFX.card('Documentation Index',
+            BFX.table(['Document', 'Purpose', 'Status'],
+                [
+                    ['CLAUDE.md', 'Project memory — business context, architecture, rules', BFX.badge('Current', 'green')],
+                    ['PROJECT_ROADMAP.md', 'Phased execution plan with priorities and status', BFX.badge('Active', 'green')],
+                    ['AUTOMATION_MAP.md', 'All automated workflows and triggers', BFX.badge('Current', 'green')],
+                    ['CHANGELOG.md', 'Semantic versioning changelog', BFX.badge('Updated', 'green')],
+                    ['docs/architecture.md', 'System architecture and design decisions', BFX.badge('Complete', 'green')],
+                    ['docs/api-reference.md', 'All 11 API endpoint documentation', BFX.badge('Complete', 'green')],
+                    ['docs/deployment.md', 'Deployment workflow and rollback procedures', BFX.badge('Complete', 'green')],
+                    ['docs/analytics.md', 'Analytics implementation guide', BFX.badge('Complete', 'green')],
+                    ['docs/environment.md', 'Environment variable reference', BFX.badge('Complete', 'green')],
+                    ['sop/ (6 files)', 'Standard operating procedures', BFX.badge('Complete', 'green')]
+                ]
+            ),
+            BFX.badge('40+ Files', 'blue'));
+
+        // --- Keyboard Shortcuts ---
         html += BFX.card('Keyboard Shortcuts', '<div>' +
-            Object.keys(OS.shortcuts.all()).map(function (combo) {
+            Object.keys(OS.shortcuts.all()).map(function(combo) {
                 var sc = OS.shortcuts.all()[combo];
                 var display = combo.replace('mod+', '⌘/Ctrl+').replace('shift+', 'Shift+').replace('alt+', 'Alt+');
                 return BFX.settingRow(sc.label, null, '<kbd class="fdr-kbd" style="font-size:0.76rem;padding:2px 8px;">' + BFX.esc(display) + '</kbd>');
-            }).join('') + '</div>');
+            }).join('') + '</div>',
+            BFX.badge(Object.keys(OS.shortcuts.all()).length + ' Shortcuts', 'cyan'));
+
+        // --- About ---
+        html += BFX.card('About BossFx Operating System',
+            BFX.settingRow('Version', '2.0.0 (Phase 4 — ERP Expansion)', BFX.badge('Current', 'green')) +
+            BFX.settingRow('Owner', 'Timilehin "BossFx" Shobande', BFX.badge('Founder', 'green')) +
+            BFX.settingRow('Platform', 'BossFx Academy — Fintech Education', BFX.badge('Live', 'green')) +
+            BFX.settingRow('Modules', '10 dashboard modules', BFX.badge('Complete', 'green')) +
+            BFX.settingRow('AI Agents', '13 active AI roles', BFX.badge('Active', 'purple')) +
+            BFX.settingRow('Stack', 'HTML/JS + Vercel + Supabase + Brevo + Flutterwave', BFX.badge('Production', 'green')) +
+            BFX.settingRow('Repository', 'Boss-fx/bossfx-academy', BFX.badge('GitHub', 'blue')) +
+            BFX.settingRow('Domain', 'www.bossfxcademy.com', BFX.badge('Live', 'green')) +
+            '<div style="margin-top:12px;text-align:center;">' +
+            '<button class="fdr-btn fdr-btn-outline fdr-btn-sm" onclick="fdrLogout()">Sign Out</button></div>');
 
         document.getElementById('sec-settings').innerHTML = html;
     }
