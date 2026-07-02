@@ -46,6 +46,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and [Sem
   - **Automation Center** — payment flow (8 stages), lead capture flow (7 stages), drip sequences (6 sequences, 19 steps), email templates (9 groups, 19+ templates), Brevo CRM integration, conversion analytics, automation architecture, AI insights
   - **Settings Dashboard** — API & integrations (9 services), infrastructure (Vercel/Supabase/Frontend), environment variables (10 vars), security configuration (14 controls, 4 sections), display preferences, feature flags (10), external dashboards (10 links), user management, documentation index, keyboard shortcuts, about section
   - Each module includes: quick actions bar, 8-metric summary grid, multiple data cards, and AI-driven insights/recommendations
+- **Unified Email Architecture** — Brevo as single source of truth for all email
+  - `docs/EMAIL_ARCHITECTURE.md` — comprehensive email infrastructure documentation covering all 9 email flows, DNS configuration, security, scaling to 100K+ users
+  - 6 branded Supabase Auth email templates (`docs/supabase-auth-templates/`) — confirm email, reset password, magic link, invite user, change email, re-authentication
+  - Setup guide for Supabase custom SMTP via Brevo relay
+  - DNS audit: SPF exists (needs Brevo include), DMARC exists (reports to Brevo), DKIM missing
+  - Updated AUTOMATION_MAP.md with Supabase Auth → Brevo SMTP workflow
 
 ### Changed
 - `app.js` fully refactored to use OS.* infrastructure instead of inline state/commands/notifications

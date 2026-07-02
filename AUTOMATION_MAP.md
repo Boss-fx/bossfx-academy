@@ -1,6 +1,6 @@
 # AUTOMATION_MAP.md — BossFx Academy Automated Workflows
 
-> **Last Updated:** 2026-06-30
+> **Last Updated:** 2026-07-02
 > **Owner:** Engineering
 > **Purpose:** Document every automated workflow, its trigger, action, failure handling, and improvement opportunities.
 
@@ -287,6 +287,32 @@ UTM source, medium, campaign, content. First-touch source and medium. Traffic so
 - [ ] LLM-powered responses (Claude API or similar)
 - [ ] Conversation history persistence
 - [ ] Product recommendation engine
+
+---
+
+## 9. Supabase Auth → Brevo SMTP Relay
+
+**Status:** Ready to configure (requires Supabase Dashboard setup)
+**Files:** `docs/supabase-auth-templates/` (6 branded HTML templates + setup guide)
+
+| Field | Value |
+|---|---|
+| **Trigger** | Supabase Auth events: signup, password reset, magic link, invite, email change, re-authentication |
+| **Action** | Supabase sends auth email via Brevo SMTP relay (`smtp-relay.brevo.com:587`) using branded BossFx templates |
+| **External Services** | Supabase Auth → Brevo SMTP Relay |
+| **Configuration** | Supabase Dashboard → Auth → SMTP Settings + Email Templates |
+| **Templates** | 6 branded templates matching BossFx design system (dark theme, amber/emerald) |
+| **DNS Required** | SPF: add `include:sendinblue.com`, DKIM: add Brevo domain verification records |
+| **Failure Handling** | Falls back to Supabase default mailer if SMTP is misconfigured |
+
+### Setup Checklist
+- [ ] Get Brevo SMTP key (Dashboard → SMTP & API → SMTP tab)
+- [ ] Configure custom SMTP in Supabase Dashboard
+- [ ] Apply 6 branded email templates in Supabase Dashboard
+- [ ] Update SPF DNS record to include `sendinblue.com`
+- [ ] Add DKIM DNS records from Brevo domain verification
+- [ ] Test all 6 email types
+- [ ] Verify emails land in inbox (not spam)
 
 ---
 
