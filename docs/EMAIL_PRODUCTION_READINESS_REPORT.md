@@ -1,9 +1,17 @@
 # EMAIL PRODUCTION READINESS REPORT
 
-> **Generated:** 2026-07-02
+> **Generated:** 2026-07-02 · **Updated:** 2026-07-11
 > **Project:** BossFx Academy — Unified Email Infrastructure
 > **Domain:** www.bossfxcademy.com
-> **Status:** 85% Complete — 3 manual steps remain
+> **Status:** 92% Complete — DNS authenticated, Supabase SMTP config remains
+
+## Status Update — 2026-07-11
+
+- ✅ **Brevo domain authenticated** — brevo-code TXT, DKIM 1 (CNAME), DKIM 2 (CNAME), and DMARC all verified in Brevo dashboard
+- ✅ **SPF updated** with `include:sendinblue.com`
+- ⚠️ **SPF record contains a stray line break** (`\n` between `include:` and `sendinblue.com`) — must be retyped as a single line at the registrar to avoid SPF permerror
+- ⏳ **Supabase custom SMTP** — not yet configured (SMTP key obtained)
+- ⏳ **6 branded auth templates** — not yet pasted into Supabase Dashboard
 
 ---
 
@@ -217,7 +225,7 @@ Change:   v=spf1 include:spf.cloudeu.xion.oxcs.net include:sendinblue.com ~all
 | Security | 9/10 | CORS hardened, headers added. -1 for DKIM pending |
 | Documentation | 10/10 | Full architecture doc, setup guides, templates, automation map |
 | Auth email branding | 8/10 | 6 templates created and tested. -2 for dashboard paste pending |
-| DNS configuration | 6/10 | DMARC exists. SPF needs Brevo include. DKIM missing |
+| DNS configuration | 9/10 | Brevo authenticated: brevo-code, DKIM 1+2, DMARC verified. -1 for SPF line-break fix pending |
 | Frontend routing | 10/10 | All subscriptions route to Brevo via server-side endpoint |
 | Error handling | 8/10 | Graceful fallbacks in place. Room for bounce webhook handling |
 | Monitoring | 7/10 | Console logging in place. No external alerting for email failures |
