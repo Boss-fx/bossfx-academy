@@ -208,6 +208,71 @@
     }
 }
 
+/* Code blocks in blog posts */
+.blog-post-body pre.blog-code {
+    background: #0A0F0C;
+    border: 1px solid rgba(16, 185, 129, 0.18);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin: 0 0 24px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.blog-post-body pre.blog-code code {
+    display: block;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', 'Courier New', monospace;
+    font-size: 0.86rem;
+    line-height: 1.7;
+    color: #CBD5E1;
+    white-space: pre;
+    background: none;
+    padding: 0;
+    border: 0;
+}
+/* Inline code */
+.blog-post-body p code,
+.blog-post-body li code {
+    font-family: 'SF Mono', 'Menlo', 'Consolas', 'Courier New', monospace;
+    font-size: 0.86em;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.16);
+    border-radius: 5px;
+    padding: 1px 6px;
+    color: #6ee7b7;
+}
+/* Figures & captions */
+.blog-post-body .blog-figure {
+    margin: 0 0 28px;
+}
+.blog-post-body .blog-figure img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    display: block;
+}
+.blog-post-body .blog-figure figcaption {
+    margin-top: 10px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+}
+/* Ordered lists in blog posts */
+.blog-post-body ol {
+    margin: 0 0 24px;
+    padding-left: 1.4em;
+    list-style: decimal;
+    color: var(--text-secondary);
+}
+.blog-post-body ol li {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 10px;
+    padding-left: 6px;
+}
+
 @media print {
     .bfx-reading-progress,
     .bfx-share-bar,

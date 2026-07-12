@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Website I Rebuilt Ended Up Rebuilding Me — BossFx Academy</title>
+    <meta name="description" content="Rebuilding BossFx Academy from a no-code website builder into a real engineering stack — Next.js, Supabase, Vercel, MQL5 — and the debugging discipline it forged." />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="The Website I Rebuilt Ended Up Rebuilding Me" />
+    <meta property="og:description" content="Rebuilding BossFx Academy from a no-code website builder into a real engineering stack — Next.js, Supabase, Vercel, MQL5 — and the debugging discipline it forged." />
+    <meta property="og:image" content="https://bossfxcademy.com/assets/blog/website-that-rebuilt-me-bossfx-homepage.jpg" />
+    <meta property="og:image:width" content="1600" />
+    <meta property="og:image:height" content="1000" />
+    <meta property="og:url" content="https://bossfxcademy.com/blog/the-website-that-rebuilt-me.html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Website I Rebuilt Ended Up Rebuilding Me" />
+    <meta name="twitter:description" content="Rebuilding BossFx Academy from a no-code website builder into a real engineering stack — Next.js, Supabase, Vercel, MQL5 — and the debugging discipline it forged." />
+    <meta name="twitter:image" content="https://bossfxcademy.com/assets/blog/website-that-rebuilt-me-bossfx-homepage.jpg" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/assets/favicon-192.png" />
+    <link rel="manifest" href="/assets/site.webmanifest" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../chatbot.css">
+    <link rel="stylesheet" href="../blog.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFQ9P5KFSJ"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ZFQ9P5KFSJ');</script>
+    <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","wnde2od79f");</script>
+    <!-- Polyfill: fix e.target.closest errors on text nodes & older browsers -->
+    <script>
+      (function(){if(typeof Element!=="undefined"&&!Element.prototype.closest){Element.prototype.closest=function(s){var e=this;while(e&&e.nodeType===1){if(e.matches(s))return e;e=e.parentElement}return null}}if(typeof Node!=="undefined"&&!Node.prototype.hasOwnProperty("closest")){Object.defineProperty(Node.prototype,"closest",{value:function(s){var e=this.nodeType===1?this:this.parentElement;return e?e.closest(s):null},configurable:true,writable:true})}})();
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "The Website I Rebuilt Ended Up Rebuilding Me",
+        "description": "Rebuilding BossFx Academy from a no-code website builder into a real engineering stack — Next.js, Supabase, Vercel, MQL5 — and the debugging discipline it forged.",
+        "image": "https://bossfxcademy.com/assets/blog/website-that-rebuilt-me-bossfx-homepage.jpg",
+        "author": {
+            "@type": "Person",
+            "name": "Timilehin Shobande",
+            "url": "https://bossfxcademy.com/about.html"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "BossFx Academy",
+            "url": "https://bossfxcademy.com"
+        },
+        "datePublished": "2026-07-12",
+        "mainEntityOfPage": "https://bossfxcademy.com/blog/the-website-that-rebuilt-me.html"
+    }
+    </script>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="../index.html" class="nav-logo"><img src="../assets/logo.png" alt="BossFX Academy Logo"></a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../live.html">Live</a></li>
+                <li><a href="../index.html#ea">Tools</a></li>
+                <li><a href="../courses.html">Courses</a></li>
+                <li><a href="../mentorship.html">Mentorship</a></li>
+                <li><a href="../community.html">Community</a></li>
+                <li><a href="../about.html">About</a></li>
+                <li><a href="../contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="btn btn-primary nav-ea-cta">Get the EA &rarr;</a>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="blog-post-header">
+        <div class="container">
+            <span class="bfx-category-badge">Engineering</span>
+            <p class="blog-post-meta">July 2026 &middot; 10 min read &middot; by Timilehin Shobande</p>
+            <h1 class="blog-post-title">The Website I Rebuilt<br>Ended Up Rebuilding Me</h1>
+            <p class="blog-post-subtitle">How rebuilding BossFx from a website builder into a real stack — Next.js, Supabase, Vercel, MQL5 — turned a trader into an engineer.</p>
+        </div>
+    </header>
+
+    <article class="blog-post-content">
+        <div class="blog-cta-banner">
+            <p>Want to learn trading properly? Start with Forex 101</p>
+            <a href="../courses.html#forex101" class="btn btn-primary">Start Learning &rarr;</a>
+        </div>
+
+        <div class="blog-post-body">
+            <p>I started studying Computer Science at the University of Lagos in 2018. The plan was simple: five years, some projects, an internship or two, then a career in software. That plan did not survive contact with reality. COVID shut everything down, then the ASUU strikes came, and years I should have spent learning and building disappeared while I waited for school to resume.</p>
+
+            <p>I'm not telling you this for sympathy. I'm telling you because my whole path only makes sense if you know it didn't start in a classroom. It started with me refusing to sit still. I couldn't control when lectures would resume, so I focused on something I could control. For me, that was trading.</p>
+
+            <p>I picked up an interest in forex around 2022, and honestly, it wasn't about money at first. I enjoyed understanding how markets moved. I spent long hours studying charts, testing strategies, documenting my trades, and learning risk management the slow, expensive way.</p>
+
+            <h2>The accidental mentor</h2>
+            <p>Then friends started asking questions. First one, then a few more, mostly referrals. Before I had a name for it, I was a mentor. The first version of BossFx wasn't a company. It was me posting market analysis on Telegram and YouTube and consistently teaching maybe three to five people at a time.</p>
+            <p>Teaching exposed something I didn't expect. The biggest problem my students had wasn't trading. It was technology.</p>
+            <p>One student asked me a question that caught me completely off guard. He wasn't confused about the market. He was confused about how to get started at all. Opening the platform, finding the right resources, knowing what to click first. I had built my teaching around what I thought was important, not around what beginners actually struggled with.</p>
+            <p>I kept circling one question: why does something this powerful still feel so difficult for the average person? Somewhere in there, my trading questions quietly became engineering questions.</p>
+
+            <h2>Shipping something imperfect</h2>
+            <p>My first website was nothing special, and I mean that literally. I built it with Hostinger's AI website builder because it was the fastest option I had. A landing page, mentorship booking, a few digital products I'd written. Live in days.</p>
+            <p>I don't regret that choice at all. It taught me a lesson I still hold onto: publishing something imperfect beats waiting for perfection.</p>
+            <p>But growth has a way of exposing your foundations. Every new idea started with me searching Hostinger for a setting or a plugin, and if it wasn't there, that was the end of the conversation. I wanted user accounts. Gated downloads after signup. Automated mentorship registration. Proper payment integration. Analytics. Dashboards. Eventually a real learning platform. The builder had opinions about all of it, and its opinion was usually no.</p>
+            <p>The pricing made it worse. Every meaningful feature seemed to sit behind another upgrade or subscription. At some point I realised I wasn't just paying for hosting anymore. I was paying for permission to build.</p>
+            <p>So I asked myself the question that changed everything: if BossFx is going to become the platform I imagine, why am I building it on something I don't actually control?</p>
+
+            <h2>Volunteering to make my own life harder</h2>
+            <p>I decided to rebuild everything from scratch. Next.js, because I wanted something modern I could grow into. Supabase, because I needed authentication, a database and storage without writing an entire backend from day one. It felt like the right balance between learning and actually shipping.</p>
+            <p>Then reality hit, and it didn't hit where I expected.</p>
+            <p>The first real fight wasn't an algorithm. It was deployment. I pushed what I was sure was a working site to Vercel, because it ran fine on my laptop. The deployment failed. I checked environment variables. Then package versions. Then imports. Then configuration files. Every fix seemed to uncover a new problem underneath it.</p>
+            <p>The worst part wasn't any single error. It was the fog. When something broke, I genuinely couldn't tell whether the problem was my code, Supabase, Next.js or Vercel. Four suspects, and I didn't know how to interrogate any of them.</p>
+            <p>There were nights I seriously wondered whether leaving the website builder had been a mistake. With Hostinger, at least the site stayed online. Now everything was my responsibility. Some evenings I'd spend four or five hours chasing a problem that turned out to be a missing environment variable.</p>
+
+            <h2>The four questions I ask now</h2>
+            <p>What came out of those weeks is probably the most useful thing I own as an engineer: a boring, repeatable way to debug. When something breaks now, I don't panic and I don't assume the framework is broken. I ask:</p>
+            <ol>
+                <li>Is it local or production?</li>
+                <li>Is it the code or the environment?</li>
+                <li>What changed since it last worked?</li>
+                <li>Can I isolate one variable before changing five others?</li>
+            </ol>
+            <p>It's slower than changing ten things at once and hoping. It also actually works.</p>
+            <p>The bug that made this lesson permanent was almost embarrassing. Much later, I was cleaning up my BossFx PWA repository, with Claude Code reviewing the codebase alongside me, and the production build refused to compile. I assumed it was another deep framework issue. The review found the real cause, and it was nothing like that. There were two Supabase client files in the project, and one of them had a trailing space in its filename:</p>
+            <pre class="blog-code"><code>lib/supabaseClient .ts    &larr; the file that actually existed
+lib/supabaseClient.ts     &larr; the file my import was looking for</code></pre>
+            <p>On top of that, <code>@supabase/supabase-js</code> wasn't even listed in package.json. Which meant this application had never truly built. Two tiny mistakes, invisible in the editor, completely fatal in production.</p>
+            <p>I should be clear about the AI part, because people get this wrong. Claude Code doesn't build things instead of me. It works more like a senior engineer I can ask questions without feeling embarrassed. It challenges my assumptions and explains why something is broken instead of just handing me code to paste. The thinking is still my job. That's exactly why I trust what I've learned.</p>
+            <p>That one bug taught me more than some courses I've paid for. Engineering isn't always difficult algorithms. Sometimes it's noticing the tiny detail everyone assumes couldn't possibly be the problem.</p>
+
+            <h2>The rabbit holes nobody warns you about</h2>
+            <p>Owning your own stack means owning everything around the code too, and nobody tells you how deep those holes go.</p>
+            <p>My automated emails from Brevo kept landing in Gmail's Promotions tab instead of the inbox. Fixing that dragged me into SPF records, DKIM signatures, DMARC policies and sender reputation. I thought I was building a website. Instead I was getting an education in email authentication.</p>
+            <p>Moving my domain between providers was supposed to be one click on "Transfer Domain." It turned into DNS propagation, email routing, and re-verifying every integration to make sure nothing silently died.</p>
+            <p>Then analytics. Adding Google Analytics and Microsoft Clarity to a Next.js app is not hard. Confirming that events actually fire, in production, on real traffic, is a separate job entirely, and it's the kind of work tutorials never show you.</p>
+            <p>None of this is glamorous. All of it is the job.</p>
+
+            <h2>Code with real money attached</h2>
+            <p>The website taught me production discipline. My trading systems taught me a different kind of respect.</p>
+            <p>I write Expert Advisors in MQL5, automated systems that execute trades on MetaTrader 5. When your code makes decisions with real money attached, "it seems to work" is not a standard. My SMA trend EA is honestly mostly risk management wrapped around a simple signal: percentage-based position sizing, a daily loss circuit breaker, a cap on trades per day, spread and session filters.</p>
+            <p>Even the position sizing is written defensively. Calculate the lot, then clamp it against every limit the broker gives you:</p>
+            <pre class="blog-code"><code>lot = MathFloor(lot / lotStep) * lotStep;        // round down to the broker's step
+if(lot &lt; minLot) lot = minLot;                   // never below the minimum
+if(lot &gt; maxLot) lot = maxLot;                   // never above the maximum
+if(marginRequired &gt; freeMargin) return minLot;   // never trade what you can't afford</code></pre>
+            <p>Every change, no matter how small, meant re-running the backtests, because a tiny adjustment can completely alter a strategy's behaviour. Then forward-testing on a demo account before real money ever touched it.</p>
+
+            <figure class="blog-figure">
+                <img src="../assets/blog/website-that-rebuilt-me-mt5-strategy-tester.jpg" width="1600" height="1000" loading="lazy" alt="The BossFx SMA Pro Trend EA running in the MT5 Strategy Tester on XAUUSD H1, with the risk dashboard showing trade limits and daily loss protection">
+                <figcaption>The EA in the MT5 Strategy Tester on gold (XAUUSD, H1). The journal at the bottom is the trailing stop doing its job.</figcaption>
+            </figure>
+
+            <p>That project settled something for me: writing code is only half the job. Proving the code behaves correctly is the other half.</p>
+
+            <h2>Users redesign your thinking</h2>
+            <p>Remember that student who couldn't figure out how to get started? He changed how I build more than any tutorial did.</p>
+            <p>After that conversation, I stopped throwing information at people and started breaking everything into structured learning paths, beginner resources, recorded sessions, and eventually the website itself. Every time someone got stuck, I treated it as a design problem instead of assuming they weren't trying hard enough.</p>
+            <p>That mindset carried straight into software. When users can't figure something out, my first question is no longer "why don't they understand?" It's "what did I design poorly?"</p>
+
+            <h2>Stubbornness</h2>
+            <p>People assume what kept me going was passion. Honestly? It was stubbornness.</p>
+            <p>Every week there was another thing I didn't know. Git. Authentication. Environment variables. DNS. Email deliverability. Production builds. And I was bootstrapping from Nigeria, where almost every online service costs money once you pass the free tier. Every subscription was another expense I had to justify to myself.</p>
+            <p>I kept going because I had invested too much time to go backwards, and because I knew that if I wanted to build products instead of just websites, I had to understand how the technology actually worked. I didn't want to spend my career waiting for a platform to unlock features for me.</p>
+            <p>The irony is that this is exactly what I got. Today I understand my own stack well enough to build it, debug it and improve it myself. Nobody has to unlock anything for me anymore.</p>
+
+            <h2>The website rebuilt me</h2>
+            <p>Back then, I measured progress almost entirely by visible numbers. Was BossFx growing? How many students? How much revenue? When those numbers moved slowly, I felt like I wasn't moving either.</p>
+            <p>I was measuring the wrong things.</p>
+            <p>The real progress was quieter. Every problem I solved was making me slightly more capable. Learning Git. Understanding deployments. Fighting DNS. Building with Next.js and Supabase. Writing MQL5 systems. Learning to work with AI as an engineering partner instead of a chatbot. None of it felt like a breakthrough on the day it happened. Stacked over two years, it completely changed what I'm able to build.</p>
+            <p>If I had quit in 2024, I would have walked away right before everything I was learning started connecting together.</p>
+            <p>Looking back, I realised I wasn't really collecting programming languages or frameworks. I was collecting ways of thinking. Every deployment failure taught me to isolate variables. Every confused student taught me to simplify complexity. Every bug taught me to slow down before assuming. Those lessons now follow me into every product I build.</p>
+            <p>I used to think I was building BossFx. Looking back, BossFx was also building me. It forced me to become a trader who could teach, a founder who could sell, and eventually an engineer who could build the tools I always wished existed.</p>
+
+            <figure class="blog-figure">
+                <img src="../assets/blog/website-that-rebuilt-me-bossfx-homepage.jpg" width="1600" height="1000" loading="lazy" alt="The live BossFx Academy homepage: Learn Forex. Build Systems. Trade Like a Pro.">
+                <figcaption>The platform today. A long way from a website builder.</figcaption>
+            </figure>
+
+            <p>The work is public now. The platform is live at <a href="../index.html">bossfxcademy.com</a>, the trading system code is on <a href="https://github.com/Gabby-tech" target="_blank" rel="noopener">my GitHub</a>, and I document what I'm building at <a href="https://timilehin-shobande.vercel.app" target="_blank" rel="noopener">timilehin-shobande.vercel.app</a>. If any of this is useful to you, or you're building something of your own from Lagos or anywhere else, my inbox is open.</p>
+        </div>
+    </article>
+
+    <!-- Lead Magnet CTA -->
+    <section class="lm-section" id="leadMagnet">
+        <div class="lm-card">
+            <div class="lm-icon">📦</div>
+            <h3 class="lm-title">Free Forex Starter Pack</h3>
+            <p class="lm-desc">Get our complete beginner's toolkit — currency pair cheat sheet, key terms glossary, and your first trading strategy.</p>
+            <form class="lm-form newsletter-form" data-source="blog" id="lmForm">
+                <div class="lm-input-row">
+                    <input type="email" id="lmEmail" placeholder="Enter your email address" required>
+                    <button type="submit" class="btn btn-ea-primary">Get Free Access</button>
+                </div>
+                <p class="lm-trust">No spam. Unsubscribe anytime.</p>
+            </form>
+            <div class="lm-success" id="lmSuccess">&#10004;&#65039; Welcome to BossFx! Check your inbox for the Starter Pack.</div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 BossFX Academy. All rights reserved.</p>
+                <p class="footer-disclaimer">Trading forex and CFDs involves substantial risk of loss and is not suitable for every investor. BossFX Academy provides educational content only — nothing on this site constitutes financial, investment, or trading advice. Past performance is not indicative of future results. <a href="../disclaimer.html">Full Risk Disclaimer</a></p>
+            </div>
+        </div>
+    </footer>
+    <script src="../script.js"></script>
+    <script src="../config.js"></script>
+    <script src="../email-config.js"></script>
+    <script src="../blog.js"></script>
+    <script src="../chatbot.js"></script>
+    <div class="sticky-cta-bar" id="stickyCta">
+        <span>Get the BossFx EA &middot; Start with Free Forex Starter Pack</span>
+        <div class="sticky-cta-btns">
+            <a href="https://www.mql5.com/en/market/product/174970" target="_blank" rel="noopener" class="btn btn-sticky-primary">Get EA</a>
+            <a href="/contact.html" class="btn btn-sticky-outline">Start Free</a>
+        </div>
+    </div>
+
+    <!-- Floating Telegram Widget -->
+    <div class="tg-float" id="tgFloat">
+        <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" class="tg-float-btn" aria-label="Join Telegram">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            <span class="tg-float-text">Join Community</span>
+            <span class="tg-float-count">5,200+ traders</span>
+        </a>
+    </div>
+</body>
+</html>
