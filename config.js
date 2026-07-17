@@ -7,6 +7,13 @@ BFX.config = {
     // Endpoints
     formspree: 'https://formspree.io/f/xeenzyna',
 
+    // BossFx AI Platform (ADR-012) — consumed ONLY via the vendored @bossfx/sdk
+    // bundle through the Application Service Layer (services/). Feature-flagged.
+    aiPlatform: {
+        url: 'http://localhost:3100/v1',   // TODO: production platform URL at deploy
+        enabled: false                      // flip to true to enable SDK-backed AI
+    },
+
     // Analytics
     ga4Id: 'G-ZFQ9P5KFSJ',
     clarityId: 'wnde2od79f',

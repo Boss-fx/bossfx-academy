@@ -1,0 +1,38 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>ASL integration test</title></head>
+<body>
+<h1>PWA → ASL → SDK → Platform</h1>
+<pre id="out">running…</pre>
+<script src="config.js"></script>
+<script src="lib/vendor/bossfx-sdk.browser.js"></script>
+<script src="services/ai-client.js"></script>
+<script src="services/capability-service.js"></script>
+<script src="services/mirror-service.js"></script>
+<script>
+  // TEST-ONLY overrides: enable the flag and supply a minted session token
+  BFX.config.aiPlatform.enabled = true;
+  var params = new URLSearchParams(location.search);
+  var tok = params.get('token');
+  BFX.auth = { getAccessToken: function () { return tok; } };
+
+  var out = [];
+  function log(s) { out.push(s); document.getElementById('out').textContent = out.join('\n'); }
+
+  (async function () {
+    try {
+      log('sdk global: ' + (window.BossFxSDK ? 'loaded' : 'MISSING'));
+      log('asl enabled: ' + BFX.aiClient.isEnabled());
+      var client = BFX.aiClient.get();
+      var h = await client.health();
+      log('health: ' + h.status + ' aiCore=' + h.aiCoreVersion + ' requestId=' + (h.requestId||'').slice(0,8));
+      var caps = await BFX.capabilityService.list();
+      log('capabilities: ' + caps.map(function(c){return c.id+'('+(c.enabled?'on':'off')+')';}).join(' '));
+      var la = await BFX.capabilityService.isEnabled('learning-assistant');
+      log('learning-assistant enabled: ' + la);
+      log('E2E-BROWSER: PASS');
+    } catch (e) {
+      log('E2E-BROWSER: FAIL — ' + (e && e.name) + ': ' + (e && e.message) + ' code=' + (e && e.code));
+    }
+  })();
+</script>
+</body></html>
