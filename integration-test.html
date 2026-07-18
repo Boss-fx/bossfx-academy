@@ -29,7 +29,22 @@
       log('capabilities: ' + caps.map(function(c){return c.id+'('+(c.enabled?'on':'off')+')';}).join(' '));
       var la = await BFX.capabilityService.isEnabled('learning-assistant');
       log('learning-assistant enabled: ' + la);
-      log('E2E-BROWSER: PASS');
+
+      // SESSION C — real chat through MirrorService (ASL) -> SDK -> /v1/chat
+      log('--- chat: grounded question ---');
+      var t0 = Date.now();
+      var r1 = await BFX.mirrorService.ask('What is leverage in forex trading?', { page: '/integration-test' });
+      log('kind: ' + r1.kind + ' (' + (Date.now() - t0) + 'ms) requestId=' + (r1.requestId||'').slice(0,8));
+      log('answer: ' + (r1.answer || '').slice(0, 140) + '…');
+      log('citations: ' + r1.citations.map(function(c){ return c.sourceRef + '@' + c.score.toFixed(2); }).join(' | '));
+
+      log('--- chat: out-of-scope (grounding guarantee) ---');
+      var t1 = Date.now();
+      var r2 = await BFX.mirrorService.ask('What is the capital city of France?', { page: '/integration-test' });
+      log('kind: ' + r2.kind + ' (' + (Date.now() - t1) + 'ms) — expected no_answer, citations=' + r2.citations.length);
+
+      var pass = r1.kind === 'answer' && r1.citations.length > 0 && r2.kind === 'no_answer';
+      log(pass ? 'E2E-BROWSER-CHAT: PASS' : 'E2E-BROWSER-CHAT: FAIL');
     } catch (e) {
       log('E2E-BROWSER: FAIL — ' + (e && e.name) + ': ' + (e && e.message) + ' code=' + (e && e.code));
     }
