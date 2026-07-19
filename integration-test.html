@@ -8,7 +8,22 @@
 <script src="services/ai-client.js"></script>
 <script src="services/capability-service.js"></script>
 <script src="services/mirror-service.js"></script>
+<script src="chatbot.js"></script>
 <script>
+  // ?legacy=1 → ROLLBACK MODE: no override; assert flag OFF + legacy intact.
+  var legacyMode = new URLSearchParams(location.search).get('legacy') === '1';
+  if (legacyMode) {
+    var out0 = [];
+    function log0(s){ out0.push(s); document.getElementById('out').textContent = out0.join('\n'); }
+    log0('ROLLBACK MODE (flag untouched)');
+    log0('config.aiPlatform.enabled: ' + BFX.config.aiPlatform.enabled);
+    log0('aiClient.isEnabled(): ' + BFX.aiClient.isEnabled());
+    log0('aiClient.get(): ' + (BFX.aiClient.get() === null ? 'null (SDK path inert)' : 'ACTIVE — FAIL'));
+    log0('legacy Mirror loaded: ' + (typeof BFX.mirror !== 'undefined'));
+    var pass0 = BFX.config.aiPlatform.enabled === false && BFX.aiClient.get() === null && typeof BFX.mirror !== 'undefined';
+    log0(pass0 ? 'ROLLBACK-VALIDATION: PASS' : 'ROLLBACK-VALIDATION: FAIL');
+    throw new Error('legacy-mode-stop'); // stop before the SDK flow
+  }
   // TEST-ONLY overrides: enable the flag and supply a minted session token
   BFX.config.aiPlatform.enabled = true;
   var params = new URLSearchParams(location.search);

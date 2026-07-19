@@ -14,6 +14,14 @@ BFX.config = {
         enabled: false                      // flip to true to enable SDK-backed AI
     },
 
+    // Supabase client auth (Session E) — powers BFX.auth's session source for
+    // AI requests. The anon key is PUBLIC by design (RLS enforces access);
+    // never put service keys here. Fill at deploy to enable client sessions.
+    supabase: {
+        url: '',        // e.g. https://<project>.supabase.co
+        anonKey: ''     // the project's anon/public key
+    },
+
     // Analytics
     ga4Id: 'G-ZFQ9P5KFSJ',
     clarityId: 'wnde2od79f',
