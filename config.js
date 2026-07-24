@@ -15,7 +15,7 @@ BFX.config = {
     // meta tag, no application-code change.
     aiPlatform: {
         url: 'https://ai-platform-web-eight.vercel.app/v1',  // default production Platform (public endpoint; auth via user JWT)
-        enabled: false                                        // flip to true to enable SDK-backed AI
+        enabled: true                                         // SDK-backed AI on; anonymous public access (ADR-013)
     },
 
     // Supabase client auth (Session E) — powers BFX.auth's session source for

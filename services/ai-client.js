@@ -33,7 +33,8 @@ BFX.aiClient = (function () {
             getToken: function () {
                 // Pluggable session source: when the PWA gains client-side
                 // Supabase auth, BFX.auth.getAccessToken() supplies the JWT.
-                // Null → the SDK refuses locally (no anonymous AI access).
+                // Null → the SDK sends anonymously; the server grants public
+                // access per ADR-013 (AI_ALLOW_ANONYMOUS).
                 if (BFX.auth && typeof BFX.auth.getAccessToken === 'function') {
                     return Promise.resolve(BFX.auth.getAccessToken());
                 }
