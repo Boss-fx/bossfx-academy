@@ -9,17 +9,23 @@ BFX.config = {
 
     // BossFx AI Platform (ADR-012) — consumed ONLY via the vendored @bossfx/sdk
     // bundle through the Application Service Layer (services/). Feature-flagged.
+    // `url` is the DEFAULT; a <meta name="ai-platform-url" content="..."> tag,
+    // when present, overrides it per-deployment (buildless env-config pattern,
+    // mirrors admin.js's Supabase meta tags). Custom-domain migration = edit the
+    // meta tag, no application-code change.
     aiPlatform: {
-        url: 'http://localhost:3100/v1',   // TODO: production platform URL at deploy
-        enabled: false                      // flip to true to enable SDK-backed AI
+        url: 'https://ai-platform-web-eight.vercel.app/v1',  // default production Platform (public endpoint; auth via user JWT)
+        enabled: false                                        // flip to true to enable SDK-backed AI
     },
 
     // Supabase client auth (Session E) — powers BFX.auth's session source for
     // AI requests. The anon key is PUBLIC by design (RLS enforces access);
     // never put service keys here. Fill at deploy to enable client sessions.
     supabase: {
-        url: '',        // e.g. https://<project>.supabase.co
-        anonKey: ''     // the project's anon/public key
+        url: 'https://kklwvzpwgpcwxjmgikfq.supabase.co',
+        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbHd2enB3Z3Bjd3hqbWdpa2ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Mzk3MTYsImV4cCI6MjA5NTExNTcxNn0.cJZkXzogx0TKXg9fht7fP_iH_qjhxbka9nzIRwKumXg'
+        // Same project + anon key already embedded client-side in admin/admin.js
+        // and founder/app.js. Public by design — RLS enforces access server-side.
     },
 
     // Analytics

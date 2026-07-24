@@ -501,17 +501,68 @@ BFX.mirror = (function () {
     }
 
     // ============================================================
-    // 7. AI SERVICE LAYER (OpenAI-ready)
+    // 7. AI SERVICE LAYER
+    // Platform path (BFX.aiClient enabled) takes priority; legacy
+    // local/openai paths are untouched fallbacks when the flag is off.
     // ============================================================
     var AIService = {
         provider: 'local',
 
+        isPlatformActive: function () {
+            return !!(BFX.aiClient && BFX.aiClient.isEnabled());
+        },
+
         getResponse: function (userText, context, callback) {
-            if (AIService.provider === 'local') {
-                LocalEngine.process(userText, context, callback);
+            if (AIService.isPlatformActive()) {
+                PlatformEngine.process(userText, context, callback);
             } else if (AIService.provider === 'openai') {
                 OpenAIEngine.process(userText, context, callback);
+            } else {
+                LocalEngine.process(userText, context, callback);
             }
+        }
+    };
+
+    // ============================================================
+    // 7a. PLATFORM ENGINE — BossFx AI Platform via the Application
+    // Service Layer (BFX.mirrorService). No AI logic here: this only
+    // adapts the platform's ChatResult into Mirror's existing message
+    // shape. Grounding, retrieval, and citations are the Platform's.
+    // ============================================================
+    var PlatformEngine = {
+        process: function (text, context, callback) {
+            if (!BFX.mirrorService) {
+                callback({ code: 'network_error', message: 'AI Platform client not loaded' });
+                return;
+            }
+            BFX.mirrorService.ask(text, { page: getPageName() })
+                .then(function (res) {
+                    if (res.kind === 'no_answer') {
+                        callback(null, {
+                            text: "That's outside what I can help with directly — but our mentors can. Want me to connect you?",
+                            ctas: [
+                                { label: '💬 Talk to a Mentor', url: 'mentorship.html' },
+                                { label: '📚 Browse Courses', url: 'courses.html' }
+                            ],
+                            intent: context.intent,
+                            matched: true,
+                            citations: [],
+                            requestId: res.requestId
+                        });
+                        return;
+                    }
+                    callback(null, {
+                        text: res.answer || '',
+                        ctas: null,
+                        intent: context.intent,
+                        matched: true,
+                        citations: res.citations || [],
+                        requestId: res.requestId
+                    });
+                })
+                .catch(function (err) {
+                    callback(err || { code: 'internal_error', message: 'Unknown error' });
+                });
         }
     };
 
@@ -1220,6 +1271,127 @@ BFX.mirror = (function () {
     }
 
     // ============================================================
+    // 11b. PLATFORM MESSAGE RENDERING
+    // Renders BossFx AI Platform responses only. Legacy KB/local
+    // responses keep using addBotMessage/renderMsg above, unchanged.
+    // Presentation only — markdown formatting and citation display,
+    // no retrieval or grounding logic.
+    // ============================================================
+    function mdToHtml(text) {
+        var esc = String(text || '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        esc = esc
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/`(.+?)`/g, '<code>$1</code>')
+            .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+        if (/(^|\n)- /.test(esc)) {
+            esc = esc.replace(/(^|\n)- (.+)/g, '$1<li>$2</li>').replace(/(<li>[\s\S]+<\/li>)/, '<ul>$1</ul>');
+        }
+        return esc.replace(/\n/g, '<br>');
+    }
+
+    function addPlatformMessage(response) {
+        state.messages.push({
+            role: 'bot', text: response.text, ctas: response.ctas || null,
+            prompts: null, time: Date.now(), citations: response.citations || []
+        });
+        saveState();
+        renderPlatformMsg(response);
+    }
+
+    function renderPlatformMsg(response) {
+        var row = document.createElement('div');
+        row.className = 'mirror-msg-row bot';
+
+        var avatar = document.createElement('div');
+        avatar.className = 'mirror-msg-avatar';
+        avatar.textContent = 'M';
+
+        var content = document.createElement('div');
+        content.className = 'mirror-msg-content';
+
+        var bubble = document.createElement('div');
+        bubble.className = 'mirror-msg-bubble';
+        bubble.innerHTML = mdToHtml(response.text);
+        content.appendChild(bubble);
+
+        if (response.citations && response.citations.length) {
+            var citeWrap = document.createElement('div');
+            citeWrap.className = 'mirror-citations';
+            var label = document.createElement('span');
+            label.className = 'mirror-citations-label';
+            label.textContent = 'Sources';
+            citeWrap.appendChild(label);
+            for (var i = 0; i < response.citations.length; i++) {
+                var c = response.citations[i];
+                var pill = document.createElement('span');
+                pill.className = 'mirror-citation-pill';
+                pill.textContent = (c.sourceRef || 'source') + (typeof c.score === 'number' ? ' · ' + Math.round(c.score * 100) + '%' : '');
+                citeWrap.appendChild(pill);
+            }
+            content.appendChild(citeWrap);
+        }
+
+        if (response.ctas && response.ctas.length) {
+            var ctaWrap = document.createElement('div');
+            ctaWrap.className = 'mirror-msg-ctas';
+            for (var c2 = 0; c2 < response.ctas.length; c2++) {
+                var btn = document.createElement('a');
+                btn.className = 'mirror-msg-cta';
+                btn.textContent = response.ctas[c2].label;
+                btn.href = response.ctas[c2].url;
+                if (response.ctas[c2].url.indexOf('http') === 0) btn.target = '_blank';
+                btn.rel = 'noopener';
+                ctaWrap.appendChild(btn);
+            }
+            content.appendChild(ctaWrap);
+        }
+
+        var time = document.createElement('div');
+        time.className = 'mirror-msg-time';
+        time.textContent = 'Mirror · just now';
+        content.appendChild(time);
+
+        row.appendChild(avatar);
+        row.appendChild(content);
+        els.messages.appendChild(row);
+        scrollToBottom();
+    }
+
+    function renderPlatformError(retryText) {
+        var row = document.createElement('div');
+        row.className = 'mirror-msg-row bot';
+
+        var avatar = document.createElement('div');
+        avatar.className = 'mirror-msg-avatar';
+        avatar.textContent = 'M';
+
+        var content = document.createElement('div');
+        content.className = 'mirror-msg-content';
+
+        var bubble = document.createElement('div');
+        bubble.className = 'mirror-msg-bubble mirror-msg-error';
+        bubble.textContent = "I couldn't reach the AI Platform just now.";
+        content.appendChild(bubble);
+
+        var retryBtn = document.createElement('button');
+        retryBtn.type = 'button';
+        retryBtn.className = 'mirror-retry-btn';
+        retryBtn.textContent = '↻ Retry';
+        retryBtn.addEventListener('click', function () {
+            row.remove();
+            handleUserInput(retryText);
+        });
+        content.appendChild(retryBtn);
+
+        row.appendChild(avatar);
+        row.appendChild(content);
+        els.messages.appendChild(row);
+        scrollToBottom();
+    }
+
+    // ============================================================
     // 12. CONVERSATION HANDLER
     // ============================================================
     function handleUserInput(text) {
@@ -1228,13 +1400,39 @@ BFX.mirror = (function () {
         addUserMessage(text);
         showTyping();
 
-        var delay = CFG.typingMin + Math.random() * (CFG.typingMax - CFG.typingMin);
-
         var context = {
             intent: state.context.intent,
             history: state.messages.slice(-10),
             page: getPageName()
         };
+
+        if (AIService.isPlatformActive()) {
+            // Real network call — the request's own latency IS the loading
+            // state; no artificial typing delay layered on top.
+            AIService.getResponse(text, context, function (err, response) {
+                removeTyping();
+
+                if (err) {
+                    trackEvent('mirror_platform_error', { code: (err && err.code) || 'unknown' });
+                    renderPlatformError(text);
+                    return;
+                }
+
+                if (response.intent) state.context.intent = response.intent;
+                state.context.stage = 'exploring';
+
+                addPlatformMessage(response);
+
+                trackEvent('mirror_platform_message', {
+                    requestId: response.requestId,
+                    citations: (response.citations || []).length
+                });
+            });
+            return;
+        }
+
+        // Legacy path (flag off) — unchanged.
+        var delay = CFG.typingMin + Math.random() * (CFG.typingMax - CFG.typingMin);
 
         AIService.getResponse(text, context, function (err, response) {
             setTimeout(function () {
@@ -1400,7 +1598,14 @@ BFX.mirror = (function () {
             switchView('chat');
             for (var i = 0; i < state.messages.length; i++) {
                 var m = state.messages[i];
-                renderMsg(m.role, m.text, m.ctas, m.prompts, true);
+                // Platform-origin messages carry a citations array (possibly
+                // empty); legacy messages never set the field. Render each
+                // through the path that matches its own markup.
+                if (m.role === 'bot' && m.citations !== undefined) {
+                    renderPlatformMsg(m);
+                } else {
+                    renderMsg(m.role, m.text, m.ctas, m.prompts, true);
+                }
             }
         }
 
