@@ -15,4 +15,4 @@ Disallow: /payment-success.html
 Disallow: /thank-you.html
 
 # Sitemap
-Sitemap: https://www.bossfxcademy.com/sitemap.xml
+Sitemap: https://bossfxcademy.com/sitemap.xml
