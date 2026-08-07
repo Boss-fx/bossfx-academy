@@ -65,7 +65,7 @@
   "routes": [
     {
       "src": "/index.html",
-      "headers": { "Location": "https://www.bossfxcademy.com/" },
+      "headers": { "Location": "https://bossfxcademy.com/" },
       "status": 301
     },
     {
