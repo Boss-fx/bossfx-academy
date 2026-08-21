@@ -75,6 +75,36 @@ li{margin-bottom:8px}li strong{color:#fff}
 <p>For the next 30 trading days, your only goal is discipline. Not profits, not pips, not win rate — pure process discipline. Follow 6 simple rules every trading day and track your score.</p>
 <p>Research shows it takes 21-30 days to form a habit. By the end of this challenge, disciplined trading will be your default mode.</p>
 
+<div class="challenge-optin" id="challengeOptin" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.03));border:1px solid rgba(16,185,129,0.25);border-radius:16px;padding:28px;margin:28px 0;">
+    <strong style="display:block;color:#34d399;font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Do it with guidance — free</strong>
+    <p style="margin:0 0 16px;color:#cbd5e1;font-size:0.95rem;line-height:1.6;">Don't do it alone. Join the guided challenge by email and I'll walk you through all 30 days — daily check-ins, milestone nudges, and Telegram accountability so you actually finish.</p>
+    <form id="challengeForm" style="display:flex;gap:10px;flex-wrap:wrap;">
+        <input id="challengeEmail" type="email" required placeholder="Your email address" aria-label="Email address" style="flex:1;min-width:200px;padding:13px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:0.95rem;outline:none;">
+        <button type="submit" style="padding:13px 26px;background:#10b981;color:#04120b;border:none;border-radius:10px;font-weight:700;font-size:0.95rem;cursor:pointer;white-space:nowrap;">Start the Challenge →</button>
+    </form>
+    <p id="challengeMsg" style="margin:12px 0 0;font-size:0.85rem;color:#94a3b8;display:none;"></p>
+</div>
+<script>
+(function(){
+    var form=document.getElementById('challengeForm');
+    if(!form)return;
+    form.addEventListener('submit',function(e){
+        e.preventDefault();
+        var email=(document.getElementById('challengeEmail').value||'').trim();
+        var msg=document.getElementById('challengeMsg');
+        var btn=form.querySelector('button');
+        if(!email||email.indexOf('@')===-1){msg.style.display='block';msg.style.color='#ef4444';msg.textContent='Please enter a valid email.';return;}
+        btn.disabled=true;btn.textContent='Joining...';
+        fetch('/api/lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'challenge',program:'30-day-discipline-challenge',page:location.pathname})})
+        .then(function(r){return r.json().catch(function(){return {};});})
+        .then(function(){
+            document.getElementById('challengeOptin').innerHTML='<strong style="display:block;color:#34d399;font-size:1.05rem;margin-bottom:6px;">✅ You\'re in!</strong><p style="margin:0;color:#cbd5e1;font-size:0.95rem;line-height:1.6;">Check your inbox — Day 0 is on its way. Print the tracker below and post your Day 1 score in <a href="https://t.me/qD_fBeaziqE5YzU8" style="color:#34d399;">Telegram</a>.</p>';
+        })
+        .catch(function(){btn.disabled=false;btn.textContent='Start the Challenge →';msg.style.display='block';msg.style.color='#ef4444';msg.textContent='Something went wrong. Please try again.';});
+    });
+})();
+</script>
+
 <h2><span class="num">02</span> The 6 Daily Rules</h2>
 <div class="rules-grid">
     <div class="rule-card"><span class="rule-num">1</span><strong>Pre-trade checklist completed</strong><p>Go through your full checklist before any trade</p></div>

@@ -16,6 +16,7 @@ const LISTS = {
     webinar:     3,  // Enthusiat Traders
     mentorship:  5,  // Mentorship Inquiries
     resource:    6,  // Resource Downloaders
+    challenge:   6,  // 30-Day Discipline Challenge → Resource Downloaders list (segment by SOURCE=challenge)
     exit_intent: 2   // Exit intent captures → general list
 };
 
@@ -209,6 +210,9 @@ function mapSourceToList(source) {
 
     // Webinar registrations
     if (s.includes('webinar')) return 'webinar';
+
+    // 30-Day Discipline Challenge
+    if (s.includes('challenge') || s.includes('discipline')) return 'challenge';
 
     // Mentorship / high-intent inquiries
     if (s.includes('mentorship') || s.includes('coaching') || s.includes('funded') ||
