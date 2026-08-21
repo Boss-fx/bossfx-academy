@@ -250,6 +250,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             font-size: 1.1rem;
             line-height: 1.7;
         }
+        /* Mission & Vision cards */
+        .mv-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            max-width: 940px;
+            margin: 0 auto 40px;
+            text-align: left;
+        }
+        .mv-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 36px;
+        }
+        .mv-card .mv-label {
+            display: inline-block;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--green-400);
+            margin-bottom: 14px;
+        }
+        .mv-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.35rem;
+            line-height: 1.25;
+            margin-bottom: 14px;
+        }
+        .mv-card p {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.75;
+        }
 
         @media (max-width: 1024px) {
             .values-grid { grid-template-columns: repeat(2, 1fr); }
@@ -260,6 +296,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             .values-grid { grid-template-columns: 1fr; }
             .why-grid { grid-template-columns: 1fr; }
             .mission-banner { padding: 40px 24px; }
+            .mv-grid { grid-template-columns: 1fr; gap: 16px; }
+            .mv-card { padding: 28px 24px; }
         }
     </style>
 </head>
@@ -320,10 +358,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="story-content">
                     <span class="section-tag">Our Story</span>
                     <h2>The Real Story Behind<br><span class="text-gradient">BossFx Academy</span></h2>
-                    <p>In 2022, I deposited my savings into a live Forex account. Three weeks later, it was gone. No stop loss. No risk management. No plan. I was a demo millionaire who couldn't survive a single month of real trading.</p>
-                    <p>I looked for help and found the same thing everywhere: Telegram signal groups charging monthly fees, "mentors" flashing rented cars, and courses that taught you to draw trendlines but never mentioned position sizing. The entire education system was broken — especially for traders in West Africa.</p>
-                    <p>So I stopped looking for a teacher and became my own. I studied Computer Science, spent 4+ years deep in the markets, and eventually started coding my own trading bot in MQL5. MetaQuotes rejected my first submission with 21 validation errors. I fixed every single one. The BossFx SMA Pro Trend EA is now live on the MT5 Market — validated, published, and trading the way I designed it.</p>
-                    <p>BossFx Academy is the education I wish existed when I started. No fluff, no hype — just the structured path from confused beginner to confident, disciplined trader. Every lesson is one I paid for with real money and real losses.</p>
+                    <p>It started in 2019. A roommate pulled about ₦70,000 from the market in a single afternoon — just by following signals — and for the first time I watched forex move on a MetaTrader screen. I understood none of it. I only knew I wanted to understand all of it.</p>
+                    <p>Chasing it took money I didn't have. My mum carried our education and looked after my brother and me — but the trading dream was mine to fund. So I built my own runway: working as a personal assistant, coaching computer basics, freelancing every tech skill I had, and putting what little I saved into my first live account. When COVID kept us home, I devoured every forex resource I could find.</p>
+                    <p>I lost that first deposit anyway. I paid into a signal group that dropped me after a week, drowned in tutorials that never connected, and got quietly bled by spreads I didn't understand. On about ₦20,000 a month, saving my next stake took six to eight painful months — less on food and clothes, miles walked instead of paid for — just to stay on target. I never stopped wanting what I'd seen that first day.</p>
+                    <p>The turn came in 2022. Through a proprietary trading firm's challenges and funded accounts, I finally faced the market with real money and real consequences — and built the discipline theory never gave me. By 2023 I was posting my own trades and analysis, friends were following my calls, and it clicked: the thing I'd been missing all along was structure — and I could teach it.</p>
+                    <p>Seven years in, I don't have the fast cars or the private jets. What I have is proof of what the market can change in a person — and honest scars from how deep it can cut. BossFx Academy is the structure I never had: risk-first, no hype, no signal-selling. Every lesson is one I paid for with real money and real losses. I know the cost of walking this path alone — so walk it with me instead.</p>
                 </div>
                 <div class="story-visual">
                     <div class="story-stat-card">
@@ -340,7 +379,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         </div>
                         <div>
-                            <strong>500+ Traders Community</strong>
+                            <strong>100+ Traders Community</strong>
                             <span>Growing network across West Africa and beyond</span>
                         </div>
                     </div>
@@ -397,15 +436,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="founder-bio">
                     <h2>Timilehin Shobande</h2>
                     <span class="founder-role">Founder & Lead Mentor, BossFx Academy</span>
-                    <p>I started trading forex in 2022 with no mentor, no strategy, and no risk management. I blew my first live account in three weeks. That experience changed everything.</p>
-                    <p>Instead of quitting, I went deep. I studied Computer Science, spent years learning price action, market structure, and trading psychology. I learned to code in MQL5 and built my own Expert Advisor from scratch. MetaQuotes rejected it 21 times before it was finally published on the MT5 Market.</p>
-                    <p>BossFx Academy exists because I know what it feels like to be a beginner with no guidance. Every module, every tool, every line of code in our EA exists because I made the mistake first and built the solution after. My mission is simple: give African traders the structured, honest education they deserve.</p>
+                    <p>My journey didn't begin with a win — it began with a question. In 2019 I watched a roommate pull money from the market by following signals, and I had to know how. What followed was years of doing it the hard way: funding my own trading ambition through odd jobs and freelance tech work, losing my first live deposit, and saving the next stake a painful naira at a time.</p>
+                    <p>The breakthrough was never a secret indicator — it was structure. Through prop-firm challenges and real, funded trades, I learned the market doesn't reward emotion; it rewards self-awareness, realistic goals, disciplined psychology, and risk management. That is the edge. I later taught myself to code in MQL5 and built my own Expert Advisor from scratch — MetaQuotes rejected it 21 times before it was published on the MT5 Market.</p>
+                    <p>BossFx Academy is the mentor I wish I'd had. Every module, every tool, every line of code exists because I made the mistake first and built the solution after. My mission is simple: give African traders the structured, honest education they deserve — so no one has to walk that path alone.</p>
                     <div class="founder-credentials">
                         <span class="founder-credential">Computer Science Background</span>
                         <span class="founder-credential">MQL5 Developer</span>
                         <span class="founder-credential">MetaQuotes Validated EA</span>
-                        <span class="founder-credential">4+ Years Trading</span>
-                        <span class="founder-credential">500+ Traders Mentored</span>
+                        <span class="founder-credential">7+ Years in the Markets</span>
+                        <span class="founder-credential">100+ Traders Mentored</span>
                     </div>
                 </div>
             </div>
@@ -493,13 +532,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </section>
 
-    <!-- Mission Banner -->
+    <!-- Mission & Vision -->
     <section class="section section-dark">
         <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">Where We're Going</span>
+                <h2 class="section-title">Our Mission &amp;<br><span class="text-gradient">Vision</span></h2>
+            </div>
+            <div class="mv-grid">
+                <div class="mv-card">
+                    <span class="mv-label">Our Mission</span>
+                    <h3>Make real trading skill accessible</h3>
+                    <p>To give African traders a structured, honest path from beginner to disciplined, risk-first trader — replacing signal-selling and hype with education, tools, and mentorship they can actually afford and apply.</p>
+                </div>
+                <div class="mv-card">
+                    <span class="mv-label">Our Vision</span>
+                    <h3>The trusted home of African traders</h3>
+                    <p>To become West Africa's most trusted forex-education community — where discipline outlasts hype, and a generation of self-reliant traders compounds real, lasting skill without having to learn the hard way alone.</p>
+                </div>
+            </div>
             <div class="mission-banner">
-                <img src="assets/logo.png" alt="BossFX" style="width: 72px; height: 72px; object-fit: contain; margin-bottom: 24px;">
-                <h3>Our Mission</h3>
-                <p>"I lost money so you don't have to learn the hard way. Every module, every tool, every line of code in our EA exists because I made the mistake first — and built the solution after. BossFx Academy is the mentor I never had."</p>
+                <img src="assets/logo.png" alt="BossFX" style="width: 64px; height: 64px; object-fit: contain; margin-bottom: 20px;">
+                <p>"I lost money so you don't have to learn the hard way. Every module, every tool, every line of code in our EA exists because I made the mistake first — and built the solution after."</p>
                 <p style="margin-top: 12px; font-size: 0.9rem; color: var(--text-muted);"><strong>— Timilehin 'BossFx' Shobande</strong>, Founder</p>
                 <a href="courses.html" class="btn btn-primary btn-lg" style="margin-top: 28px;">
                     Start Your Journey
@@ -610,7 +664,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener" class="tg-float-btn" aria-label="Join Telegram">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
             <span class="tg-float-text">Join Community</span>
-            <span class="tg-float-count">5,200+ traders</span>
+            <span class="tg-float-count">100+ traders</span>
         </a>
     </div>
 
