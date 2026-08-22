@@ -9,6 +9,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and [Sem
 ## [3.2.0] — Unreleased (Pending Deploy)
 
 ### Added
+- **Professional Trading Journal** (`resources/journals/trading-journal.html`) — free lead magnet, ninth resource in the magnet grid
+  - Full trade CRUD with live R-multiple maths derived from prices, so it is symbol-agnostic (no pip tables or contract sizes): `R = (exit − entry) ÷ (entry − stop)`, inverted for shorts; falls back to `P/L ÷ risk` when prices are absent
+  - Dashboard with 12 metrics: net P/L, equity, win rate, expectancy (R), profit factor, max drawdown (currency + %), avg win/loss, payoff ratio, best/worst, streaks, plan adherence
+  - Three hand-built inline SVG charts, no libraries: equity curve with drawdown shading, R-multiple distribution, P/L by day of week
+  - Trade log with 8 filters, sortable columns, edit/duplicate/delete
+  - Insights: ranked breakdowns by symbol, setup, session, direction, emotional state and weekday, plus a Discipline Audit comparing plan-followed vs plan-broken expectancy
+  - Weekly Review with auto-calculated weekly stats and persisted reflection fields
+  - JSON backup export/import and CSV export/import (maps common broker headers — Type, S/L, T/P, Close Price, Profit, Commission — and dd/mm/yyyy dates)
+  - Sample-data generator for first-run exploration
+  - Storage: `localStorage` only (`bfx_journal_*` keys) — no accounts, no serverless functions, no Supabase tables, so it adds nothing to the Vercel Hobby function budget (still 11/12) and no student data leaves the device
+  - Registered as magnet key `trading-journal` in `script.js` `RESOURCE_URLS`; card added to the magnet grid on index, about, community, courses, live and mentorship
 - **BossFx OS Core Infrastructure (Phase 3D)** — full operating system architecture
   - `core.js` — OS namespace IIFE with 13 subsystems:
     - Event Bus: pub/sub with wildcard `*` support, `OS.events.on/off/emit`

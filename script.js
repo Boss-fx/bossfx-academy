@@ -1714,6 +1714,7 @@ BFX.socialGate = (function() {
         'prop-guide': 'resources/prop-firm/prop-firm-survival-guide.html',
         'risk-calculator': 'resources/risk-management/risk-calculator.html',
         'trading-plan': 'resources/templates/trading-plan-template.html',
+        'trading-journal': 'resources/journals/trading-journal.html',
         'trade-journal': 'resources/journals/trade-journal-sheet.html',
         'discipline-tracker': 'resources/challenges/trading-discipline-tracker.html'
     };
