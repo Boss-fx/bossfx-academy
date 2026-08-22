@@ -774,6 +774,7 @@ document.querySelectorAll('.faq-question').forEach(btn => {
         animated = true;
         statNums.forEach(function(el) {
             var target = parseInt(el.dataset.count);
+            var suffix = el.dataset.suffix || '';
             var duration = 2000;
             var start = 0;
             var startTime = null;
@@ -781,9 +782,9 @@ document.querySelectorAll('.faq-question').forEach(btn => {
                 if (!startTime) startTime = ts;
                 var progress = Math.min((ts - startTime) / duration, 1);
                 var eased = 1 - Math.pow(1 - progress, 3);
-                el.textContent = Math.floor(eased * target).toLocaleString();
+                el.textContent = Math.floor(eased * target).toLocaleString() + suffix;
                 if (progress < 1) requestAnimationFrame(step);
-                else el.textContent = target.toLocaleString();
+                else el.textContent = target.toLocaleString() + suffix;
             }
             requestAnimationFrame(step);
         });
