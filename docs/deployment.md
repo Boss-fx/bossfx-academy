@@ -10,7 +10,7 @@
 BossFx Academy deploys automatically to Vercel on every push to the `main` branch. There is no staging environment (planned in Phase 2). All changes go directly to production.
 
 **Hosting:** Vercel Hobby (free tier)
-**Domain:** `www.bossfxcademy.com`
+**Domain:** `bossfxcademy.com` — canonical host, no `www`. `www.bossfxcademy.com` 308-redirects to it (see [seo-canonical-domain.md](seo-canonical-domain.md)).
 **Deploy trigger:** `git push origin main`
 
 ---
