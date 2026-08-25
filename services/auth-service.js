@@ -38,6 +38,22 @@ BFX.auth = (function () {
             return sb.auth.signInWithPassword({ email: email, password: password });
         },
 
+        /** Create a student account. `meta` -> user_metadata (e.g. { full_name }). */
+        signUp: function (email, password, meta) {
+            var sb = getClient();
+            if (!sb) return Promise.reject(new Error('Auth is not configured'));
+            return sb.auth.signUp({ email: email, password: password, options: { data: meta || {} } });
+        },
+
+        /** Current signed-in user object, or null. */
+        getUser: function () {
+            var sb = getClient();
+            if (!sb) return Promise.resolve(null);
+            return sb.auth.getUser().then(function (res) {
+                return (res.data && res.data.user) || null;
+            }).catch(function () { return null; });
+        },
+
         signOut: function () {
             var sb = getClient();
             if (!sb) return Promise.resolve();
@@ -46,6 +62,11 @@ BFX.auth = (function () {
 
         isConfigured: function () {
             return Boolean(getClient());
+        },
+
+        /** Direct Supabase client for RLS-gated data reads/writes (progress, enrollments). */
+        db: function () {
+            return getClient();
         }
     };
 })();
