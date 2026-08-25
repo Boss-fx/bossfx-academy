@@ -1,128 +1,221 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>My Learning — BossFx Academy</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --green:#10b981; --green-400:#34d399; --bg:#0a0f0d; --card:#111a16; --border:#1e2b25; --text:#e2e8f0; --muted:#94a3b8; }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,sans-serif; line-height:1.6; min-height:100vh; }
-        a { color:var(--green-400); text-decoration:none; }
-        .topbar { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(10,15,13,0.9); backdrop-filter:blur(8px); z-index:10; }
-        .brand { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; }
-        .brand span { color:var(--green-400); }
-        .topbar-right { display:flex; align-items:center; gap:16px; font-size:0.9rem; }
-        .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 22px; border-radius:10px; border:none; font-family:inherit; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all .2s; }
-        .btn-primary { background:var(--green); color:#04120b; }
-        .btn-primary:hover { background:#0ea472; }
-        .btn-ghost { background:transparent; border:1px solid var(--border); color:var(--text); }
-        .wrap { max-width:820px; margin:0 auto; padding:48px 24px; }
-
-        /* Auth */
-        .auth-card { max-width:420px; margin:40px auto; background:var(--card); border:1px solid var(--border); border-radius:18px; padding:36px; }
-        .auth-card h1 { font-family:'Space Grotesk',sans-serif; font-size:1.5rem; margin-bottom:6px; }
-        .auth-card .sub { color:var(--muted); font-size:0.92rem; margin-bottom:24px; }
-        .field { margin-bottom:14px; }
-        .field label { display:block; font-size:0.8rem; color:var(--muted); margin-bottom:6px; }
-        .field input { width:100%; padding:13px 15px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; color:#fff; font-size:0.95rem; font-family:inherit; outline:none; }
-        .field input:focus { border-color:var(--green); }
-        .auth-toggle { text-align:center; margin-top:18px; font-size:0.88rem; color:var(--muted); }
-        .auth-msg { margin-top:14px; font-size:0.86rem; padding:10px 14px; border-radius:8px; display:none; }
-        .auth-msg.err { display:block; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); color:#fca5a5; }
-        .auth-msg.ok { display:block; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); color:var(--green-400); }
-
-        /* Dashboard */
-        .dash-head { margin-bottom:32px; }
-        .dash-head h1 { font-family:'Space Grotesk',sans-serif; font-size:1.8rem; }
-        .dash-head p { color:var(--muted); }
-        .course-card { background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; }
-        .course-top { padding:28px 32px; border-bottom:1px solid var(--border); }
-        .course-top h2 { font-family:'Space Grotesk',sans-serif; font-size:1.4rem; margin-bottom:6px; }
-        .course-top .course-meta { color:var(--muted); font-size:0.9rem; }
-        .progress-bar { height:8px; background:rgba(255,255,255,0.06); border-radius:6px; margin-top:16px; overflow:hidden; }
-        .progress-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--green-400)); border-radius:6px; width:0; transition:width .5s; }
-        .lesson { display:flex; align-items:center; gap:16px; padding:16px 32px; border-bottom:1px solid var(--border); text-decoration:none; color:var(--text); transition:background .15s; }
-        .lesson:last-child { border-bottom:none; }
-        .lesson:hover { background:rgba(16,185,129,0.04); }
-        .lesson-check { width:26px; height:26px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.8rem; }
-        .lesson.done .lesson-check { background:var(--green); border-color:var(--green); color:#04120b; }
-        .lesson-title { flex:1; font-weight:500; }
-        .lesson-num { color:var(--muted); font-size:0.85rem; }
-        .hidden { display:none !important; }
-        .center { text-align:center; }
-        .loading { color:var(--muted); text-align:center; padding:60px 0; }
-        .notice { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); border-radius:10px; padding:14px 18px; color:#fcd34d; font-size:0.85rem; margin-top:20px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>My Learning — BossFx Academy</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#090909;color:#e2e8f0;font-family:'Inter',-apple-system,sans-serif;line-height:1.6;min-height:100vh}
+  a{color:#34d399;text-decoration:none}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid #1e1e1e;max-width:1000px;margin:0 auto}
+  .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:#fff}
+  .brand span{color:#10b981}
+  .wrap{max-width:1000px;margin:0 auto;padding:40px 24px}
+  .muted{color:#94a3b8}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#10b981;color:#04120b;border:none;border-radius:10px;font-weight:700;font-size:0.95rem;padding:13px 22px;cursor:pointer;font-family:inherit}
+  .btn:hover{background:#00d46a}
+  .btn-ghost{background:transparent;border:1px solid #334155;color:#e2e8f0}
+  .btn-ghost:hover{border-color:#10b981;color:#34d399}
+  /* auth */
+  .auth-card{max-width:420px;margin:60px auto 0;background:#151515;border:1px solid #262626;border-radius:18px;padding:36px}
+  .auth-card h1{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin-bottom:6px;color:#fff}
+  .auth-card p.sub{color:#94a3b8;font-size:0.92rem;margin-bottom:24px}
+  .field{margin-bottom:14px}
+  .field input{width:100%;padding:13px 15px;background:rgba(255,255,255,0.04);border:1px solid #333;border-radius:10px;color:#fff;font-size:0.95rem;font-family:inherit;outline:none}
+  .field input:focus{border-color:#10b981}
+  .auth-switch{margin-top:18px;text-align:center;font-size:0.9rem;color:#94a3b8}
+  .msg{margin:10px 0 0;font-size:0.85rem;min-height:18px}
+  .msg.err{color:#f87171}.msg.ok{color:#34d399}
+  .tabs{display:flex;gap:8px;margin-bottom:22px;background:#0f0f0f;border:1px solid #262626;border-radius:12px;padding:4px}
+  .tabs button{flex:1;padding:10px;background:transparent;border:none;border-radius:9px;color:#94a3b8;font-weight:600;font-size:0.9rem;cursor:pointer;font-family:inherit}
+  .tabs button.active{background:#10b981;color:#04120b}
+  /* dashboard */
+  .dash-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px}
+  .dash-head h1{font-family:'Space Grotesk',sans-serif;font-size:1.9rem;color:#fff}
+  .course-card{background:#151515;border:1px solid #262626;border-radius:18px;padding:32px;margin-top:28px}
+  .course-card h2{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;color:#fff;margin-bottom:6px}
+  .progress-bar{height:8px;background:#1e1e1e;border-radius:6px;overflow:hidden;margin:18px 0 6px}
+  .progress-fill{height:100%;background:linear-gradient(90deg,#10b981,#00d46a);width:0;transition:width .5s}
+  .progress-label{font-size:0.82rem;color:#94a3b8;margin-bottom:20px}
+  .lesson-list{list-style:none}
+  .lesson-item{display:flex;align-items:center;gap:14px;padding:14px 4px;border-top:1px solid #1e1e1e}
+  .lesson-item:first-child{border-top:none}
+  .lesson-check{width:26px;height:26px;border-radius:50%;border:2px solid #334155;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#04120b}
+  .lesson-check.done{background:#10b981;border-color:#10b981}
+  .lesson-item .l-title{flex:1;color:#e2e8f0;font-size:0.98rem}
+  .lesson-item .l-title small{display:block;color:#64748b;font-size:0.72rem;letter-spacing:1px;text-transform:uppercase}
+  .lesson-item a.l-go{color:#34d399;font-size:0.85rem;font-weight:600;white-space:nowrap}
+  .hide{display:none!important}
+  .center{text-align:center}
+</style>
 </head>
 <body>
-    <div class="topbar">
-        <a href="/" class="brand">BossFx <span>Academy</span></a>
-        <div class="topbar-right">
-            <span id="userEmail" class="hidden" style="color:var(--muted)"></span>
-            <button id="logoutBtn" class="btn btn-ghost hidden" style="padding:8px 16px;">Log out</button>
-            <a href="/" style="color:var(--muted)">← Back to site</a>
-        </div>
+  <div class="top">
+    <a href="/" class="brand">BossFx <span>Academy</span></a>
+    <div id="topRight"><a href="/" class="muted" style="font-size:0.9rem">← Back to site</a></div>
+  </div>
+
+  <!-- AUTH (logged out) -->
+  <div class="wrap" id="authView">
+    <div class="auth-card">
+      <div class="tabs">
+        <button id="tabLogin" class="active" type="button">Log in</button>
+        <button id="tabSignup" type="button">Create account</button>
+      </div>
+      <h1 id="authTitle">Welcome back, Trader</h1>
+      <p class="sub" id="authSub">Log in to continue your learning.</p>
+      <form id="authForm">
+        <div class="field" id="nameField" style="display:none"><input id="fName" type="text" placeholder="Your name" autocomplete="name"></div>
+        <div class="field"><input id="fEmail" type="email" placeholder="Email address" autocomplete="email" required></div>
+        <div class="field"><input id="fPass" type="password" placeholder="Password (min 6 chars)" autocomplete="current-password" required></div>
+        <button class="btn" type="submit" id="authBtn" style="width:100%">Log in</button>
+        <p class="msg" id="authMsg"></p>
+      </form>
+      <p class="auth-switch" id="authSwitch">New here? <a href="#" id="goSignup">Create a free account →</a></p>
     </div>
+  </div>
 
-    <!-- Loading -->
-    <div id="loadingView" class="loading">Loading your learning area…</div>
-
-    <!-- Auth (logged out) -->
-    <div id="authView" class="hidden">
-        <div class="auth-card">
-            <h1 id="authTitle">Welcome back, Trader</h1>
-            <p class="sub" id="authSub">Log in to continue your learning.</p>
-            <form id="authForm">
-                <div class="field" id="nameField" style="display:none;">
-                    <label>Full name</label>
-                    <input type="text" id="fName" autocomplete="name" placeholder="Your name">
-                </div>
-                <div class="field">
-                    <label>Email</label>
-                    <input type="email" id="fEmail" autocomplete="email" required placeholder="you@example.com">
-                </div>
-                <div class="field">
-                    <label>Password</label>
-                    <input type="password" id="fPassword" autocomplete="current-password" required minlength="6" placeholder="••••••••">
-                </div>
-                <button type="submit" class="btn btn-primary" style="width:100%;" id="authSubmit">Log in</button>
-                <div id="authMsg" class="auth-msg"></div>
-            </form>
-            <div class="auth-toggle">
-                <span id="toggleText">New to BossFx?</span>
-                <a href="#" id="toggleLink">Create an account</a>
-            </div>
-        </div>
+  <!-- DASHBOARD (logged in) -->
+  <div class="wrap hide" id="dashView">
+    <div class="dash-head">
+      <h1>My Learning</h1>
+      <button class="btn btn-ghost" id="logoutBtn" type="button">Log out</button>
     </div>
+    <p class="muted" id="welcome"></p>
+    <div id="courses"></div>
+  </div>
 
-    <!-- Dashboard (logged in) -->
-    <div id="dashView" class="hidden">
-        <div class="wrap">
-            <div class="dash-head">
-                <h1>Your Learning</h1>
-                <p>Pick up where you left off.</p>
-            </div>
-            <div class="course-card">
-                <div class="course-top">
-                    <h2>Forex 101 — The Trader's Bible</h2>
-                    <div class="course-meta"><span id="progressText">0 of 8 lessons complete</span></div>
-                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-                </div>
-                <div id="lessonList"></div>
-            </div>
-            <div class="notice">Proof-of-concept: lessons open a gated video page and your progress saves to your account. Video embeds and the paid-enrolment gate come next.</div>
-        </div>
-    </div>
+  <div class="wrap hide" id="loadingView"><p class="muted center">Loading…</p></div>
 
-    <script src="../config.js"></script>
-    <script src="../lib/vendor/supabase.umd.js"></script>
-    <script src="../services/auth-service.js"></script>
-    <script src="learn.js"></script>
+  <script src="../config.js"></script>
+  <script src="../lib/vendor/supabase.umd.js"></script>
+  <script src="../services/auth-service.js"></script>
+  <script src="learn.js"></script>
+  <script>
+  (function () {
+    var els = {
+      auth: document.getElementById('authView'),
+      dash: document.getElementById('dashView'),
+      loading: document.getElementById('loadingView'),
+      form: document.getElementById('authForm'),
+      email: document.getElementById('fEmail'),
+      pass: document.getElementById('fPass'),
+      name: document.getElementById('fName'),
+      nameField: document.getElementById('nameField'),
+      btn: document.getElementById('authBtn'),
+      msg: document.getElementById('authMsg'),
+      title: document.getElementById('authTitle'),
+      sub: document.getElementById('authSub'),
+      tabLogin: document.getElementById('tabLogin'),
+      tabSignup: document.getElementById('tabSignup'),
+      switch: document.getElementById('authSwitch'),
+      welcome: document.getElementById('welcome'),
+      courses: document.getElementById('courses'),
+      logout: document.getElementById('logoutBtn')
+    };
+    var mode = 'login';
+
+    if (!BFX.learn.ready()) {
+      show('auth');
+      setMsg('Auth is not configured on this deployment yet.', 'err');
+      return;
+    }
+
+    function show(v) {
+      els.auth.classList.toggle('hide', v !== 'auth');
+      els.dash.classList.toggle('hide', v !== 'dash');
+      els.loading.classList.toggle('hide', v !== 'loading');
+    }
+    function setMsg(t, cls) { els.msg.textContent = t || ''; els.msg.className = 'msg ' + (cls || ''); }
+
+    function setMode(m) {
+      mode = m;
+      var login = m === 'login';
+      els.tabLogin.classList.toggle('active', login);
+      els.tabSignup.classList.toggle('active', !login);
+      els.title.textContent = login ? 'Welcome back, Trader' : 'Create your free account';
+      els.sub.textContent = login ? 'Log in to continue your learning.' : 'Track your progress through every module — free.';
+      els.btn.textContent = login ? 'Log in' : 'Create account';
+      els.nameField.style.display = login ? 'none' : 'block';
+      els.switch.innerHTML = login
+        ? 'New here? <a href="#" id="goSignup">Create a free account →</a>'
+        : 'Already have an account? <a href="#" id="goLogin">Log in →</a>';
+      wireSwitch();
+      setMsg('');
+    }
+    function wireSwitch() {
+      var s = document.getElementById('goSignup'), l = document.getElementById('goLogin');
+      if (s) s.onclick = function (e) { e.preventDefault(); setMode('signup'); };
+      if (l) l.onclick = function (e) { e.preventDefault(); setMode('login'); };
+    }
+    els.tabLogin.onclick = function () { setMode('login'); };
+    els.tabSignup.onclick = function () { setMode('signup'); };
+    wireSwitch();
+
+    els.form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = els.email.value.trim(), pass = els.pass.value;
+      if (!email || pass.length < 6) { setMsg('Enter a valid email and a 6+ character password.', 'err'); return; }
+      els.btn.disabled = true; els.btn.textContent = mode === 'login' ? 'Logging in…' : 'Creating…';
+      var p = mode === 'login'
+        ? BFX.auth.signInWithPassword(email, pass)
+        : BFX.auth.signUp(email, pass, { full_name: els.name.value.trim() });
+      p.then(function (res) {
+        if (res && res.error) throw res.error;
+        if (mode === 'signup' && res.data && !res.data.session) {
+          setMsg('Account created — check your email to confirm, then log in.', 'ok');
+          els.btn.disabled = false; els.btn.textContent = 'Create account'; setMode('login'); return;
+        }
+        boot();
+      }).catch(function (err) {
+        setMsg((err && err.message) || 'Something went wrong.', 'err');
+        els.btn.disabled = false; els.btn.textContent = mode === 'login' ? 'Log in' : 'Create account';
+      });
+    });
+
+    els.logout.onclick = function () { BFX.auth.signOut().then(function () { location.reload(); }); };
+
+    function renderCourse(user) {
+      var cid = 'forex-101', c = BFX.learn.course(cid);
+      BFX.learn.getProgress(cid).then(function (done) {
+        var total = c.lessons.length, doneCount = 0;
+        var rows = c.lessons.map(function (ls) {
+          var isDone = !!done[ls.id]; if (isDone) doneCount++;
+          return '<li class="lesson-item">' +
+            '<span class="lesson-check ' + (isDone ? 'done' : '') + '">' + (isDone ? '✓' : '') + '</span>' +
+            '<span class="l-title"><small>Module ' + ls.n + '</small>' + esc(ls.title) + '</span>' +
+            '<a class="l-go" href="lesson.html?course=' + cid + '&lesson=' + ls.id + '">' + (isDone ? 'Review' : 'Start') + ' →</a>' +
+          '</li>';
+        }).join('');
+        var pct = total ? Math.round(doneCount / total * 100) : 0;
+        els.courses.innerHTML =
+          '<div class="course-card"><h2>' + esc(c.title) + '</h2><p class="muted">' + esc(c.blurb) + '</p>' +
+          '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+          '<p class="progress-label">' + doneCount + ' of ' + total + ' modules complete · ' + pct + '%</p>' +
+          '<ul class="lesson-list">' + rows + '</ul></div>';
+      }).catch(function () {
+        els.courses.innerHTML = '<div class="course-card"><p class="muted">Couldn\'t load your progress. Refresh to try again.</p></div>';
+      });
+    }
+
+    function boot() {
+      show('loading');
+      BFX.learn.currentUser().then(function (user) {
+        if (!user) { show('auth'); return; }
+        var nm = (user.user_metadata && user.user_metadata.full_name) || user.email;
+        els.welcome.textContent = 'Signed in as ' + nm + '. Pick up where you left off.';
+        renderCourse(user);
+        show('dash');
+      });
+    }
+    function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+    boot();
+  })();
+  </script>
 </body>
 </html>
