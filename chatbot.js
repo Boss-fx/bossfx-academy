@@ -54,7 +54,7 @@ BFX.mirror = (function () {
                 id: 'start-forex',
                 patterns: [/start|beginn|new to|first time|learn forex|how.*forex|getting started|zero|scratch/i],
                 intent: 'beginner',
-                text: "Great question! Here's the fastest path to becoming a structured trader:\n\n<b>1.</b> Download the free <b>Forex Starter Pack</b> — covers the basics\n<b>2.</b> Start <b>Forex 101</b> — our 12-module course (free)\n<b>3.</b> Join <b>Telegram</b> — 5,200+ traders, daily analysis\n\nThis combo has helped thousands go from zero to understanding how markets actually move.",
+                text: "Great question! Here's the fastest path to becoming a structured trader:\n\n<b>1.</b> Download the free <b>Forex Starter Pack</b> — covers the basics\n<b>2.</b> Start <b>Forex 101</b> — our 12-module course (free)\n<b>3.</b> Join <b>Telegram</b> — 100+ traders, daily analysis\n\nThis combo has helped thousands go from zero to understanding how markets actually move.",
                 ctas: [
                     { label: '📚 Start Forex 101', url: 'courses.html' },
                     { label: '📦 Get Starter Pack', url: 'community.html#resources' }
@@ -130,7 +130,7 @@ BFX.mirror = (function () {
                 id: 'pricing',
                 patterns: [/price|cost|pay|afford|fee|subscription|how much|budget/i],
                 intent: null,
-                text: "Most of what BossFx offers is <b>completely free</b>:\n\n🆓 Forex 101 course\n🆓 All 8 trading resources\n🆓 Telegram community (5,200+ traders)\n🆓 Weekly webinars\n\n💰 <b>Paid options:</b>\n• SMA Pro Trend EA — $49.99 (one-time)\n• Group Mentorship — see mentorship page\n• 1-on-1 Mentorship — premium tier\n\nStart free, upgrade when you're ready.",
+                text: "Most of what BossFx offers is <b>completely free</b>:\n\n🆓 Forex 101 course\n🆓 All 8 trading resources\n🆓 Telegram community (100+ traders)\n🆓 Weekly webinars\n\n💰 <b>Paid options:</b>\n• SMA Pro Trend EA — $49.99 (one-time)\n• Group Mentorship — see mentorship page\n• 1-on-1 Mentorship — premium tier\n\nStart free, upgrade when you're ready.",
                 ctas: [
                     { label: '🆓 Start Free', url: 'courses.html' },
                     { label: '💰 View Mentorship', url: 'mentorship.html' }
@@ -140,7 +140,7 @@ BFX.mirror = (function () {
                 id: 'telegram',
                 patterns: [/telegram|community|join|group|chat.*group|member|discord/i],
                 intent: null,
-                text: "Our Telegram community is <b>5,200+ traders strong</b> and growing.\n\nWhat you get:\n• Daily market bias updates\n• Live webinar notifications\n• Trade setups from mentors\n• Peer support & motivation\n• Webinar replays\n\nIt's completely free to join.",
+                text: "Our Telegram community is <b>100+ traders strong</b> and growing.\n\nWhat you get:\n• Daily market bias updates\n• Live webinar notifications\n• Trade setups from mentors\n• Peer support & motivation\n• Webinar replays\n\nIt's completely free to join.",
                 ctas: [
                     { label: '💬 Join Telegram', url: getTelegramUrl() }
                 ]
@@ -169,7 +169,7 @@ BFX.mirror = (function () {
                 id: 'about',
                 patterns: [/who.*(?:is|are|founded)|founder|about.*(?:bossfx|academy|you)|timilehin|bossfx.*academy|story|behind.*bossfx/i],
                 intent: null,
-                text: "BossFx Academy was founded by <b>Timilehin 'BossFx' Shobande</b> — a forex trader and educator building Africa's most accessible trading education platform.\n\nOur mission: give every trader the structured education, tools, and community they need to succeed.\n\nWe've taught 5,200+ traders across Africa and beyond.",
+                text: "BossFx Academy was founded by <b>Timilehin 'BossFx' Shobande</b> — a forex trader and educator building Africa's most accessible trading education platform.\n\nOur mission: give every trader the structured education, tools, and community they need to succeed.\n\nWe've taught 100+ traders across Africa and beyond.",
                 ctas: [
                     { label: '📖 Our Story', url: 'about.html' }
                 ]
@@ -1413,8 +1413,18 @@ BFX.mirror = (function () {
                 removeTyping();
 
                 if (err) {
-                    trackEvent('mirror_platform_error', { code: (err && err.code) || 'unknown' });
-                    renderPlatformError(text);
+                    // Platform unreachable or errored — fall back to the built-in
+                    // local assistant (pre-Platform embedded model) so the user
+                    // always gets a helpful reply instead of a dead-end error.
+                    trackEvent('mirror_platform_error', { code: (err && err.code) || 'unknown', fallback: 'local' });
+                    LocalEngine.process(text, context, function (lerr, lresp) {
+                        if (lerr || !lresp) {
+                            addBotMessage(KB.fallback.text, null, KB.fallback.prompts);
+                            return;
+                        }
+                        if (lresp.intent) state.context.intent = lresp.intent;
+                        addBotMessage(lresp.text, lresp.ctas, lresp.prompts);
+                    });
                     return;
                 }
 
