@@ -149,9 +149,32 @@ These still reference `www` **on purpose**. Do not "fix" them without reading wh
 
 ## Search Console
 
-**Property:** URL-prefix, `https://bossfxcademy.com/`
+**Properties:**
 
-**Recommended:** also add a **Domain property** (`bossfxcademy.com`, no protocol, no `www`). It covers every host and protocol at once, so a hostname split like this one can never again hide traffic. Requires a DNS TXT record.
+| Property | Type | Verified via |
+|---|---|---|
+| `bossfxcademy.com` | Domain (preferred — covers all hosts & protocols) | Domain name provider, TXT record |
+| `https://bossfxcademy.com/` | URL-prefix (legacy, kept for history) | — |
+
+Use the **Domain property** for anything that matters. It spans `www`/non-`www` and `http`/`https` together, so a hostname split like the 2026-08-23 incident can never again hide traffic behind a property boundary.
+
+### DNS records — do not remove
+
+The apex carries three TXT records. **Removing any one breaks something silently:**
+
+| Record | Purpose | Breaks if removed |
+|---|---|---|
+| `google-site-verification=…` | Search Console Domain property | Property loses verification, all data access |
+| `v=spf1 include:spf.cloudeu.xion.oxcs.net include:sendinblue.com ~all` | SPF | **Brevo drips and fulfilment emails start failing SPF → spam folder** |
+| `brevo-code:…` | Brevo domain authentication | Brevo sending auth |
+
+DNS is managed at **WhoGoHost** (`nsa.whogohost.com` / `nsb.whogohost.com`) — *not* Vercel, despite Vercel serving the site. When adding a TXT record, **add** a new one; never edit or replace an existing row.
+
+Verify all three at any time:
+
+```bash
+dig +short TXT bossfxcademy.com
+```
 
 ### After a canonical or domain change
 
