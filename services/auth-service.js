@@ -38,6 +38,17 @@ BFX.auth = (function () {
             return sb.auth.signInWithPassword({ email: email, password: password });
         },
 
+        /** OAuth sign-in (e.g. 'google'). Redirects the browser to the provider,
+         *  then back to `redirectTo` where supabase-js restores the session. */
+        signInWithOAuth: function (provider, redirectTo) {
+            var sb = getClient();
+            if (!sb) return Promise.reject(new Error('Auth is not configured'));
+            return sb.auth.signInWithOAuth({
+                provider: provider,
+                options: { redirectTo: redirectTo || (location.origin + '/learn/') }
+            });
+        },
+
         /** Create a student account. `meta` -> user_metadata (e.g. { full_name }). */
         signUp: function (email, password, meta) {
             var sb = getClient();
