@@ -52,6 +52,14 @@
   .lesson-item .l-title{flex:1;color:#e2e8f0;font-size:0.98rem}
   .lesson-item .l-title small{display:block;color:#64748b;font-size:0.72rem;letter-spacing:1px;text-transform:uppercase}
   .lesson-item a.l-go{color:#34d399;font-size:0.85rem;font-weight:600;white-space:nowrap}
+  .lesson-item.locked .l-title{color:#64748b}
+  .lesson-check{font-size:0.7rem}
+  a.l-lock{color:#f59e0b!important}
+  .l-free{display:inline-block;margin-left:8px;color:#34d399;font-style:normal;font-size:0.68rem;letter-spacing:0.5px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);padding:1px 6px;border-radius:20px;vertical-align:middle}
+  .enroll-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(16,185,129,0.08));border:1px solid rgba(245,158,11,0.35);border-radius:14px;padding:18px 20px;margin:4px 0 22px}
+  .enroll-banner strong{display:block;color:#fff;font-size:1rem;margin-bottom:2px}
+  .enroll-banner span{color:#94a3b8;font-size:0.86rem}
+  .enroll-banner .btn{white-space:nowrap}
   .hide{display:none!important}
   .center{text-align:center}
 </style>
@@ -201,21 +209,33 @@
 
     function renderCourse(user) {
       var cid = 'forex-101', c = BFX.learn.course(cid);
-      BFX.learn.getProgress(cid).then(function (done) {
+      Promise.all([BFX.learn.getProgress(cid), BFX.learn.isEnrolled(cid)]).then(function (r) {
+        var done = r[0], enrolled = r[1];
         var total = c.lessons.length, doneCount = 0;
         var rows = c.lessons.map(function (ls) {
-          var isDone = !!done[ls.id]; if (isDone) doneCount++;
-          return '<li class="lesson-item">' +
-            '<span class="lesson-check ' + (isDone ? 'done' : '') + '">' + (isDone ? '✓' : '') + '</span>' +
-            '<span class="l-title"><small>Module ' + ls.n + '</small>' + esc(ls.title) + '</span>' +
-            '<a class="l-go" href="lesson.html?course=' + cid + '&lesson=' + ls.id + '">' + (isDone ? 'Review' : 'Start') + ' →</a>' +
+          var open = BFX.learn.canAccess(ls, enrolled);
+          var isDone = open && !!done[ls.id]; if (isDone) doneCount++;
+          var tag = ls.free ? '<em class="l-free">Free</em>' : '';
+          var action = open
+            ? '<a class="l-go" href="lesson.html?course=' + cid + '&lesson=' + ls.id + '">' + (isDone ? 'Review' : 'Start') + ' →</a>'
+            : '<a class="l-go l-lock" href="' + c.enrollUrl + '">🔒 Unlock</a>';
+          return '<li class="lesson-item' + (open ? '' : ' locked') + '">' +
+            '<span class="lesson-check ' + (isDone ? 'done' : '') + '">' + (isDone ? '✓' : (open ? '' : '🔒')) + '</span>' +
+            '<span class="l-title"><small>Module ' + ls.n + tag + '</small>' + esc(ls.title) + '</span>' +
+            action +
           '</li>';
         }).join('');
         var pct = total ? Math.round(doneCount / total * 100) : 0;
+        var banner = enrolled ? '' :
+          '<div class="enroll-banner">' +
+          '<div><strong>Unlock the full course</strong><span>Modules 1–' + c.freeCount + ' are free. Get all 12 modules, lifetime access & the community.</span></div>' +
+          '<a class="btn" href="' + c.enrollUrl + '">Enroll — ₦' + c.priceNGN.toLocaleString() + ' →</a></div>';
         els.courses.innerHTML =
           '<div class="course-card"><h2>' + esc(c.title) + '</h2><p class="muted">' + esc(c.blurb) + '</p>' +
           '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
-          '<p class="progress-label">' + doneCount + ' of ' + total + ' modules complete · ' + pct + '%</p>' +
+          '<p class="progress-label">' + doneCount + ' of ' + total + ' modules complete · ' + pct + '%' +
+          (enrolled ? ' · <span style="color:#34d399">Full access ✓</span>' : ' · Free preview') + '</p>' +
+          banner +
           '<ul class="lesson-list">' + rows + '</ul></div>';
       }).catch(function () {
         els.courses.innerHTML = '<div class="course-card"><p class="muted">Couldn\'t load your progress. Refresh to try again.</p></div>';

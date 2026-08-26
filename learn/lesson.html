@@ -77,9 +77,26 @@
 
     BFX.learn.currentUser().then(function (user) {
       if (!user) { location.replace('index.html'); return; }  // gate: must be signed in
+      return BFX.learn.isEnrolled(courseId).then(function (enrolled) { render(user, enrolled); });
+    });
 
+    function render(user, enrolled) {
       document.getElementById('crumb').textContent = info.course.title + ' · Module ' + info.lesson.n;
       document.getElementById('title').textContent = info.lesson.title;
+
+      // Paywall: a non-free module you haven't purchased shows an upsell.
+      if (!BFX.learn.canAccess(info.lesson, enrolled)) {
+        document.getElementById('video').innerHTML =
+          '<div class="video-ph"><strong>🔒 This module is part of the full course</strong>' +
+          'Modules 1–' + info.course.freeCount + ' are free. Unlock all 12 modules, lifetime access and the community.</div>';
+        var act = document.querySelector('.actions');
+        act.innerHTML = '<a class="btn btn-done" href="' + info.course.enrollUrl + '">Enroll — ₦' + info.course.priceNGN.toLocaleString() + ' →</a>' +
+          '<a class="btn btn-ghost" href="index.html">Back to My Learning</a>';
+        var pv = document.getElementById('prevLink'), nx = document.getElementById('nextLink');
+        pv.classList.add('hide'); nx.classList.add('hide');
+        show(view);
+        return;
+      }
 
       var v = document.getElementById('video');
       if (info.lesson.video) {
@@ -114,7 +131,7 @@
       };
 
       show(view);
-    });
+    }
   })();
   </script>
 </body>
