@@ -1022,14 +1022,9 @@ document.querySelectorAll('.faq-question').forEach(btn => {
     var closeBtn = document.getElementById('webinarModalClose');
     var form = document.getElementById('webinarRegForm');
     if (!modal) return;
-    document.querySelectorAll('.webinar-register-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var card = btn.closest('.webinar-card');
-            var title = card ? card.querySelector('.webinar-title').textContent : '';
-            if (modalTitle) modalTitle.textContent = title;
-            modal.classList.add('active');
-        });
-    });
+    // Webinar "Register Free" buttons now route to sign-up (/learn/?signup=1),
+    // so the registration modal is no longer opened from them. The modal markup
+    // + submit handler stay in place for any future use.
     if (closeBtn) closeBtn.addEventListener('click', function() { modal.classList.remove('active'); });
     modal.addEventListener('click', function(e) { if (e.target === modal) modal.classList.remove('active'); });
     if (form) {
