@@ -170,34 +170,47 @@ function fetchGoldPrice() {
     });
 }
 
-// Indices — use Twelve Data or Alpha Vantage free tier
+// Indices — Yahoo Finance v8 chart endpoint (no key). ^DJI = Dow (US30),
+// ^NDX = Nasdaq 100 (NAS100). The v7 quote endpoint is blocked by Yahoo, but
+// the v8 chart endpoint still works server-side with a browser User-Agent.
 function fetchIndices() {
-    // Try Yahoo Finance quotes (no key needed)
-    var symbols = 'DJI,IXIC';
-    var url = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=%5EDJI,%5EIXIC&fields=regularMarketPrice,regularMarketChange,regularMarketChangePercent';
-    return fetchJSON(url, 5000).then(function (data) {
-        var result = {};
-        if (data.quoteResponse && data.quoteResponse.result) {
-            data.quoteResponse.result.forEach(function (q) {
-                if (q.symbol === '^DJI') {
-                    result.US30 = {
-                        price: parseFloat((q.regularMarketPrice || 0).toFixed(0)),
-                        change: parseFloat((q.regularMarketChange || 0).toFixed(0)),
-                        changePct: parseFloat((q.regularMarketChangePercent || 0).toFixed(2)),
-                        direction: (q.regularMarketChangePercent || 0) >= 0 ? 'up' : 'down'
-                    };
-                }
-                if (q.symbol === '^IXIC') {
-                    result.NAS100 = {
-                        price: parseFloat((q.regularMarketPrice || 0).toFixed(0)),
-                        change: parseFloat((q.regularMarketChange || 0).toFixed(0)),
-                        changePct: parseFloat((q.regularMarketChangePercent || 0).toFixed(2)),
-                        direction: (q.regularMarketChangePercent || 0) >= 0 ? 'up' : 'down'
-                    };
-                }
+    function chart(sym) {
+        return new Promise(function (resolve) {
+            var url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + sym + '?interval=1d&range=5d';
+            var settled = false;
+            function done(v) { if (settled) return; settled = true; clearTimeout(t); resolve(v); }
+            var t = setTimeout(function () { try { req.destroy(); } catch (e) {} done(null); }, 5000);
+            var req = https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36', 'Accept': 'application/json' } }, function (res) {
+                if (res.statusCode < 200 || res.statusCode >= 300) { res.resume(); return done(null); }
+                var b = '';
+                res.on('data', function (c) { b += c; });
+                res.on('end', function () {
+                    try {
+                        var m = JSON.parse(b).chart.result[0].meta;
+                        var price = m.regularMarketPrice;
+                        var pc = (m.chartPreviousClose != null ? m.chartPreviousClose : (m.previousClose != null ? m.previousClose : price));
+                        if (price == null) return done(null);
+                        done({ price: price, prev: pc });
+                    } catch (e) { done(null); }
+                });
             });
-        }
-        return result;
+            req.on('error', function () { done(null); });
+        });
+    }
+    function build(o) {
+        var pct = o.prev ? (o.price - o.prev) / o.prev * 100 : 0;
+        return {
+            price: parseFloat(o.price.toFixed(0)),
+            change: parseFloat((o.price - o.prev).toFixed(0)),
+            changePct: parseFloat(pct.toFixed(2)),
+            direction: pct >= 0 ? 'up' : 'down'
+        };
+    }
+    return Promise.all([chart('%5EDJI'), chart('%5ENDX')]).then(function (r) {
+        var out = {};
+        if (r[0]) out.US30 = build(r[0]);
+        if (r[1]) out.NAS100 = build(r[1]);
+        return out;
     }).catch(function () { return {}; });
 }
 
@@ -213,8 +226,6 @@ function fetchTwelveData() {
         'GBP/USD': { k: 'GBPUSD', dp: 5 },
         'USD/JPY': { k: 'USDJPY', dp: 3 },
         'XAU/USD': { k: 'XAUUSD', dp: 2 },
-        'DJI':     { k: 'US30',   dp: 0 },
-        'NDX':     { k: 'NAS100', dp: 0 },
         'BTC/USD': { k: 'BTCUSD', dp: 2 },
         'ETH/USD': { k: 'ETHUSD', dp: 2 }
     };
