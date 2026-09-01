@@ -201,8 +201,75 @@ function fetchIndices() {
     }).catch(function () { return {}; });
 }
 
-// Economic calendar — constructed from known schedule + API when available
+// Economic calendar — REAL high/medium/low-impact events from the free
+// ForexFactory weekly JSON feed (no API key), with a graceful fallback to a
+// computed schedule if the feed is unreachable.
 function fetchCalendar() {
+    return new Promise(function (resolve) {
+        var url = 'https://nfs.faireconomy.media/ff_calendar_thisweek.json';
+        var settled = false;
+        function done(list) {
+            if (settled) return; settled = true;
+            clearTimeout(timer);
+            if (list && list.length) resolve(list);
+            else fallbackCalendar().then(resolve);
+        }
+        var timer = setTimeout(function () { try { req.destroy(); } catch (e) {} done(null); }, 6000);
+        var req = https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; BossFxAcademy/1.0)' } }, function (res) {
+            if (res.statusCode < 200 || res.statusCode >= 300) { res.resume(); return done(null); }
+            var body = '';
+            res.on('data', function (c) { body += c; });
+            res.on('end', function () {
+                try { done(mapCalendar(JSON.parse(body))); } catch (e) { done(null); }
+            });
+        });
+        req.on('error', function () { done(null); });
+    });
+}
+
+// Normalise the raw ForexFactory feed into the shape the dashboard + chatbot expect.
+function mapCalendar(raw) {
+    if (!Array.isArray(raw)) return null;
+    var now = new Date();
+    var todayUTC = now.toISOString().slice(0, 10);
+    var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    var out = [];
+    for (var i = 0; i < raw.length; i++) {
+        var e = raw[i];
+        var impact = String(e.impact || '').toLowerCase();
+        if (impact !== 'high' && impact !== 'medium' && impact !== 'low') continue;
+        var d = new Date(e.date);
+        if (isNaN(d.getTime())) continue;
+        var evtUTC = d.toISOString().slice(0, 10);
+        var status = evtUTC === todayUTC ? 'today' : (d.getTime() > now.getTime() ? 'upcoming' : 'past');
+        var h = d.getUTCHours(), m = d.getUTCMinutes();
+        var ampm = h >= 12 ? 'PM' : 'AM';
+        var h12 = h % 12; if (h12 === 0) h12 = 12;
+        out.push({
+            title: e.title,
+            impact: impact,
+            currency: e.country || '',
+            day: days[d.getUTCDay()],
+            time: h12 + ':' + (m < 10 ? '0' + m : m) + ' ' + ampm + ' GMT',
+            date: e.date,
+            forecast: e.forecast || '',
+            previous: e.previous || '',
+            actual: e.actual || '',
+            status: status,
+            ts: d.getTime()
+        });
+    }
+    if (!out.length) return null;
+    var order = { today: 0, upcoming: 1, past: 2 };
+    out.sort(function (a, b) {
+        var o = (order[a.status] || 2) - (order[b.status] || 2);
+        return o !== 0 ? o : a.ts - b.ts;
+    });
+    return out;
+}
+
+// Fallback economic calendar — computed schedule when the live feed is unreachable
+function fallbackCalendar() {
     var now = new Date();
     var day = now.getUTCDay(); // 0=Sun
     var hour = now.getUTCHours();

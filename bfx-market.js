@@ -196,10 +196,12 @@ BFX.market = (function () {
             if (container) container.innerHTML = '<p class="mkt-empty">No major events scheduled this week.</p>';
             return;
         }
+        // Prioritise today + upcoming (already sorted that way) and cap the card length
+        var shown = events.slice(0, 8);
         var html = '';
-        for (var i = 0; i < events.length; i++) {
-            var evt = events[i];
-            var impactClass = evt.impact === 'high' ? 'mkt-impact-high' : 'mkt-impact-medium';
+        for (var i = 0; i < shown.length; i++) {
+            var evt = shown[i];
+            var impactClass = evt.impact === 'high' ? 'mkt-impact-high' : (evt.impact === 'low' ? 'mkt-impact-low' : 'mkt-impact-medium');
             var statusClass = evt.status === 'past' ? 'mkt-event-past' : (evt.status === 'today' ? 'mkt-event-today' : '');
             var statusBadge = evt.status === 'today' ? '<span class="mkt-event-today-badge">TODAY</span>' : '';
 

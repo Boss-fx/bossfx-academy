@@ -377,14 +377,16 @@ BFX.mirror = (function () {
             },
             {
                 id: 'economic-events',
-                patterns: [/econom|calendar|cpi|nfp|fomc|fed|interest.*rate|news.*trad|fundamental|gdp|pmi|inflation|unemployment/i],
+                patterns: [/econom|calendar|cpi|nfp|fomc|fed|interest.*rate|news.*trad|fundamental|gdp|pmi|inflation|unemployment|this week|today.*event|event.*today|what.*news|news.*today|red folder/i],
                 intent: 'market',
+                _dynamic: true,
+                _calendar: true,
                 text: "Economic events are the <b>catalysts</b> that drive major market moves.\n\n<b>High-impact events to watch:</b>\n• <b>NFP</b> (Non-Farm Payrolls) — first Friday monthly\n• <b>CPI</b> (Inflation data) — mid-month\n• <b>FOMC</b> (Fed decisions) — every 6 weeks\n• <b>GDP</b> — quarterly\n\n<b>Our approach:</b>\n• Avoid entering trades 30 min before high-impact news\n• Close or tighten stops on open positions\n• Wait for the dust to settle, then trade the reaction\n\nCheck our <b>Live Dashboard</b> for this week's key events.",
                 ctas: [
-                    { label: '📊 Economic Calendar', url: 'live.html' },
-                    { label: '📚 Learn More', url: 'courses.html' }
+                    { label: '📅 Full Economic Calendar', url: 'calendar.html' },
+                    { label: '📊 Live Dashboard', url: 'live.html' }
                 ],
-                followUp: ['How to trade news events?', 'Live market bias', 'This week calendar']
+                followUp: ['How to trade news events?', 'What is high impact?', 'Live market bias']
             },
             {
                 id: 'prop-ea',
@@ -655,6 +657,42 @@ BFX.mirror = (function () {
             return lines.join('\n');
         },
 
+        generateCalendar: function (data) {
+            if (!data || !data.calendar || !data.calendar.length) return null;
+            var cal = data.calendar;
+            var rank = { high: 0, medium: 1, low: 2 };
+            function byImpact(a, b) { return (rank[a.impact] - rank[b.impact]) || ((a.ts || 0) - (b.ts || 0)); }
+            var today = cal.filter(function (e) { return e.status === 'today'; }).sort(byImpact);
+            var upcoming = cal.filter(function (e) { return e.status === 'upcoming'; }).sort(byImpact);
+            function fmt(e) {
+                var flag = e.impact === 'high' ? '🔴' : (e.impact === 'medium' ? '🟠' : '🟡');
+                var extra = [];
+                if (e.actual) extra.push('A: ' + e.actual);
+                if (e.forecast) extra.push('F: ' + e.forecast);
+                if (e.previous) extra.push('P: ' + e.previous);
+                var tail = extra.length ? ' — ' + extra.join(' · ') : '';
+                return flag + ' <b>' + (e.currency ? e.currency + ' ' : '') + e.title + '</b>\n   ' + e.day + ' · ' + e.time + tail;
+            }
+            var lines = [];
+            if (today.length) {
+                lines.push("<b>📅 Today's economic events:</b>");
+                today.slice(0, 6).forEach(function (e) { lines.push(fmt(e)); });
+            }
+            var up = upcoming.slice(0, today.length ? 4 : 8);
+            if (up.length) {
+                lines.push((lines.length ? '\n' : '') + '<b>🗓️ Coming up this week:</b>');
+                up.forEach(function (e) { lines.push(fmt(e)); });
+            }
+            if (!lines.length) {
+                var hi = cal.filter(function (e) { return e.impact === 'high'; }).slice(0, 6);
+                if (!hi.length) return null;
+                lines.push('<b>🗓️ High-impact events this week:</b>');
+                hi.forEach(function (e) { lines.push(fmt(e)); });
+            }
+            lines.push('\n🔴 = high impact. <b>Rule of thumb:</b> avoid new entries ~30 min around high-impact releases — let the spike settle, then trade the reaction.');
+            return lines.join('\n');
+        },
+
         generateAssetAnalysis: function (data, assetKey) {
             if (!data || !data.prices || !data.prices[assetKey]) return null;
             var p = data.prices[assetKey];
@@ -773,7 +811,9 @@ BFX.mirror = (function () {
                         return;
                     }
                     var responseText;
-                    if (asset) {
+                    if (match._calendar) {
+                        responseText = MarketEngine.generateCalendar(data);
+                    } else if (asset) {
                         responseText = MarketEngine.generateAssetAnalysis(data, asset);
                     }
                     if (!responseText) {
