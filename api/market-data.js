@@ -201,6 +201,47 @@ function fetchIndices() {
     }).catch(function () { return {}; });
 }
 
+// Real-time prices across ALL asset classes in ONE call — Twelve Data
+// (free API key). Covers forex, gold, indices and crypto with intraday price
+// and % change. Requires env var TWELVEDATA_API_KEY; returns {} without it so
+// the other (fallback) fetchers still supply data.
+function fetchTwelveData() {
+    var key = process.env.TWELVEDATA_API_KEY;
+    if (!key) return Promise.resolve({});
+    var cfg = {
+        'EUR/USD': { k: 'EURUSD', dp: 5 },
+        'GBP/USD': { k: 'GBPUSD', dp: 5 },
+        'USD/JPY': { k: 'USDJPY', dp: 3 },
+        'XAU/USD': { k: 'XAUUSD', dp: 2 },
+        'DJI':     { k: 'US30',   dp: 0 },
+        'NDX':     { k: 'NAS100', dp: 0 },
+        'BTC/USD': { k: 'BTCUSD', dp: 2 },
+        'ETH/USD': { k: 'ETHUSD', dp: 2 }
+    };
+    var syms = Object.keys(cfg);
+    var url = 'https://api.twelvedata.com/quote?symbol=' + encodeURIComponent(syms.join(',')) + '&apikey=' + encodeURIComponent(key);
+    return fetchJSON(url, 6000).then(function (data) {
+        var out = {};
+        syms.forEach(function (s) {
+            var q = (syms.length === 1) ? data : (data && data[s]);
+            if (!q || q.status === 'error' || q.close == null) return;
+            var price = parseFloat(q.close);
+            if (isNaN(price)) return;
+            var pc = (q.previous_close != null && q.previous_close !== '') ? parseFloat(q.previous_close) : price;
+            var changePct = (q.percent_change != null && q.percent_change !== '') ? parseFloat(q.percent_change) : (pc ? (price - pc) / pc * 100 : 0);
+            var change = (q.change != null && q.change !== '') ? parseFloat(q.change) : (price - pc);
+            var dp = cfg[s].dp;
+            out[cfg[s].k] = {
+                price: parseFloat(price.toFixed(dp)),
+                change: parseFloat(change.toFixed(dp === 0 ? 0 : 2)),
+                changePct: parseFloat((isNaN(changePct) ? 0 : changePct).toFixed(2)),
+                direction: changePct >= 0 ? 'up' : 'down'
+            };
+        });
+        return out;
+    }).catch(function () { return {}; });
+}
+
 // Economic calendar — REAL high/medium/low-impact events from the free
 // ForexFactory weekly JSON feed (no API key), with a graceful fallback to a
 // computed schedule if the feed is unreachable.
@@ -487,11 +528,15 @@ module.exports = function (req, res) {
 
     // Fetch fresh data
     var pricesPromise = (type === 'all' || type === 'prices' || type === 'sentiment')
-        ? Promise.all([fetchForexPrices(), fetchCryptoPrices(), fetchGoldPrice(), fetchIndices()])
+        ? Promise.all([fetchTwelveData(), fetchCryptoPrices(), fetchForexPrices(), fetchGoldPrice(), fetchIndices()])
             .then(function (results) {
                 var merged = {};
-                results.forEach(function (r) { for (var k in r) { if (r.hasOwnProperty(k)) merged[k] = r[k]; } });
-                // Fill missing with fallback
+                // Merge lowest-priority first; Twelve Data (real intraday) overrides last.
+                // order: Frankfurter forex → old gold → old indices → CoinGecko crypto → Twelve Data
+                [results[2], results[3], results[4], results[1], results[0]].forEach(function (r) {
+                    for (var k in r) { if (r.hasOwnProperty(k)) merged[k] = r[k]; }
+                });
+                // Fill anything still missing with static fallback
                 for (var sym in FALLBACK_PRICES) {
                     if (!merged[sym]) merged[sym] = FALLBACK_PRICES[sym];
                 }
