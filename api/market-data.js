@@ -231,7 +231,7 @@ function fetchTwelveData() {
         // Index ETFs (free tier covers ETFs; raw indices are gated). DIA≈Dow/100
         // gives an accurate US30; QQQ tracks the Nasdaq-100 (scaled to index level).
         'DIA':     { k: 'US30',   dp: 0, m: 100 },
-        'QQQ':     { k: 'NAS100', dp: 0, m: 41.5 }
+        'QQQ':     { k: 'NAS100', dp: 0, m: 41.088 } // calibrated to NDX/QQQ (Sep 2026); retune if it drifts
     };
     var syms = Object.keys(cfg);
     var url = 'https://api.twelvedata.com/quote?symbol=' + encodeURIComponent(syms.join(',')) + '&apikey=' + encodeURIComponent(key);

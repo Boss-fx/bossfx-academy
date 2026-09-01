@@ -229,6 +229,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <p class="daily-card-note">Algorithmic sentiment derived from price action and momentum</p>
                 </div>
 
+                <!-- Live Technical Ratings (TradingView) -->
+                <div class="daily-card" style="grid-column: 1 / -1;">
+                    <div class="daily-card-header">
+                        <span class="daily-card-icon">🎯</span>
+                        <h4>Live Technical Ratings</h4>
+                        <span class="daily-live-dot"></span>
+                    </div>
+                    <div class="daily-card-body">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
+                            <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1h","width":"100%","isTransparent":true,"height":360,"symbol":"FX:EURUSD","showIntervalTabs":true,"displayMode":"single","locale":"en","colorTheme":"dark"}</script></div>
+                            <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1h","width":"100%","isTransparent":true,"height":360,"symbol":"FX:GBPUSD","showIntervalTabs":true,"displayMode":"single","locale":"en","colorTheme":"dark"}</script></div>
+                            <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1h","width":"100%","isTransparent":true,"height":360,"symbol":"OANDA:XAUUSD","showIntervalTabs":true,"displayMode":"single","locale":"en","colorTheme":"dark"}</script></div>
+                            <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{"interval":"1h","width":"100%","isTransparent":true,"height":360,"symbol":"BITSTAMP:BTCUSD","showIntervalTabs":true,"displayMode":"single","locale":"en","colorTheme":"dark"}</script></div>
+                        </div>
+                    </div>
+                    <p class="daily-card-note">Real-time technical consensus (Strong Buy → Strong Sell) aggregated from moving averages &amp; oscillators across timeframes. Ratings by TradingView.</p>
+                </div>
+
                 <!-- Volatility Meter -->
                 <div class="daily-card">
                     <div class="daily-card-header">
