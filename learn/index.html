@@ -172,6 +172,8 @@
     els.tabLogin.onclick = function () { setMode('login'); };
     els.tabSignup.onclick = function () { setMode('signup'); };
     wireSwitch();
+    // Open the "Create account" tab directly when routed here to sign up
+    try { if (/[?&]signup=1/.test(location.search) || location.hash === '#signup') setMode('signup'); } catch (e) {}
 
     els.form.addEventListener('submit', function (e) {
       e.preventDefault();
