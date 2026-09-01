@@ -345,7 +345,7 @@ BFX.mirror = (function () {
             },
             {
                 id: 'market-live',
-                patterns: [/market.*today|live.*price|current.*rate|what.*is.*trad|price.*now|how.*is.*market|market.*update|market.*bias|daily.*bias/i],
+                patterns: [/market.*today|live.*price|current.*rate|what.*is.*trad|price.*now|how.*is.*market|market.*update|market.*bias|daily.*bias|volatil|market.*sentiment|overall.*sentiment|sentiment.*now|bullish.*or.*bearish|buy.*or.*sell|technical.*rating|live.*data|market.*overview|market.*now|whats.*happening.*market|live.*page.*data|market.*open/i],
                 intent: 'market',
                 text: null,
                 _dynamic: true,
@@ -634,26 +634,46 @@ BFX.mirror = (function () {
 
         generateOverview: function (data) {
             if (!data || !data.prices) return null;
-            var lines = ["Here's today's <b>market overview</b>:\n"];
             var prices = data.prices;
             var sentiment = data.sentiment || {};
+            var lines = [];
+            // Live market status (same as the Live page header)
+            if (data.market) {
+                lines.push(data.market.open
+                    ? '🟢 <b>Market OPEN</b> — ' + (data.market.session || 'active') + ' session'
+                    : '🔴 <b>Market CLOSED</b> — ' + (data.market.session || 'weekend'));
+            }
+            lines.push("Here's the <b>live market</b> right now:");
+            var volSum = 0, volN = 0;
             for (var sym in prices) {
                 if (prices.hasOwnProperty(sym) && MarketEngine.ASSETS[sym]) {
                     var p = prices[sym];
                     var arrow = p.changePct >= 0 ? '🟢' : '🔴';
                     var dir = p.changePct >= 0 ? '+' : '';
-                    var s = sentiment[sym] ? ' (' + sentiment[sym].bias + ')' : '';
-                    lines.push(arrow + ' <b>' + MarketEngine.ASSETS[sym].name + '</b>: ' + p.price + ' ' + dir + p.changePct + '%' + s);
+                    var s = sentiment[sym] ? ' · ' + sentiment[sym].bias : '';
+                    lines.push(arrow + ' <b>' + MarketEngine.ASSETS[sym].name + '</b>: ' + p.price + ' (' + dir + p.changePct + '%)' + s);
+                    volSum += Math.abs(p.changePct || 0); volN++;
                 }
             }
-            if (data.calendar && data.calendar.length > 0) {
-                lines.push('\n<b>Upcoming events:</b>');
-                var evts = data.calendar.slice(0, 3);
-                for (var e = 0; e < evts.length; e++) {
-                    lines.push('📅 ' + evts[e].title + (evts[e].impact === 'high' ? ' (HIGH impact)' : ''));
+            // Volatility (same calc as the Live page Volatility Index)
+            if (volN) {
+                var avg = volSum / volN;
+                var lvl = avg > 1.5 ? 'HIGH ⚡' : (avg > 0.5 ? 'MODERATE' : 'LOW');
+                lines.push('\n📊 <b>Volatility:</b> ' + lvl + ' (avg move ' + avg.toFixed(2) + '%)');
+            }
+            // Next high-impact events
+            if (data.calendar && data.calendar.length) {
+                var up = data.calendar.filter(function (e) { return e.status === 'today' || e.status === 'upcoming'; });
+                up.sort(function (a, b) { var r = { high: 0, medium: 1, low: 2 }; return (r[a.impact] - r[b.impact]) || ((a.ts || 0) - (b.ts || 0)); });
+                if (up.length) {
+                    lines.push('\n<b>Next key events:</b>');
+                    up.slice(0, 3).forEach(function (e) {
+                        var f = e.impact === 'high' ? '🔴' : (e.impact === 'medium' ? '🟠' : '🟡');
+                        lines.push(f + ' ' + (e.currency ? e.currency + ' ' : '') + e.title + ' · ' + e.day + ' ' + e.time);
+                    });
                 }
             }
-            lines.push('\nData refreshes every 5 minutes. For the full dashboard, visit the <b>Live page</b>.');
+            lines.push('\n🎯 Live <b>technical ratings</b> (Buy/Sell gauges) &amp; full charts are on the <b>Live page</b>. Prices refresh ~every 5 min.');
             return lines.join('\n');
         },
 
