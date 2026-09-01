@@ -227,7 +227,11 @@ function fetchTwelveData() {
         'USD/JPY': { k: 'USDJPY', dp: 3 },
         'XAU/USD': { k: 'XAUUSD', dp: 2 },
         'BTC/USD': { k: 'BTCUSD', dp: 2 },
-        'ETH/USD': { k: 'ETHUSD', dp: 2 }
+        'ETH/USD': { k: 'ETHUSD', dp: 2 },
+        // Index ETFs (free tier covers ETFs; raw indices are gated). DIA≈Dow/100
+        // gives an accurate US30; QQQ tracks the Nasdaq-100 (scaled to index level).
+        'DIA':     { k: 'US30',   dp: 0, m: 100 },
+        'QQQ':     { k: 'NAS100', dp: 0, m: 41.5 }
     };
     var syms = Object.keys(cfg);
     var url = 'https://api.twelvedata.com/quote?symbol=' + encodeURIComponent(syms.join(',')) + '&apikey=' + encodeURIComponent(key);
@@ -242,9 +246,10 @@ function fetchTwelveData() {
             var changePct = (q.percent_change != null && q.percent_change !== '') ? parseFloat(q.percent_change) : (pc ? (price - pc) / pc * 100 : 0);
             var change = (q.change != null && q.change !== '') ? parseFloat(q.change) : (price - pc);
             var dp = cfg[s].dp;
+            var mult = cfg[s].m || 1; // scale ETF proxy → index level
             out[cfg[s].k] = {
-                price: parseFloat(price.toFixed(dp)),
-                change: parseFloat(change.toFixed(dp === 0 ? 0 : 2)),
+                price: parseFloat((price * mult).toFixed(dp)),
+                change: parseFloat((change * mult).toFixed(dp === 0 ? 0 : 2)),
                 changePct: parseFloat((isNaN(changePct) ? 0 : changePct).toFixed(2)),
                 direction: changePct >= 0 ? 'up' : 'down'
             };
@@ -539,12 +544,12 @@ module.exports = function (req, res) {
 
     // Fetch fresh data
     var pricesPromise = (type === 'all' || type === 'prices' || type === 'sentiment')
-        ? Promise.all([fetchTwelveData(), fetchCryptoPrices(), fetchForexPrices(), fetchGoldPrice(), fetchIndices()])
+        ? Promise.all([fetchTwelveData(), fetchCryptoPrices(), fetchForexPrices(), fetchGoldPrice()])
             .then(function (results) {
                 var merged = {};
                 // Merge lowest-priority first; Twelve Data (real intraday) overrides last.
-                // order: Frankfurter forex → old gold → old indices → CoinGecko crypto → Twelve Data
-                [results[2], results[3], results[4], results[1], results[0]].forEach(function (r) {
+                // order: Frankfurter forex → old gold → CoinGecko crypto → Twelve Data
+                [results[2], results[3], results[1], results[0]].forEach(function (r) {
                     for (var k in r) { if (r.hasOwnProperty(k)) merged[k] = r[k]; }
                 });
                 // Fill anything still missing with static fallback
