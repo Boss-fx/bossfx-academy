@@ -5,6 +5,7 @@
 
 const { getProduct, getProductByAmount } = require('../lib/products');
 const { generateAccessToken, getProductFiles } = require('../lib/files');
+const { fulfillOrder } = require('../lib/fulfillment');
 const { generateToken: generateLegacyToken } = require('./download-forex101');
 const { applyRateLimit } = require('../lib/rate-limit');
 const { setCors } = require('../lib/cors');
@@ -124,6 +125,30 @@ module.exports = async function handler(req, res) {
                 }));
             } catch (err) {
                 console.warn('[Verify] EA addon file fetch failed:', err.message);
+            }
+        }
+
+        // ---- Resilience: also trigger fulfillment here (idempotent) ----
+        // The Flutterwave webhook is the primary fulfillment path, but if it
+        // never fired or was rejected (bad secret hash, misconfigured URL, etc.)
+        // the buyer would get NO email, NO course access, and NO EA. Since we
+        // have already re-verified the payment with Flutterwave here, run
+        // fulfillment too. fulfillOrder de-dupes on the Flutterwave transaction
+        // id, so this never double-charges, double-grants, or double-emails.
+        if (flutterwaveVerified && paymentData && product) {
+            try {
+                await fulfillOrder({
+                    id: paymentData.id,
+                    tx_ref: paymentData.tx_ref,
+                    flw_ref: paymentData.flw_ref,
+                    amount: paymentData.amount,
+                    currency: paymentData.currency,
+                    payment_type: paymentData.payment_type,
+                    customer: paymentData.customer,
+                    meta: paymentData.meta || {}
+                });
+            } catch (err) {
+                console.error('[Verify] Fallback fulfillment failed (non-fatal):', err.message);
             }
         }
 

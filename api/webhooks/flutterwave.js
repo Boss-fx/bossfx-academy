@@ -168,8 +168,14 @@ function validatePayment(paymentData) {
         };
     }
 
-    // Must match a known product amount
-    const match = getProductByAmount(amount);
+    // Must match a known product amount. Orders may include the ₦15,000 EA
+    // addon, so also accept (amount - 15000) as the base product total.
+    let match = getProductByAmount(amount);
+    let withEaAddon = false;
+    if (!match && amount > 15000) {
+        match = getProductByAmount(amount - 15000);
+        if (match) withEaAddon = true;
+    }
     if (!match) {
         return {
             valid: false,
@@ -177,5 +183,5 @@ function validatePayment(paymentData) {
         };
     }
 
-    return { valid: true, product: match[1] };
+    return { valid: true, product: match[1], withEaAddon: withEaAddon };
 }
