@@ -8,6 +8,9 @@ const { getSupabaseClient } = require('../lib/supabase');
 const { getProduct } = require('../lib/products');
 const { fulfillOrder } = require('../lib/fulfillment');
 const { generateAccessToken, storeAccessToken } = require('../lib/files');
+const { sendFulfillmentEmail } = require('../lib/email');
+const { grantEnrollmentsForProduct } = require('../lib/enrollment');
+const { getOrderByTxRef, getOrdersByEmail } = require('../lib/orders');
 const { applyRateLimit } = require('../lib/rate-limit');
 const { setCors } = require('../lib/cors');
 
@@ -25,10 +28,11 @@ module.exports = async function handler(req, res) {
     switch (action) {
         case 'stats': return handleStats(req, res);
         case 'resend': return handleResend(req, res);
+        case 'deliver': return handleDeliver(req, res);
         case 'token': return handleToken(req, res);
         case 'founder': return handleFounder(req, res);
         case 'system': return handleSystem(req, res);
-        default: return res.status(400).json({ error: 'Unknown action. Use: stats, resend, token, founder, system' });
+        default: return res.status(400).json({ error: 'Unknown action. Use: stats, resend, deliver, token, founder, system' });
     }
 };
 
@@ -94,40 +98,130 @@ async function handleStats(req, res) {
     }
 }
 
+// Core (re)delivery: grant course access, (re)issue download + EA tokens, and
+// send the fulfillment email. Unlike fulfillOrder this ALWAYS re-sends (no
+// dedupe) — it is the manual recovery path for failed/lost deliveries.
+async function deliverToCustomer(opts) {
+    const { email, name, phone, productId, product, txRef, orderId, hasEaAddon } = opts;
+    const out = { granted: [], downloadToken: null, eaDownloadToken: null };
+
+    // 1. Grant course access (idempotent upsert; no-op for mentorship/EA-only)
+    try {
+        const g = await grantEnrollmentsForProduct(email, productId, txRef || null, 'admin-resend');
+        out.granted = g.granted || [];
+    } catch (e) { out.grantError = e.message; }
+
+    // 2. Download token for the product itself (skip mentorship — nothing to download)
+    if (product.type !== 'mentorship') {
+        out.downloadToken = generateAccessToken(email, productId, product.type, orderId || null);
+        if (orderId) {
+            const hrs = product.type === 'vip' ? 720 : 72;
+            await storeAccessToken(orderId, out.downloadToken, email, productId, product.type, Date.now() + hrs * 3600 * 1000).catch(function () {});
+        }
+    }
+
+    // 3. Separate EA-addon token when the order included the EA
+    if (hasEaAddon && productId !== 'ea-bundle') {
+        out.eaDownloadToken = generateAccessToken(email, 'ea-bundle', 'ea', orderId || null);
+        if (orderId) {
+            await storeAccessToken(orderId, out.eaDownloadToken, email, 'ea-bundle', 'ea', Date.now() + 72 * 3600 * 1000).catch(function () {});
+        }
+    }
+
+    // 4. Send the fulfillment email (throws if Brevo rejects — surfaced to caller)
+    await sendFulfillmentEmail(
+        { email: email, name: name || 'Valued Customer', phone: phone || '' },
+        product, txRef || 'MANUAL', out.downloadToken,
+        { hasEaAddon: !!hasEaAddon, eaDownloadToken: out.eaDownloadToken }
+    );
+    return out;
+}
+
+// POST /api/admin?action=resend  body: { orderId | txRef | email }
+// Re-delivers everything (email + access + EA) for an existing order, ALWAYS
+// re-sending even if it was previously marked fulfilled.
 async function handleResend(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
 
-    const { orderId } = req.body || {};
-    if (!orderId) return res.status(400).json({ error: 'Missing orderId' });
-
+    const body = req.body || {};
     const sb = getSupabaseClient();
     if (!sb) return res.status(500).json({ error: 'Database unavailable' });
 
     try {
-        const { data: order, error } = await sb.from('orders')
-            .select('*').eq('id', orderId).single();
-        if (error || !order) return res.status(404).json({ error: 'Order not found' });
+        let order = null;
+        if (body.orderId) {
+            const r = await sb.from('orders').select('*').eq('id', body.orderId).single();
+            order = r.data;
+        } else if (body.txRef) {
+            order = await getOrderByTxRef(body.txRef);
+        } else if (body.email) {
+            const list = await getOrdersByEmail(body.email, 1);
+            order = list && list[0];
+        } else {
+            return res.status(400).json({ error: 'Provide orderId, txRef, or email' });
+        }
+        if (!order) return res.status(404).json({ error: 'No order found. If the webhook never created one, use action=deliver with email+productId.' });
 
         const product = getProduct(order.product_id);
-        if (!product) return res.status(400).json({ error: 'Unknown product' });
+        if (!product) return res.status(400).json({ error: 'Unknown product: ' + order.product_id });
+        product.id = order.product_id;
 
-        await fulfillOrder({
-            id: order.flw_transaction_id,
-            tx_ref: order.tx_ref,
-            amount: order.amount,
-            currency: order.currency,
-            meta: order.meta || {},
-            customer: {
-                email: order.customer_email,
-                name: order.customer_name,
-                phone_number: order.customer_phone
-            }
+        const hasEaAddon = !!(order.meta && (order.meta.has_ea_addon || order.meta.ea_bundle === 'yes'));
+
+        const r = await deliverToCustomer({
+            email: order.customer_email, name: order.customer_name, phone: order.customer_phone,
+            productId: order.product_id, product: product, txRef: order.tx_ref, orderId: order.id, hasEaAddon: hasEaAddon
         });
 
-        return res.status(200).json({ success: true, message: 'Email resent successfully' });
+        await sb.from('orders').update({ fulfilled: true, email_sent: true, email_error: null, fulfilled_at: new Date().toISOString() }).eq('id', order.id).catch(function () {});
+
+        return res.status(200).json({
+            success: true,
+            message: 'Delivery re-sent to ' + order.customer_email,
+            product: order.product_id,
+            eaIncluded: hasEaAddon,
+            courseAccessGranted: r.granted
+        });
     } catch (err) {
         console.error('[Admin Resend] Error:', err.message);
-        return res.status(500).json({ error: 'Failed to resend email' });
+        return res.status(500).json({ error: 'Resend failed: ' + err.message });
+    }
+}
+
+// POST /api/admin?action=deliver  body: { email, productId, name?, phone?, ea?, txRef? }
+// Manual delivery for a buyer with NO order record (webhook never fired, bank
+// transfer, etc.). Grants access + sends email + EA link. Use with care.
+async function handleDeliver(req, res) {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'POST required' });
+
+    const body = req.body || {};
+    const email = (body.email || '').trim();
+    const productId = (body.productId || '').trim();
+    if (!email || !productId) {
+        return res.status(400).json({ error: 'email and productId required (productId: forex-101, ea-bundle, mentorship-group, mentorship-1on1, vip)' });
+    }
+
+    const product = getProduct(productId);
+    if (!product) return res.status(400).json({ error: 'Unknown productId: ' + productId });
+    product.id = productId;
+
+    const hasEaAddon = body.ea === true || body.ea === 'yes' || body.ea === '1';
+
+    try {
+        const r = await deliverToCustomer({
+            email: email, name: body.name, phone: body.phone,
+            productId: productId, product: product, txRef: body.txRef || null, orderId: null, hasEaAddon: hasEaAddon
+        });
+        return res.status(200).json({
+            success: true,
+            message: 'Delivered to ' + email,
+            product: productId,
+            eaIncluded: hasEaAddon,
+            courseAccessGranted: r.granted
+        });
+    } catch (err) {
+        console.error('[Admin Deliver] Error:', err.message);
+        return res.status(500).json({ error: 'Deliver failed: ' + err.message });
     }
 }
 
