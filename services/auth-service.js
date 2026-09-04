@@ -53,7 +53,17 @@ BFX.auth = (function () {
         signUp: function (email, password, meta) {
             var sb = getClient();
             if (!sb) return Promise.reject(new Error('Auth is not configured'));
-            return sb.auth.signUp({ email: email, password: password, options: { data: meta || {} } });
+            return sb.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: meta || {},
+                    // If "Confirm email" is ever enabled in Supabase, send the
+                    // confirmation link back to /learn/ instead of the default
+                    // Supabase URL (which shows a bare error page to the user).
+                    emailRedirectTo: (location.origin + '/learn/')
+                }
+            });
         },
 
         /** Current signed-in user object, or null. */
