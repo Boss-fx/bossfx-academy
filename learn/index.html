@@ -60,6 +60,9 @@
   .enroll-banner strong{display:block;color:#fff;font-size:1rem;margin-bottom:2px}
   .enroll-banner span{color:#94a3b8;font-size:0.86rem}
   .enroll-banner .btn{white-space:nowrap}
+  .auth-extra{text-align:center;margin-top:12px;font-size:0.85rem}
+  .muted-link{color:#94a3b8;text-decoration:none;margin:0 8px;cursor:pointer}
+  .muted-link:hover{color:#34d399}
   .hide{display:none!important}
   .center{text-align:center}
 </style>
@@ -90,6 +93,10 @@
         <div class="field"><input id="fPass" type="password" placeholder="Password (min 6 chars)" autocomplete="current-password" required></div>
         <button class="btn" type="submit" id="authBtn" style="width:100%">Log in</button>
         <p class="msg" id="authMsg"></p>
+        <div class="auth-extra">
+          <a class="muted-link" id="forgotLink">Forgot password?</a>
+          <a class="muted-link hide" id="resendLink">Resend confirmation email</a>
+        </div>
       </form>
       <p class="auth-switch" id="authSwitch">New here? <a href="#" id="goSignup">Create a free account →</a></p>
     </div>
@@ -103,6 +110,17 @@
     </div>
     <p class="muted" id="welcome"></p>
     <div id="courses"></div>
+  </div>
+
+  <!-- PASSWORD RECOVERY (arriving from a reset-password email link) -->
+  <div class="wrap hide" id="recoverView">
+    <div class="auth-card">
+      <h1>Set a new password</h1>
+      <p class="sub">Choose a new password to finish resetting your account.</p>
+      <div class="field"><input id="rPass" type="password" placeholder="New password (min 6 chars)" autocomplete="new-password"></div>
+      <button class="btn" type="button" id="rBtn" style="width:100%">Update password</button>
+      <p class="msg" id="rMsg"></p>
+    </div>
   </div>
 
   <div class="wrap hide" id="loadingView"><p class="muted center">Loading…</p></div>
@@ -132,7 +150,13 @@
       switch: document.getElementById('authSwitch'),
       welcome: document.getElementById('welcome'),
       courses: document.getElementById('courses'),
-      logout: document.getElementById('logoutBtn')
+      logout: document.getElementById('logoutBtn'),
+      forgot: document.getElementById('forgotLink'),
+      resend: document.getElementById('resendLink'),
+      recover: document.getElementById('recoverView'),
+      rPass: document.getElementById('rPass'),
+      rBtn: document.getElementById('rBtn'),
+      rMsg: document.getElementById('rMsg')
     };
     var mode = 'login';
 
@@ -146,8 +170,26 @@
       els.auth.classList.toggle('hide', v !== 'auth');
       els.dash.classList.toggle('hide', v !== 'dash');
       els.loading.classList.toggle('hide', v !== 'loading');
+      els.recover.classList.toggle('hide', v !== 'recover');
     }
     function setMsg(t, cls) { els.msg.textContent = t || ''; els.msg.className = 'msg ' + (cls || ''); }
+
+    // Turn Supabase's terse auth errors into guidance students can act on.
+    function friendlyError(err) {
+      var code = ((err && err.code) || '') + '';
+      var m = (((err && err.message) || '') + '').toLowerCase();
+      if (code === 'email_not_confirmed' || m.indexOf('not confirmed') > -1)
+        return { text: 'Please confirm your email first — check your inbox (and spam) for the verification link.', resend: true };
+      if (code === 'invalid_credentials' || m.indexOf('invalid login') > -1)
+        return { text: mode === 'login' ? 'Email or password is incorrect. Try again, or reset your password below.' : 'Those details didn’t work — try again.' };
+      if (code === 'user_already_exists' || m.indexOf('already registered') > -1 || m.indexOf('already been registered') > -1)
+        return { text: 'You already have an account with this email — switch to Log in (or reset your password).' };
+      if (code === 'over_email_send_rate_limit' || m.indexOf('rate limit') > -1 || m.indexOf('too many') > -1)
+        return { text: 'Too many attempts — please wait a minute and try again.' };
+      if (m.indexOf('at least') > -1 || (m.indexOf('password') > -1 && m.indexOf('6') > -1))
+        return { text: 'Password must be at least 6 characters.' };
+      return { text: (err && err.message) || 'Something went wrong. Please try again.' };
+    }
 
     function setMode(m) {
       mode = m;
@@ -163,6 +205,8 @@
         : 'Already have an account? <a href="#" id="goLogin">Log in →</a>';
       wireSwitch();
       setMsg('');
+      els.forgot.classList.toggle('hide', !login);
+      els.resend.classList.add('hide');
     }
     function wireSwitch() {
       var s = document.getElementById('goSignup'), l = document.getElementById('goLogin');
@@ -191,7 +235,9 @@
         }
         boot();
       }).catch(function (err) {
-        setMsg((err && err.message) || 'Something went wrong.', 'err');
+        var fe = friendlyError(err);
+        setMsg(fe.text, 'err');
+        els.resend.classList.toggle('hide', !fe.resend);   // offer resend only when unconfirmed
         els.btn.disabled = false; els.btn.textContent = mode === 'login' ? 'Log in' : 'Create account';
       });
     });
@@ -208,6 +254,51 @@
     };
 
     els.logout.onclick = function () { BFX.auth.signOut().then(function () { location.reload(); }); };
+
+    var sb = BFX.auth.db && BFX.auth.db();
+
+    // "Forgot password?" — email a reset link back to /learn/
+    els.forgot.onclick = function (e) {
+      e.preventDefault();
+      var email = els.email.value.trim();
+      if (!email) { setMsg('Enter your email above first, then click “Forgot password”.', 'err'); els.email.focus(); return; }
+      setMsg('Sending reset link…', '');
+      sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/learn/' })
+        .then(function (r) { if (r && r.error) throw r.error; setMsg('Password reset link sent — check your email (and spam).', 'ok'); })
+        .catch(function (err) { setMsg(friendlyError(err).text, 'err'); });
+    };
+
+    // "Resend confirmation email" — appears when login is blocked by email_not_confirmed
+    els.resend.onclick = function (e) {
+      e.preventDefault();
+      var email = els.email.value.trim();
+      if (!email) { setMsg('Enter your email above, then click resend.', 'err'); return; }
+      setMsg('Resending confirmation…', '');
+      sb.auth.resend({ type: 'signup', email: email })
+        .then(function (r) { if (r && r.error) throw r.error; setMsg('Confirmation email resent — check your inbox (and spam).', 'ok'); els.resend.classList.add('hide'); })
+        .catch(function (err) { setMsg(friendlyError(err).text, 'err'); });
+    };
+
+    // Password recovery: Supabase fires PASSWORD_RECOVERY when the user returns
+    // from a reset-password email; show the set-new-password panel.
+    if (sb) {
+      sb.auth.onAuthStateChange(function (event) {
+        if (event === 'PASSWORD_RECOVERY') show('recover');
+      });
+    }
+    els.rBtn.onclick = function () {
+      var pw = els.rPass.value;
+      if (!pw || pw.length < 6) { els.rMsg.textContent = 'Password must be at least 6 characters.'; els.rMsg.className = 'msg err'; return; }
+      els.rBtn.disabled = true; els.rBtn.textContent = 'Updating…';
+      sb.auth.updateUser({ password: pw }).then(function (r) {
+        if (r && r.error) throw r.error;
+        els.rMsg.textContent = 'Password updated — signing you in…'; els.rMsg.className = 'msg ok';
+        setTimeout(boot, 900);
+      }).catch(function (err) {
+        els.rMsg.textContent = (err && err.message) || 'Could not update password.'; els.rMsg.className = 'msg err';
+        els.rBtn.disabled = false; els.rBtn.textContent = 'Update password';
+      });
+    };
 
     function renderCourse(user) {
       var cid = 'forex-101', c = BFX.learn.course(cid);
@@ -256,7 +347,15 @@
     }
     function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 
-    boot();
+    // A reset-password link returns with type=recovery — wait for the recovery
+    // panel instead of dropping the user on the dashboard.
+    var isRecovery = /type=recovery/.test(location.hash) || /type=recovery/.test(location.search);
+    if (isRecovery) {
+      show('loading');
+      setTimeout(function () { if (els.recover.classList.contains('hide')) show('recover'); }, 1800);
+    } else {
+      boot();
+    }
   })();
   </script>
 </body>
