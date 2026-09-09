@@ -84,14 +84,19 @@
       document.getElementById('crumb').textContent = info.course.title + ' · Module ' + info.lesson.n;
       document.getElementById('title').textContent = info.lesson.title;
 
+      // Track activity + last lesson (powers re-engagement) — attribute only.
+      BFX.learn.syncBrevo('progress', { IS_STUDENT: 'true', LAST_ACTIVE: new Date().toISOString(), LAST_LESSON: 'Module ' + info.lesson.n + ' — ' + info.lesson.title }, { noSeq: true, email: user.email });
+
       // Paywall: a non-free module you haven't purchased shows an upsell.
       if (!BFX.learn.canAccess(info.lesson, enrolled)) {
         document.getElementById('video').innerHTML =
           '<div class="video-ph"><strong>🔒 This module is part of the full course</strong>' +
           'Modules 1–' + info.course.freeCount + ' are free. Unlock all 12 modules, lifetime access and the community.</div>';
         var act = document.querySelector('.actions');
-        act.innerHTML = '<a class="btn btn-done" href="' + info.course.enrollUrl + '">Enroll — ₦' + info.course.priceNGN.toLocaleString() + ' →</a>' +
+        act.innerHTML = '<a class="btn btn-done" id="enrollCta" href="' + info.course.enrollUrl + '">Enroll — ₦' + info.course.priceNGN.toLocaleString() + ' →</a>' +
           '<a class="btn btn-ghost" href="index.html">Back to My Learning</a>';
+        var ecta = document.getElementById('enrollCta');
+        if (ecta) ecta.onclick = function () { BFX.learn.syncBrevo('checkout_started', { IS_STUDENT: 'true', CHECKOUT_STARTED: new Date().toISOString() }, { noSeq: true, email: user.email }); };
         var pv = document.getElementById('prevLink'), nx = document.getElementById('nextLink');
         pv.classList.add('hide'); nx.classList.add('hide');
         show(view);
@@ -123,6 +128,10 @@
         BFX.learn.markComplete(user.id, courseId, lessonId, target).then(function (res) {
           if (res && res.error) throw res.error;
           isDone = target; paint();
+          // P2: finishing the last free module without enrolling → conversion journey
+          if (target && lessonId === 'module-03' && !enrolled) {
+            BFX.learn.syncBrevo('free_completed', { IS_STUDENT: 'true', FREE_COMPLETED_AT: new Date().toISOString() }, { once: true, email: user.email });
+          }
           dmsg.textContent = target ? 'Saved to your progress.' : 'Marked incomplete.';
           setTimeout(function(){ dmsg.textContent=''; }, 2500);
         }).catch(function (err) {

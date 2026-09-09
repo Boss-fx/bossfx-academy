@@ -90,6 +90,16 @@ module.exports = async function handler(req, res) {
             attributes.LASTNAME = nameParts.slice(1).join(' ') || '';
         }
 
+        // Merge explicit attributes from the client (LMS sync: IS_STUDENT,
+        // ENROLLED_FOREX101, LAST_LESSON, LAST_ACTIVE, FOREX101_PROGRESS,
+        // CHECKOUT_STARTED, …). String values keep Brevo happy.
+        if (body.attributes && typeof body.attributes === 'object') {
+            Object.keys(body.attributes).forEach(function (k) {
+                var v = body.attributes[k];
+                if (v !== undefined && v !== null && v !== '') attributes[k] = String(v);
+            });
+        }
+
         // Add webinar-specific fields
         if (source === 'webinar_registration' || source === 'webinar') {
             attributes.WEBINAR_NAME = body.webinar || '';
@@ -158,10 +168,17 @@ module.exports = async function handler(req, res) {
         }
 
         // --- Trigger drip automation sequence ---
+        // Attribute-only pings (LMS progress / activity / checkout tracking)
+        // update the contact but must NOT start an email sequence.
+        const noSequence = body.no_sequence === true || source === 'progress' || source === 'activity' || source === 'checkout_started';
         let automationResult = null;
         try {
+            if (noSequence) {
+                console.log(`[lead-capture] Attribute-only update for ${email} (source: ${source}) — no sequence triggered`);
+            } else {
             automationResult = await processNewLead(email, source, attributes, apiKey);
             console.log(`[lead-capture] Automation triggered: ${automationResult.sequence} (${automationResult.drip.steps_scheduled}/${automationResult.drip.steps_total} steps)`);
+            }
         } catch (automationErr) {
             console.error(`[lead-capture] Automation engine error (non-blocking):`, JSON.stringify({
                 message: automationErr.message,

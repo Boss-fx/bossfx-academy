@@ -229,6 +229,9 @@
         : BFX.auth.signUp(email, pass, { full_name: els.name.value.trim() });
       p.then(function (res) {
         if (res && res.error) throw res.error;
+        if (mode === 'signup') {
+          BFX.learn.syncBrevo('student_signup', { IS_STUDENT: 'true', SIGNUP_DATE: new Date().toISOString() }, { once: true, email: email, name: els.name.value.trim() });
+        }
         if (mode === 'signup' && res.data && !res.data.session) {
           setMsg('Account created — check your email to confirm, then log in.', 'ok');
           els.btn.disabled = false; els.btn.textContent = 'Create account'; setMode('login'); return;
@@ -339,6 +342,15 @@
       show('loading');
       BFX.learn.currentUser().then(function (user) {
         if (!user) { show('auth'); return; }
+        // New Google/OAuth signups: sync to Brevo once (fires student_welcome)
+        try {
+          var created = user.created_at ? new Date(user.created_at).getTime() : 0;
+          if (created && (Date.now() - created) < 5 * 60 * 1000) {
+            BFX.learn.syncBrevo('student_signup', { IS_STUDENT: 'true', SIGNUP_DATE: new Date().toISOString() }, { once: true, email: user.email, name: (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || '' });
+          }
+        } catch (e) {}
+        // Every visit: refresh LAST_ACTIVE (powers re-engagement) — no sequence
+        BFX.learn.syncBrevo('activity', { IS_STUDENT: 'true', LAST_ACTIVE: new Date().toISOString() }, { noSeq: true, email: user.email });
         var nm = (user.user_metadata && user.user_metadata.full_name) || user.email;
         els.welcome.textContent = 'Signed in as ' + nm + '. Pick up where you left off.';
         renderCourse(user);
@@ -346,6 +358,13 @@
       });
     }
     function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+    // Enroll-intent (P5): capture a checkout start when a signed-in student
+    // clicks any enroll / unlock link, so the cron can recover abandonments.
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href*="forex101"], a.l-lock, .enroll-banner a') : null;
+      if (a) BFX.learn.syncBrevo('checkout_started', { IS_STUDENT: 'true', CHECKOUT_STARTED: new Date().toISOString() }, { noSeq: true });
+    });
 
     // A reset-password link returns with type=recovery — wait for the recovery
     // panel instead of dropping the user on the dashboard.

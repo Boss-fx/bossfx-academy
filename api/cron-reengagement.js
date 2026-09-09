@@ -15,6 +15,11 @@ const INACTIVITY_DAYS = 30;          // Days without activity before re-engageme
 const MAX_DRIP_PER_RUN = 20;        // Max drip emails to send per cron run
 const MAX_REENGAGE_PER_RUN = 5;     // Max re-engagement triggers per run
 const REENGAGEMENT_COOLDOWN = 60;    // Days before re-engaging same contact again
+const STUDENT_INACTIVITY_DAYS = 14;  // Days without LMS activity before student re-engage (P3)
+const CHECKOUT_ABANDON_HOURS = 6;    // Hours after checkout start before recovery (P5)
+const MAX_STUDENT_REENGAGE_PER_RUN = 5;
+const MAX_CHECKOUT_PER_RUN = 10;
+const STUDENT_REENGAGE_COOLDOWN = 30; // Days before re-engaging same student again
 
 module.exports = async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -114,12 +119,77 @@ module.exports = async function handler(req, res) {
         }
         results.drip.processed = dripCount;
 
+        // Track contacts handled by the LMS phases so PHASE 2 doesn't double-touch them
+        const handled = new Set();
+
+        // ---- PHASE 1b: Abandoned-checkout recovery (P5) ----
+        results.checkout = { processed: 0, skipped: 0, errors: [] };
+        let checkoutCount = 0;
+        for (const contact of allContacts) {
+            if (checkoutCount >= MAX_CHECKOUT_PER_RUN) break;
+            const attrs = contact.attributes || {};
+            const started = attrs.CHECKOUT_STARTED ? new Date(attrs.CHECKOUT_STARTED) : null;
+            if (!started) continue;
+            if (attrs.ENROLLED_FOREX101 === 'true' || attrs.CHECKOUT_RECOVERED === 'true') { results.checkout.skipped++; continue; }
+            const hrs = (now - started) / 3600000;
+            if (hrs < CHECKOUT_ABANDON_HOURS || hrs > 24 * 7) { results.checkout.skipped++; continue; }  // window 6h–7d
+            // Don't interrupt an active, incomplete non-recovery sequence
+            const f = attrs.AUTOMATION_FLOW || '';
+            if (f && f !== 'checkout_recovery' && SEQUENCES[f]) {
+                const st = parseInt(attrs.AUTOMATION_STEP) || 0;
+                if (st + 1 < SEQUENCES[f].steps.length) { results.checkout.skipped++; continue; }
+            }
+            try {
+                await triggerSequence(contact.email, 'checkout_recovery', attrs, apiKey);
+                await contactsApi.updateContact(contact.email, { attributes: {
+                    AUTOMATION_FLOW: 'checkout_recovery', AUTOMATION_STEP: '0',
+                    AUTOMATION_START: now.toISOString(), CHECKOUT_RECOVERED: 'true'
+                } });
+                handled.add(contact.email); checkoutCount++;
+                console.log(`[cron] Checkout recovery for ${contact.email.substring(0,3)}***`);
+            } catch (err) { results.checkout.errors.push(err.body?.message || err.message); }
+        }
+        results.checkout.processed = checkoutCount;
+
+        // ---- PHASE 1c: Inactive-student re-engagement (P3) ----
+        results.student_reengage = { processed: 0, skipped: 0, errors: [] };
+        let studentCount = 0;
+        const studentCutoff = new Date(now.getTime() - STUDENT_INACTIVITY_DAYS * 24 * 3600000);
+        for (const contact of allContacts) {
+            if (studentCount >= MAX_STUDENT_REENGAGE_PER_RUN) break;
+            if (handled.has(contact.email)) continue;
+            const attrs = contact.attributes || {};
+            if (attrs.IS_STUDENT !== 'true') continue;
+            const lastActive = attrs.LAST_ACTIVE ? new Date(attrs.LAST_ACTIVE) : null;
+            if (!lastActive || lastActive > studentCutoff) { results.student_reengage.skipped++; continue; }  // still active
+            const f = attrs.AUTOMATION_FLOW || '';
+            if (f && SEQUENCES[f]) {
+                const st = parseInt(attrs.AUTOMATION_STEP) || 0;
+                if (st + 1 < SEQUENCES[f].steps.length) { results.student_reengage.skipped++; continue; }  // mid-sequence
+            }
+            if (f === 'student_reengage' && attrs.AUTOMATION_START) {  // cooldown
+                const cd = new Date(new Date(attrs.AUTOMATION_START).getTime() + STUDENT_REENGAGE_COOLDOWN * 24 * 3600000);
+                if (now < cd) { results.student_reengage.skipped++; continue; }
+            }
+            try {
+                await triggerSequence(contact.email, 'student_reengage', attrs, apiKey);
+                await contactsApi.updateContact(contact.email, { attributes: {
+                    AUTOMATION_FLOW: 'student_reengage', AUTOMATION_STEP: '0', AUTOMATION_START: now.toISOString()
+                } });
+                handled.add(contact.email); studentCount++;
+                console.log(`[cron] Student re-engagement for ${contact.email.substring(0,3)}***`);
+            } catch (err) { results.student_reengage.errors.push(err.body?.message || err.message); }
+        }
+        results.student_reengage.processed = studentCount;
+
         // ---- PHASE 2: Re-engagement for inactive contacts ----
         let reengageCount = 0;
         for (const contact of allContacts) {
             if (reengageCount >= MAX_REENGAGE_PER_RUN) break;
 
             const attrs = contact.attributes || {};
+            if (handled.has(contact.email)) { results.reengagement.skipped++; continue; }
+            if (attrs.IS_STUDENT === 'true') { results.reengagement.skipped++; continue; }  // students use P3
             const signupDate = attrs.SIGNUP_DATE ? new Date(attrs.SIGNUP_DATE) : null;
             const automationFlow = attrs.AUTOMATION_FLOW || '';
             const automationStart = attrs.AUTOMATION_START ? new Date(attrs.AUTOMATION_START) : null;

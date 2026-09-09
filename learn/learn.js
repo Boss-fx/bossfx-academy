@@ -97,6 +97,33 @@ BFX.learn = (function () {
             .eq('course_id', courseId).eq('lesson_id', lessonId);
     }
 
+    // Fire a lightweight event to the Brevo pipeline via /api/lead-capture.
+    // Powers the LMS lifecycle automations (signup, free-completed, progress,
+    // checkout intent). opts: { once, noSeq, email, name }.
+    // - once  → send at most once per (source,email) in this browser
+    // - noSeq → attribute update only, never starts an email sequence
+    function syncBrevo(source, attrs, opts) {
+        opts = opts || {};
+        function post(email, name) {
+            if (!email) return;
+            if (opts.once) {
+                var k = 'bfx_sync_' + source + '_' + email;
+                try { if (localStorage.getItem(k)) return; localStorage.setItem(k, '1'); } catch (e) {}
+            }
+            var payload = { email: email, source: source, name: name || '', attributes: attrs || {}, no_sequence: !!opts.noSeq };
+            try {
+                fetch('/api/lead-capture', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload), keepalive: true
+                }).catch(function () {});
+            } catch (e) {}
+        }
+        if (opts.email) { post(opts.email, opts.name); return Promise.resolve(); }
+        return currentUser().then(function (user) {
+            if (user && user.email) post(user.email, (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || '');
+        }).catch(function () {});
+    }
+
     return {
         COURSES: COURSES,
         ready: ready,
@@ -105,6 +132,7 @@ BFX.learn = (function () {
         canAccess: canAccess,
         getProgress: getProgress,
         markComplete: markComplete,
+        syncBrevo: syncBrevo,
         course: function (id) { return COURSES[id] || null; },
         lesson: function (courseId, lessonId) {
             var c = COURSES[courseId];
