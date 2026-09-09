@@ -18,6 +18,7 @@ module.exports = async function handler(req, res) {
         var action = req.query.action || '';
         if (action === 'setup') return handleSetup(req, res);
         if (action === 'check-setup') return handleCheckSetup(req, res);
+        if (action === 'ensure-attributes') return handleEnsureAttributes(req, res);
         return res.status(400).json({ error: 'Unknown POST action' });
     }
 
@@ -282,4 +283,36 @@ function getBrevoErrorHint(err) {
         return 'Rate limit hit. Wait and retry, or upgrade Brevo plan.';
     }
     return 'Check Brevo dashboard for API status: https://status.brevo.com';
+}
+
+// ================================================================
+// One-time: create the LMS custom contact attributes in Brevo so
+// IS_STUDENT / ENROLLED_FOREX101 / progress / checkout attrs persist.
+// POST /api/health?action=ensure-attributes
+// ================================================================
+async function handleEnsureAttributes(req, res) {
+    const apiKey = process.env.BREVO_API_KEY;
+    if (!apiKey) return res.status(500).json({ error: 'BREVO_API_KEY not set' });
+
+    const NEEDED = [
+        'IS_STUDENT', 'ENROLLED_FOREX101', 'LAST_ACTIVE', 'LAST_LESSON',
+        'FOREX101_PROGRESS', 'CHECKOUT_STARTED', 'CHECKOUT_RECOVERED',
+        'FREE_COMPLETED_AT', 'ENROLL_DATE', 'ENROLL_TX'
+    ];
+
+    const attrApi = new brevo.ContactsApi();
+    attrApi.setApiKey(brevo.ContactsApiApiKeys.apiKey, apiKey);
+
+    const created = [], skipped = [], errors = [];
+    for (const name of NEEDED) {
+        try {
+            await attrApi.createAttribute('normal', name, { type: 'text' });
+            created.push(name);
+        } catch (err) {
+            const m = err.body?.message || err.message || '';
+            if (/already exist/i.test(m)) skipped.push(name);
+            else errors.push({ name, message: m });
+        }
+    }
+    return res.status(200).json({ success: errors.length === 0, created, skipped, errors });
 }
