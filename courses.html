@@ -216,7 +216,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             padding: 36px 28px;
             text-align: center;
             position: relative;
-            opacity: 0.7;
+            opacity: 1;
+            display: flex;
+            flex-direction: column;
         }
         .coming-card .lock-icon {
             width: 48px;
@@ -250,6 +252,66 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             border-radius: 100px;
             margin-top: 16px;
         }
+        .coming-card .coming-curric {
+            list-style: none;
+            margin: 16px 0 0;
+            padding: 0;
+            text-align: left;
+        }
+        .coming-card .coming-curric li {
+            position: relative;
+            padding-left: 24px;
+            margin: 9px 0;
+            font-size: 0.86rem;
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+        .coming-card .coming-curric li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #10b981;
+            font-weight: 800;
+        }
+        .coming-card .coming-badge { align-self: center; }
+        .coming-wait {
+            display: flex;
+            gap: 8px;
+            margin-top: 18px;
+        }
+        .coming-wait input {
+            flex: 1;
+            min-width: 0;
+            padding: 11px 13px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #0a0f0c;
+            color: #eaf2ee;
+            font-size: 0.84rem;
+        }
+        .coming-wait input:focus { outline: none; border-color: #10b981; }
+        .coming-wait button {
+            padding: 11px 15px;
+            border: 0;
+            border-radius: 10px;
+            background: #10b981;
+            color: #04140d;
+            font-weight: 700;
+            font-size: 0.84rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background .15s;
+        }
+        .coming-wait button:hover { background: #34d399; }
+        .coming-wait.done {
+            justify-content: center;
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 4px 0;
+        }
+        .coming-spacer { flex: 1; }
 
         /* FAQ */
         .faq-list {
@@ -416,7 +478,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="section-header center">
                 <span class="section-tag">Coming Soon</span>
                 <h2 class="section-title">More Courses<br><span class="text-gradient">On the Way</span></h2>
-                <p class="section-subtitle">We're building more advanced programs for traders ready for the next level.</p>
+                <p class="section-subtitle">The next courses in the BossFx ladder — for traders ready for the next level. Join a waitlist and be first in (early-bird pricing for the list).</p>
             </div>
             <div class="coming-grid">
                 <div class="coming-card">
@@ -424,24 +486,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     </div>
                     <h3>Advanced Price Action</h3>
-                    <p>Deep dive into institutional order flow, liquidity zones, and advanced chart reading.</p>
-                    <span class="coming-badge">Coming Soon</span>
+                    <p>Read the chart like the institutions do — beyond indicators, into raw price.</p>
+                    <ul class="coming-curric">
+                        <li>Order blocks &amp; institutional footprints</li>
+                        <li>Liquidity pools, sweeps &amp; stop hunts</li>
+                        <li>Fair value gaps &amp; imbalance</li>
+                        <li>Live chart mark-ups with BossFx</li>
+                    </ul>
+                    <div class="coming-spacer"></div>
+                    <form class="coming-wait" data-source="waitlist_advanced_price_action" data-course="Advanced Price Action">
+                        <input type="email" placeholder="Email me when it drops" required>
+                        <button type="submit">Notify me</button>
+                    </form>
+                    <span class="coming-badge">Coming Q1 2027</span>
                 </div>
                 <div class="coming-card">
                     <div class="lock-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     </div>
                     <h3>Smart Money Concepts</h3>
-                    <p>Understand how institutional traders move the market and learn to trade alongside them.</p>
-                    <span class="coming-badge">Coming Soon</span>
+                    <p>Understand how the big players move price — and learn to trade alongside them.</p>
+                    <ul class="coming-curric">
+                        <li>Market-maker models &amp; manipulation</li>
+                        <li>Break of structure &amp; change of character</li>
+                        <li>Premium vs discount zones</li>
+                        <li>Entries that follow the smart money</li>
+                    </ul>
+                    <div class="coming-spacer"></div>
+                    <form class="coming-wait" data-source="waitlist_smart_money_concepts" data-course="Smart Money Concepts">
+                        <input type="email" placeholder="Email me when it drops" required>
+                        <button type="submit">Notify me</button>
+                    </form>
+                    <span class="coming-badge">Coming Q2 2027</span>
                 </div>
                 <div class="coming-card">
                     <div class="lock-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     </div>
                     <h3>Trading Psychology Deep Dive</h3>
-                    <p>Master the mental game — discipline, emotional control, and the mindset of elite traders.</p>
-                    <span class="coming-badge">Coming 2027</span>
+                    <p>The mental game that decides who survives — and who blows the account.</p>
+                    <ul class="coming-curric">
+                        <li>Beating fear, greed &amp; revenge trading</li>
+                        <li>Building unshakeable discipline</li>
+                        <li>Routines &amp; rules of elite traders</li>
+                        <li>Journaling for a pro mindset</li>
+                    </ul>
+                    <div class="coming-spacer"></div>
+                    <form class="coming-wait" data-source="waitlist_trading_psychology" data-course="Trading Psychology Deep Dive">
+                        <input type="email" placeholder="Email me when it drops" required>
+                        <button type="submit">Notify me</button>
+                    </form>
+                    <span class="coming-badge">Coming Q3 2027</span>
                 </div>
             </div>
         </div>
@@ -563,5 +658,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <a href="/learn/?signup=1" class="btn btn-primary btn-glow">Start Free Today</a>
     </div>
 <script src="page-nav.js" defer></script>
+<script>
+/* Coming-soon course waitlist -> Brevo (/api/lead-capture) + Formspree fallback */
+(function(){
+    document.querySelectorAll('.coming-wait').forEach(function(form){
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            var input = form.querySelector('input[type=email]');
+            var email = (input && input.value || '').trim();
+            if(!email) return;
+            var source = form.getAttribute('data-source') || 'course_waitlist';
+            var course = form.getAttribute('data-course') || '';
+            var btn = form.querySelector('button'); if(btn){ btn.disabled = true; btn.textContent = '…'; }
+            var reqs = [];
+            try { reqs.push(fetch('/api/lead-capture', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: email, source: source, name: '', attributes: {}, no_sequence: false }), keepalive: true })); } catch(e){}
+            var fs = (window.BFX && BFX.config && BFX.config.formspree) || 'https://formspree.io/f/xeenzyna';
+            try { reqs.push(fetch(fs, { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body: JSON.stringify({ email: email, _subject: 'Course waitlist — ' + course, course: course }) })); } catch(e){}
+            var finished = false;
+            function done(){ if(finished) return; finished = true; form.classList.add('done'); form.innerHTML = "✓ You're on the list — we'll email you first."; }
+            Promise.race(reqs.length ? reqs : [Promise.resolve()]).then(done).catch(done);
+            setTimeout(done, 2500);
+        });
+    });
+})();
+</script>
 </body>
 </html>
