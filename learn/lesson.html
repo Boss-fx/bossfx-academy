@@ -110,7 +110,7 @@
       if (info.lesson.video) {
         // `video` may be a YouTube ID, a self-hosted path (/media/….mp4), or a full video URL
         if (/\.(mp4|webm|mov)(\?|$)/i.test(info.lesson.video) || /^https?:\/\//i.test(info.lesson.video)) {
-          v.innerHTML = '<video src="' + info.lesson.video + '" controls playsinline preload="metadata"></video>';
+          v.innerHTML = '<video src="' + info.lesson.video + '" poster="/media/thumbs/' + info.lesson.id + '.jpg" controls playsinline preload="metadata"></video>';
         } else {
           v.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + info.lesson.video + '" title="Lesson video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
         }
