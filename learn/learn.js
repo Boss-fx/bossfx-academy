@@ -22,7 +22,7 @@ BFX.learn = (function () {
             enrollUrl: '/courses.html#forex101',
             freeCount: 3,
             lessons: [
-                { id: 'module-01', n: '01', title: 'Introduction to Forex', blurb: 'What forex is, how it works, and why it matters', video: '', portrait: true, free: true },
+                { id: 'module-01', n: '01', title: 'Introduction to Forex', blurb: 'What forex is, how it works, and why it matters', video: '/media/lessons/module-01.mp4', free: true },
                 { id: 'module-02', n: '02', title: 'Currency Pairs & Quotes', blurb: 'Understanding majors, minors, and exotics', video: '', free: true },
                 { id: 'module-03', n: '03', title: 'Market Structure 101', blurb: 'How price moves and market phases', video: '', free: true },
                 { id: 'module-04', n: '04', title: 'Market Sessions & Volatility', blurb: 'Trading the right sessions at the right time', video: '', free: false },
