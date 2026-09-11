@@ -1693,18 +1693,25 @@ BFX.mirror = (function () {
         open: function () { if (!state.isOpen) togglePanel(); },
         close: function () { if (state.isOpen) togglePanel(); },
         switchView: switchView,
-        getState: function () { return state; }
+        getState: function () { return state; },
+        // Programmatic Q&A entry (used by the /learn/ lesson page's inline
+        // "Ask about this module" box). Routes through the same engine the
+        // widget uses — Platform when enabled, else the local knowledge base.
+        getResponse: function (text, context, callback) { return AIService.getResponse(text, context || {}, callback); }
     };
 })();
 
 // Backward compatibility
 BFX.chatbot = BFX.mirror;
 
-// Auto-init
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
+// Auto-init the floating widget (skip when a page only wants the engine,
+// e.g. the lesson page sets window.BFX_NO_CHAT_WIDGET before loading this).
+if (!window.BFX_NO_CHAT_WIDGET) {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(BFX.mirror.init, 1500);
+        });
+    } else {
         setTimeout(BFX.mirror.init, 1500);
-    });
-} else {
-    setTimeout(BFX.mirror.init, 1500);
+    }
 }

@@ -112,6 +112,8 @@
   <script src="../lib/vendor/bossfx-sdk.browser.js"></script>
   <script src="../services/ai-client.js"></script>
   <script src="../services/mirror-service.js"></script>
+  <script>window.BFX_NO_CHAT_WIDGET = true;</script>
+  <script src="../chatbot.js"></script>
   <script src="learn.js"></script>
   <script>
   (function () {
@@ -210,23 +212,21 @@
           ta.dispatchEvent(new Event('input'));
           ta.scrollTop = ta.scrollHeight;
         };
-        // Free-form AI Q&A only when the AI platform is enabled (paused on subscription → hidden)
-        var aiOn = !!(BFX.aiClient && BFX.aiClient.isEnabled && BFX.aiClient.isEnabled() && BFX.mirrorService);
-        var askRow = document.querySelector('.ask-row'), aOut = document.getElementById('askOut'), lead = document.querySelector('.mirror-lead');
-        if (aiOn) {
-          document.getElementById('askBtn').onclick = function () {
-            var q = (document.getElementById('askInput').value || '').trim(); if (!q) return;
-            aOut.classList.remove('hide'); aOut.textContent = 'Mirror is thinking…';
-            BFX.mirrorService.ask('In the BossFx Academy Forex 101 lesson "' + info.lesson.title + '", a student asks: ' + q, { page: 'lesson' })
-              .then(function (res) { aOut.textContent = (res && res.kind === 'answer' && res.answer) ? res.answer : "Mirror doesn't have a confident answer on that — try rephrasing, or bring it to the community / mentorship."; })
-              .catch(function () { aOut.textContent = 'Mirror could not respond right now. Your notes are still saved.'; });
-          };
-          document.getElementById('askInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') document.getElementById('askBtn').click(); });
-        } else {
-          if (askRow) askRow.classList.add('hide');
-          if (aOut) aOut.classList.add('hide');
-          if (lead) lead.innerHTML = 'Tip: tap <strong>&ldquo;Add summary to my notes&rdquo;</strong> to journal the key takeaways. Live AI Q&amp;A is coming soon &mdash; for now, bring questions to the <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener">Telegram community</a>.';
+        // Free-form Q&A via the site assistant. Uses the generic knowledge-base
+        // engine now (AI platform paused); upgrades to the AI Platform
+        // automatically when config.aiPlatform.enabled flips back to true.
+        var aOut = document.getElementById('askOut'), askInput = document.getElementById('askInput'), lead = document.querySelector('.mirror-lead');
+        function answer(q) {
+          if (!(BFX.mirror && BFX.mirror.getResponse)) { aOut.classList.remove('hide'); aOut.textContent = 'Assistant is unavailable right now — revise the key takeaways above.'; return; }
+          aOut.classList.remove('hide'); aOut.textContent = 'Thinking…';
+          BFX.mirror.getResponse(q, { page: 'lesson' }, function (err, resp) {
+            if (err || !resp || !resp.text) { aOut.textContent = "Couldn't find an answer to that — try rephrasing, or ask in the Telegram community."; return; }
+            aOut.innerHTML = resp.text;
+          });
         }
+        document.getElementById('askBtn').onclick = function () { var q = (askInput.value || '').trim(); if (q) answer(q); };
+        askInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('askBtn').click(); } });
+        if (lead) lead.innerHTML = 'Ask the BossFx assistant about this module, or tap <strong>&ldquo;Add summary to my notes&rdquo;</strong> to journal the key points.';
         document.getElementById('study').classList.remove('hide');
       })();
 
