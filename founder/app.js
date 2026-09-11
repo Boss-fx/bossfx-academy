@@ -717,8 +717,7 @@
             ['TikTok', 'https://www.tiktok.com/@bossfx1', '@bossfx1', 'cyan'],
             ['YouTube', 'https://youtube.com/@bossfx-tradingcommunity', '@bossfx-tradingcommunity', 'red'],
             ['X (Twitter)', 'https://x.com/teebossx', '@teebossx', 'blue'],
-            ['Telegram', 'https://t.me/qD_fBeaziqE5YzU8', 'Community Group', 'blue'],
-            ['LinkedIn', 'https://linkedin.com', 'Coming Soon', 'dim']
+            ['Telegram', 'https://t.me/qD_fBeaziqE5YzU8', 'Community Group', 'blue']
         ];
         var socialHtml = socials.map(function (s) {
             return '<a href="' + BFX.esc(s[1]) + '" target="_blank" rel="noopener" class="fdr-setting-row" style="text-decoration:none;color:inherit;">' +
