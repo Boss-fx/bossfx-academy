@@ -26,7 +26,7 @@ BFX.learn = (function () {
                 { id: 'module-02', n: '02', title: 'Currency Pairs & Quotes', blurb: 'Understanding majors, minors, and exotics', video: '/media/lessons/module-02.mp4', free: true },
                 { id: 'module-03', n: '03', title: 'Market Structure 101', blurb: 'How price moves and market phases', video: '/media/lessons/module-03.mp4', free: true },
                 { id: 'module-04', n: '04', title: 'Market Sessions & Volatility', blurb: 'Trading the right sessions at the right time', video: '/media/lessons/module-04.mp4', free: false },
-                { id: 'module-05', n: '05', title: 'Risk Management', blurb: 'Protect your capital — the #1 rule', video: '', free: false },
+                { id: 'module-05', n: '05', title: 'Risk Management', blurb: 'Protect your capital — the #1 rule', video: '/media/lessons/module-05.mp4', free: false },
                 { id: 'module-06', n: '06', title: 'Trading Psychology', blurb: 'Master your mindset and emotions', video: '/media/lessons/module-06.mp4', free: false },
                 { id: 'module-07', n: '07', title: 'Technical Analysis Foundations', blurb: 'Reading charts like a professional', video: '', free: false },
                 { id: 'module-08', n: '08', title: 'Candlestick Patterns', blurb: 'Price action and pattern recognition', video: '', free: false },
