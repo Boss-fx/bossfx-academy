@@ -34,6 +34,24 @@
   .muted{color:#94a3b8}
   .center{text-align:center;padding:80px 20px}
   .hide{display:none!important}
+  .card{background:#111;border:1px solid #232323;border-radius:16px;padding:24px;margin:22px 0}
+  .card-h{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;color:#fff;margin-bottom:12px}
+  .sum{color:#cbd5e1;font-size:1rem}
+  .kp-h{font-size:0.78rem;letter-spacing:1.5px;text-transform:uppercase;color:#34d399;margin:18px 0 10px}
+  .keypts{list-style:none;display:flex;flex-direction:column;gap:9px}
+  .keypts li{position:relative;padding-left:26px;color:#e2e8f0;font-size:0.96rem}
+  .keypts li::before{content:'✓';position:absolute;left:0;top:0;color:#10b981;font-weight:800}
+  .notes-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .note-hint{font-size:0.85rem;margin:4px 0 10px}
+  .note-state{font-size:0.78rem;color:#34d399}
+  .notes{width:100%;min-height:150px;background:#0b0b0b;border:1px solid #262626;border-radius:12px;color:#e2e8f0;font-family:inherit;font-size:0.95rem;line-height:1.6;padding:14px;resize:vertical}
+  .notes:focus{outline:none;border-color:#10b981}
+  .mirror-row,.ask-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .mirror-btn{border-color:#10b981;color:#34d399}
+  .ask-input{flex:1;min-width:180px;background:#0b0b0b;border:1px solid #262626;border-radius:10px;color:#e2e8f0;font-family:inherit;font-size:0.92rem;padding:12px 14px}
+  .ask-input:focus{outline:none;border-color:#10b981}
+  .mirror-out{margin-top:12px;background:#0b1512;border:1px solid #1f3a30;border-radius:12px;padding:14px 16px;color:#d1fae5;font-size:0.94rem;white-space:pre-wrap}
+  .mirror-lead{font-size:0.82rem;color:#64748b;margin-top:14px}
 </style>
 </head>
 <body>
@@ -52,6 +70,35 @@
       <button class="btn btn-done" id="doneBtn" type="button">Mark complete</button>
       <span class="muted" id="doneMsg" style="font-size:0.88rem"></span>
     </div>
+
+    <div id="study" class="hide">
+      <div class="card">
+        <h2 class="card-h">📝 Summary</h2>
+        <p id="sumText" class="sum"></p>
+        <div class="kp-h">Key takeaways</div>
+        <ul id="keyList" class="keypts"></ul>
+      </div>
+      <div class="card">
+        <div class="notes-head">
+          <h2 class="card-h" style="margin:0">🗒️ Your notes &amp; journal</h2>
+          <span id="noteState" class="note-state"></span>
+        </div>
+        <p class="note-hint muted">Jot your key points, questions or a trade to journal. Saved on this device.</p>
+        <textarea id="notes" class="notes" placeholder="Type your notes here…"></textarea>
+        <div class="mirror-row">
+          <button class="btn btn-ghost mirror-btn" id="mirrorSum" type="button">✨ Summarize with Mirror</button>
+          <button class="btn btn-ghost" id="notesClear" type="button">Clear</button>
+        </div>
+        <div id="mirrorOut" class="mirror-out hide"></div>
+        <div class="ask-row">
+          <input id="askInput" class="ask-input" placeholder="Ask Mirror about this module…">
+          <button class="btn btn-done" id="askBtn" type="button">Ask</button>
+        </div>
+        <div id="askOut" class="mirror-out hide"></div>
+        <div class="mirror-lead">Mirror is your AI study assistant — it helps you summarize and understand. Always apply proper risk management.</div>
+      </div>
+    </div>
+
     <div class="navrow">
       <a id="prevLink" href="#">← Previous</a>
       <a href="index.html">All modules</a>
@@ -62,6 +109,9 @@
   <script src="../config.js"></script>
   <script src="../lib/vendor/supabase.umd.js"></script>
   <script src="../services/auth-service.js"></script>
+  <script src="../lib/vendor/bossfx-sdk.browser.js"></script>
+  <script src="../services/ai-client.js"></script>
+  <script src="../services/mirror-service.js"></script>
   <script src="learn.js"></script>
   <script>
   (function () {
@@ -117,6 +167,53 @@
       } else {
         v.innerHTML = '<div class="video-ph"><strong>🎬 Lesson video coming soon</strong>Video for this module hasn\'t been uploaded yet. Your progress still tracks — mark it complete once you\'ve studied the module.</div>';
       }
+
+      // ---- Study: summary, key takeaways, notes/journal, Mirror ----
+      (function study() {
+        var sum = document.getElementById('sumText');
+        if (sum) sum.textContent = info.lesson.summary || '';
+        var kl = document.getElementById('keyList');
+        if (kl) { kl.innerHTML = ''; (info.lesson.keyPoints || []).forEach(function (k) { var li = document.createElement('li'); li.textContent = k; kl.appendChild(li); }); }
+
+        var ta = document.getElementById('notes'), st = document.getElementById('noteState');
+        var nKey = 'bfx_notes_' + courseId + '_' + lessonId + '_' + (user.email || 'anon');
+        try { ta.value = localStorage.getItem(nKey) || ''; } catch (e) {}
+        var timer;
+        ta.addEventListener('input', function () {
+          st.textContent = 'Saving…'; clearTimeout(timer);
+          timer = setTimeout(function () { try { localStorage.setItem(nKey, ta.value); } catch (e) {} st.textContent = 'Saved ✓'; setTimeout(function () { st.textContent = ''; }, 1500); }, 500);
+        });
+        document.getElementById('notesClear').onclick = function () { if (confirm('Clear your notes for this module?')) { ta.value = ''; try { localStorage.removeItem(nKey); } catch (e) {} } };
+
+        function ask(prompt, outEl, addBtn) {
+          if (!(BFX.mirrorService && BFX.aiClient && BFX.aiClient.isEnabled && BFX.aiClient.isEnabled())) {
+            outEl.classList.remove('hide'); outEl.textContent = 'Mirror is unavailable right now — your notes still save.'; return;
+          }
+          outEl.classList.remove('hide'); outEl.textContent = 'Mirror is thinking…';
+          BFX.mirrorService.ask(prompt, { page: 'lesson' }).then(function (res) {
+            if (res && res.kind === 'answer' && res.answer) {
+              outEl.textContent = res.answer;
+              if (addBtn) {
+                var b = document.createElement('button'); b.className = 'btn btn-ghost'; b.style.marginTop = '10px'; b.textContent = '＋ Add to my notes';
+                b.onclick = function () { ta.value = (ta.value ? ta.value + '\n\n' : '') + res.answer; ta.dispatchEvent(new Event('input')); };
+                outEl.appendChild(document.createElement('br')); outEl.appendChild(b);
+              }
+            } else {
+              outEl.textContent = "Mirror doesn't have a confident answer on that — try rephrasing, or bring it to the community / mentorship.";
+            }
+          }).catch(function () { outEl.textContent = 'Mirror could not respond right now. Your notes are still saved.'; });
+        }
+        var mOut = document.getElementById('mirrorOut'), aOut = document.getElementById('askOut');
+        document.getElementById('mirrorSum').onclick = function () {
+          ask('Summarize this BossFx Academy Forex 101 lesson, "' + info.lesson.title + '", into 5 short, clear bullet points a beginner can journal. Context: ' + (info.lesson.summary || '') + ' Key points: ' + (info.lesson.keyPoints || []).join('; '), mOut, true);
+        };
+        document.getElementById('askBtn').onclick = function () {
+          var q = (document.getElementById('askInput').value || '').trim(); if (!q) return;
+          ask('In the BossFx Academy Forex 101 lesson "' + info.lesson.title + '", a student asks: ' + q, aOut, false);
+        };
+        document.getElementById('askInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') document.getElementById('askBtn').click(); });
+        document.getElementById('study').classList.remove('hide');
+      })();
 
       var prev = document.getElementById('prevLink'), next = document.getElementById('nextLink');
       if (info.prev) prev.href = 'lesson.html?course=' + courseId + '&lesson=' + info.prev.id; else prev.classList.add('hide');
