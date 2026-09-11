@@ -60,6 +60,15 @@
   .enroll-banner strong{display:block;color:#fff;font-size:1rem;margin-bottom:2px}
   .enroll-banner span{color:#94a3b8;font-size:0.86rem}
   .enroll-banner .btn{white-space:nowrap}
+  .welcome-video{display:flex;gap:20px;align-items:center;background:#151515;border:1px solid #262626;border-radius:16px;padding:20px;margin:18px 0 4px}
+  .welcome-video .wv-copy strong{display:block;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin-bottom:4px}
+  .welcome-video .wv-copy span{color:#94a3b8;font-size:0.9rem;line-height:1.5}
+  .welcome-video .bfx-video-facade{flex:0 0 auto;width:118px}
+  .bfx-video-facade{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;border:1px solid #2A4D3A;background:radial-gradient(120% 80% at 50% 0,rgba(16,185,129,.22),#0a0f0c);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+  .bfx-video-facade .bfx-play{width:46px;height:46px;border-radius:50%;background:#10b981;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(16,185,129,.4)}
+  .bfx-video-facade .bfx-cap{color:#eaf2ee;font-weight:600;font-size:0.7rem;text-align:center;padding:0 6px;font-family:'Space Grotesk',sans-serif}
+  .bfx-video-facade.playing{background:#000;cursor:default}
+  @media(max-width:560px){.welcome-video{flex-direction:column;text-align:center}.welcome-video .bfx-video-facade{width:150px}}
   .auth-extra{text-align:center;margin-top:12px;font-size:0.85rem}
   .muted-link{color:#94a3b8;text-decoration:none;margin:0 8px;cursor:pointer}
   .muted-link:hover{color:#34d399}
@@ -109,6 +118,13 @@
       <button class="btn btn-ghost" id="logoutBtn" type="button">Log out</button>
     </div>
     <p class="muted" id="welcome"></p>
+    <div class="welcome-video">
+      <div class="wv-copy"><strong>New here? Watch this first 👋</strong><span>A 60-second intro to who we are and how to get the most from BossFx Academy.</span></div>
+      <div class="bfx-video-facade" data-yt="nPtQpG0LYbo" role="button" tabindex="0" aria-label="Play the BossFx Academy intro video">
+        <span class="bfx-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#04140d"><path d="M8 5v14l11-7z"/></svg></span>
+        <span class="bfx-cap">Watch · 1 min</span>
+      </div>
+    </div>
     <div id="courses"></div>
   </div>
 
@@ -375,6 +391,19 @@
     } else {
       boot();
     }
+  })();
+  </script>
+  <script>
+  // Click-to-play for the welcome intro video (loads YouTube only on click)
+  (function(){
+    document.querySelectorAll('.bfx-video-facade').forEach(function(el){
+      el.addEventListener('click', function(){
+        if(el.classList.contains('playing')) return;
+        var id = el.getAttribute('data-yt');
+        el.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&playsinline=1&rel=0" title="BossFx Academy intro" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>';
+        el.classList.add('playing');
+      });
+    });
   })();
   </script>
 </body>
