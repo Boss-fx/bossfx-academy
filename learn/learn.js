@@ -25,14 +25,14 @@ BFX.learn = (function () {
                 { id: 'module-01', n: '01', title: 'Introduction to Forex', blurb: 'What forex is, how it works, and why it matters', video: '/media/lessons/module-01.mp4', free: true },
                 { id: 'module-02', n: '02', title: 'Currency Pairs & Quotes', blurb: 'Understanding majors, minors, and exotics', video: '/media/lessons/module-02.mp4', free: true },
                 { id: 'module-03', n: '03', title: 'Market Structure 101', blurb: 'How price moves and market phases', video: '/media/lessons/module-03.mp4', free: true },
-                { id: 'module-04', n: '04', title: 'Market Sessions & Volatility', blurb: 'Trading the right sessions at the right time', video: '', free: false },
+                { id: 'module-04', n: '04', title: 'Market Sessions & Volatility', blurb: 'Trading the right sessions at the right time', video: '/media/lessons/module-04.mp4', free: false },
                 { id: 'module-05', n: '05', title: 'Risk Management', blurb: 'Protect your capital — the #1 rule', video: '', free: false },
-                { id: 'module-06', n: '06', title: 'Trading Psychology', blurb: 'Master your mindset and emotions', video: '', free: false },
+                { id: 'module-06', n: '06', title: 'Trading Psychology', blurb: 'Master your mindset and emotions', video: '/media/lessons/module-06.mp4', free: false },
                 { id: 'module-07', n: '07', title: 'Technical Analysis Foundations', blurb: 'Reading charts like a professional', video: '', free: false },
                 { id: 'module-08', n: '08', title: 'Candlestick Patterns', blurb: 'Price action and pattern recognition', video: '', free: false },
                 { id: 'module-09', n: '09', title: 'Support & Resistance', blurb: 'Key levels and zones that matter', video: '', free: false },
                 { id: 'module-10', n: '10', title: 'Trading Strategies', blurb: 'Fibonacci, moving averages, and intraday setups', video: '', free: false },
-                { id: 'module-11', n: '11', title: 'Building Your Trading Plan', blurb: 'Your personal roadmap to execution', video: '', free: false },
+                { id: 'module-11', n: '11', title: 'Building Your Trading Plan', blurb: 'Your personal roadmap to execution', video: '/media/lessons/module-11.mp4', free: false },
                 { id: 'module-12', n: '12', title: 'Live Trading & Journaling', blurb: 'Execute, track, and improve every trade', video: '', free: false }
             ]
         }
