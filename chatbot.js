@@ -178,7 +178,7 @@ BFX.mirror = (function () {
                 id: 'support',
                 patterns: [/contact|support|need.*help|email|reach|speak|human|real.*person|complaint|issue/i],
                 intent: 'support',
-                text: "You can reach the BossFx team through:\n\n📧 <b>Email:</b> hello@bossfxcademy.com\n💬 <b>Telegram:</b> DM us in the community\n📱 <b>WhatsApp:</b> +234 915 500 8539\n📸 <b>Instagram:</b> @bossfx_academy\n\nOr use the contact form for detailed inquiries.",
+                text: "You can reach the BossFx team through:\n\n📧 <b>Email:</b> hello@bossfxcademy.com\n💬 <b>Telegram:</b> DM us in the community\n📱 <b>WhatsApp:</b> +234 915 500 8539\n📸 <b>Instagram:</b> @bossfxacademy_\n\nOr use the contact form for detailed inquiries.",
                 ctas: [
                     { label: '📝 Contact Form', url: 'contact.html' },
                     { label: '💬 WhatsApp', url: 'https://wa.me/2349155008539' }

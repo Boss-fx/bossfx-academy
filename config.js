@@ -35,7 +35,7 @@ BFX.config = {
     // Social links
     socials: {
         telegram: 'https://t.me/qD_fBeaziqE5YzU8',
-        instagram: 'https://www.instagram.com/bossfx_academy',
+        instagram: 'https://www.instagram.com/bossfxacademy_',
         youtube: 'https://youtube.com/@bossfx-tradingcommunity',
         x: 'https://x.com/teebossx',
         tiktok: 'https://www.tiktok.com/@bossfx1'

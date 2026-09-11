@@ -1697,7 +1697,7 @@ BFX.socialGate = (function() {
 
     var SOCIALS = [
         { id: 'telegram', icon: '💬', name: 'Join Telegram Community', desc: '5,200+ traders', url: 'https://t.me/qD_fBeaziqE5YzU8' },
-        { id: 'instagram', icon: '📸', name: 'Follow on Instagram', desc: '@bossfx_academy', url: 'https://www.instagram.com/bossfx_academy' },
+        { id: 'instagram', icon: '📸', name: 'Follow on Instagram', desc: '@bossfxacademy_', url: 'https://www.instagram.com/bossfxacademy_' },
         { id: 'youtube', icon: '▶️', name: 'Subscribe on YouTube', desc: 'BossFx Trading Community', url: 'https://youtube.com/@bossfx-tradingcommunity?si=9cDfBjWkpJWsgLCe' },
         { id: 'x', icon: '𝕏', name: 'Follow on X', desc: '@teebossx', url: 'https://x.com/teebossx' }
     ];

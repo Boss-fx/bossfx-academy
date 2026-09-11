@@ -713,7 +713,7 @@
             '<a href="https://app.brevo.com" target="_blank" rel="noopener" class="fdr-btn fdr-btn-outline fdr-btn-xs">Manage Lists &rarr;</a>');
 
         var socials = [
-            ['Instagram', 'https://www.instagram.com/bossfx_academy', '@bossfx_academy', 'pink'],
+            ['Instagram', 'https://www.instagram.com/bossfxacademy_', '@bossfxacademy_', 'pink'],
             ['TikTok', 'https://www.tiktok.com/@bossfx1', '@bossfx1', 'cyan'],
             ['YouTube', 'https://youtube.com/@bossfx-tradingcommunity', '@bossfx-tradingcommunity', 'red'],
             ['X (Twitter)', 'https://x.com/teebossx', '@teebossx', 'blue'],
