@@ -24,7 +24,7 @@ BFX.learn = (function () {
             lessons: [
                 { id: 'module-01', n: '01', title: 'Introduction to Forex', blurb: 'What forex is, how it works, and why it matters', video: '/media/lessons/module-01.mp4', free: true },
                 { id: 'module-02', n: '02', title: 'Currency Pairs & Quotes', blurb: 'Understanding majors, minors, and exotics', video: '/media/lessons/module-02.mp4', free: true },
-                { id: 'module-03', n: '03', title: 'Market Structure 101', blurb: 'How price moves and market phases', video: '', free: true },
+                { id: 'module-03', n: '03', title: 'Market Structure 101', blurb: 'How price moves and market phases', video: '/media/lessons/module-03.mp4', free: true },
                 { id: 'module-04', n: '04', title: 'Market Sessions & Volatility', blurb: 'Trading the right sessions at the right time', video: '', free: false },
                 { id: 'module-05', n: '05', title: 'Risk Management', blurb: 'Protect your capital — the #1 rule', video: '', free: false },
                 { id: 'module-06', n: '06', title: 'Trading Psychology', blurb: 'Master your mindset and emotions', video: '', free: false },
