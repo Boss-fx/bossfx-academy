@@ -177,13 +177,31 @@
 
         var ta = document.getElementById('notes'), st = document.getElementById('noteState');
         var nKey = 'bfx_notes_' + courseId + '_' + lessonId + '_' + (user.email || 'anon');
+        var cloudOn = false;
         try { ta.value = localStorage.getItem(nKey) || ''; } catch (e) {}
+        function pushCloud(val, done) {
+          BFX.learn.saveNote(user.id, courseId, lessonId, val)
+            .then(function (res) { if (res && res.error) throw res.error; done && done(true); })
+            .catch(function () { done && done(false); });
+        }
+        // Load the cross-device note; migrate an existing on-device note up on first run
+        BFX.learn.getNote(courseId, lessonId).then(function (remote) {
+          if (remote === null || remote === undefined) { cloudOn = false; return; } // table missing / offline → device-only
+          cloudOn = true;
+          if (remote && remote !== ta.value) { ta.value = remote; try { localStorage.setItem(nKey, remote); } catch (e) {} }
+          else if (!remote && ta.value) { pushCloud(ta.value); } // migrate device note into the cloud
+        });
         var timer;
         ta.addEventListener('input', function () {
           st.textContent = 'Saving…'; clearTimeout(timer);
-          timer = setTimeout(function () { try { localStorage.setItem(nKey, ta.value); } catch (e) {} st.textContent = 'Saved ✓'; setTimeout(function () { st.textContent = ''; }, 1500); }, 500);
+          var val = ta.value;
+          timer = setTimeout(function () {
+            try { localStorage.setItem(nKey, val); } catch (e) {}
+            if (cloudOn) { pushCloud(val, function (ok) { st.textContent = ok ? 'Synced ✓' : 'Saved on this device'; setTimeout(function () { st.textContent = ''; }, 1800); }); }
+            else { st.textContent = 'Saved on this device'; setTimeout(function () { st.textContent = ''; }, 1800); }
+          }, 600);
         });
-        document.getElementById('notesClear').onclick = function () { if (confirm('Clear your notes for this module?')) { ta.value = ''; try { localStorage.removeItem(nKey); } catch (e) {} } };
+        document.getElementById('notesClear').onclick = function () { if (confirm('Clear your notes for this module?')) { ta.value = ''; try { localStorage.removeItem(nKey); } catch (e) {} if (cloudOn) pushCloud(''); } };
 
         function ask(prompt, outEl, addBtn) {
           if (!(BFX.mirrorService && BFX.aiClient && BFX.aiClient.isEnabled && BFX.aiClient.isEnabled())) {

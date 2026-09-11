@@ -121,6 +121,31 @@ BFX.learn = (function () {
             .eq('course_id', courseId).eq('lesson_id', lessonId);
     }
 
+    // ---- notes / journal (RLS: users only see/write their own rows) ----
+    // Resolves the saved note content (a string, '' if empty) or null when the
+    // `lesson_notes` table is unavailable (not migrated / offline) — callers
+    // fall back to on-device storage on null.
+    function getNote(courseId, lessonId) {
+        var db = BFX.auth.db && BFX.auth.db();
+        if (!db) return Promise.resolve(null);
+        return db.from('lesson_notes')
+            .select('content')
+            .eq('course_id', courseId)
+            .eq('lesson_id', lessonId)
+            .limit(1)
+            .then(function (res) { if (res.error) return null; return (res.data && res.data[0]) ? (res.data[0].content || '') : ''; })
+            .catch(function () { return null; });
+    }
+
+    function saveNote(userId, courseId, lessonId, content) {
+        var db = BFX.auth.db && BFX.auth.db();
+        if (!db) return Promise.reject(new Error('Not configured'));
+        return db.from('lesson_notes').upsert({
+            user_id: userId, course_id: courseId, lesson_id: lessonId,
+            content: content, updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id,course_id,lesson_id' });
+    }
+
     // Fire a lightweight event to the Brevo pipeline via /api/lead-capture.
     // Powers the LMS lifecycle automations (signup, free-completed, progress,
     // checkout intent). opts: { once, noSeq, email, name }.
@@ -156,6 +181,8 @@ BFX.learn = (function () {
         canAccess: canAccess,
         getProgress: getProgress,
         markComplete: markComplete,
+        getNote: getNote,
+        saveNote: saveNote,
         syncBrevo: syncBrevo,
         course: function (id) { return COURSES[id] || null; },
         lesson: function (courseId, lessonId) {
