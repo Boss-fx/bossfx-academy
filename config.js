@@ -15,7 +15,7 @@ BFX.config = {
     // meta tag, no application-code change.
     aiPlatform: {
         url: 'https://ai-platform-web-eight.vercel.app/v1',  // default production Platform (public endpoint; auth via user JWT)
-        enabled: true                                         // SDK-backed AI on; anonymous public access (ADR-013)
+        enabled: false                                        // PAUSED (subscription) — chatbot falls back to the generic MarketEngine bot. Flip back to true to re-enable Mirror AI when revenue starts.
     },
 
     // Supabase client auth (Session E) — powers BFX.auth's session source for

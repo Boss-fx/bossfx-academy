@@ -83,10 +83,10 @@
           <h2 class="card-h" style="margin:0">🗒️ Your notes &amp; journal</h2>
           <span id="noteState" class="note-state"></span>
         </div>
-        <p class="note-hint muted">Jot your key points, questions or a trade to journal. Saved on this device.</p>
+        <p class="note-hint muted">Jot your key points, questions or a trade to journal. Auto-saved.</p>
         <textarea id="notes" class="notes" placeholder="Type your notes here…"></textarea>
         <div class="mirror-row">
-          <button class="btn btn-ghost mirror-btn" id="mirrorSum" type="button">✨ Summarize with Mirror</button>
+          <button class="btn btn-ghost mirror-btn" id="mirrorSum" type="button">✨ Add summary to my notes</button>
           <button class="btn btn-ghost" id="notesClear" type="button">Clear</button>
         </div>
         <div id="mirrorOut" class="mirror-out hide"></div>
@@ -203,33 +203,30 @@
         });
         document.getElementById('notesClear').onclick = function () { if (confirm('Clear your notes for this module?')) { ta.value = ''; try { localStorage.removeItem(nKey); } catch (e) {} if (cloudOn) pushCloud(''); } };
 
-        function ask(prompt, outEl, addBtn) {
-          if (!(BFX.mirrorService && BFX.aiClient && BFX.aiClient.isEnabled && BFX.aiClient.isEnabled())) {
-            outEl.classList.remove('hide'); outEl.textContent = 'Mirror is unavailable right now — your notes still save.'; return;
-          }
-          outEl.classList.remove('hide'); outEl.textContent = 'Mirror is thinking…';
-          BFX.mirrorService.ask(prompt, { page: 'lesson' }).then(function (res) {
-            if (res && res.kind === 'answer' && res.answer) {
-              outEl.textContent = res.answer;
-              if (addBtn) {
-                var b = document.createElement('button'); b.className = 'btn btn-ghost'; b.style.marginTop = '10px'; b.textContent = '＋ Add to my notes';
-                b.onclick = function () { ta.value = (ta.value ? ta.value + '\n\n' : '') + res.answer; ta.dispatchEvent(new Event('input')); };
-                outEl.appendChild(document.createElement('br')); outEl.appendChild(b);
-              }
-            } else {
-              outEl.textContent = "Mirror doesn't have a confident answer on that — try rephrasing, or bring it to the community / mentorship.";
-            }
-          }).catch(function () { outEl.textContent = 'Mirror could not respond right now. Your notes are still saved.'; });
-        }
-        var mOut = document.getElementById('mirrorOut'), aOut = document.getElementById('askOut');
+        // "Add summary to my notes" — local, always works (no AI needed)
         document.getElementById('mirrorSum').onclick = function () {
-          ask('Summarize this BossFx Academy Forex 101 lesson, "' + info.lesson.title + '", into 5 short, clear bullet points a beginner can journal. Context: ' + (info.lesson.summary || '') + ' Key points: ' + (info.lesson.keyPoints || []).join('; '), mOut, true);
+          var block = 'KEY TAKEAWAYS — ' + info.lesson.title + ':\n' + (info.lesson.keyPoints || []).map(function (k) { return '• ' + k; }).join('\n');
+          ta.value = (ta.value ? ta.value + '\n\n' : '') + block;
+          ta.dispatchEvent(new Event('input'));
+          ta.scrollTop = ta.scrollHeight;
         };
-        document.getElementById('askBtn').onclick = function () {
-          var q = (document.getElementById('askInput').value || '').trim(); if (!q) return;
-          ask('In the BossFx Academy Forex 101 lesson "' + info.lesson.title + '", a student asks: ' + q, aOut, false);
-        };
-        document.getElementById('askInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') document.getElementById('askBtn').click(); });
+        // Free-form AI Q&A only when the AI platform is enabled (paused on subscription → hidden)
+        var aiOn = !!(BFX.aiClient && BFX.aiClient.isEnabled && BFX.aiClient.isEnabled() && BFX.mirrorService);
+        var askRow = document.querySelector('.ask-row'), aOut = document.getElementById('askOut'), lead = document.querySelector('.mirror-lead');
+        if (aiOn) {
+          document.getElementById('askBtn').onclick = function () {
+            var q = (document.getElementById('askInput').value || '').trim(); if (!q) return;
+            aOut.classList.remove('hide'); aOut.textContent = 'Mirror is thinking…';
+            BFX.mirrorService.ask('In the BossFx Academy Forex 101 lesson "' + info.lesson.title + '", a student asks: ' + q, { page: 'lesson' })
+              .then(function (res) { aOut.textContent = (res && res.kind === 'answer' && res.answer) ? res.answer : "Mirror doesn't have a confident answer on that — try rephrasing, or bring it to the community / mentorship."; })
+              .catch(function () { aOut.textContent = 'Mirror could not respond right now. Your notes are still saved.'; });
+          };
+          document.getElementById('askInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') document.getElementById('askBtn').click(); });
+        } else {
+          if (askRow) askRow.classList.add('hide');
+          if (aOut) aOut.classList.add('hide');
+          if (lead) lead.innerHTML = 'Tip: tap <strong>&ldquo;Add summary to my notes&rdquo;</strong> to journal the key takeaways. Live AI Q&amp;A is coming soon &mdash; for now, bring questions to the <a href="https://t.me/qD_fBeaziqE5YzU8" target="_blank" rel="noopener">Telegram community</a>.';
+        }
         document.getElementById('study').classList.remove('hide');
       })();
 
