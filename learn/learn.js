@@ -20,7 +20,7 @@ BFX.learn = (function () {
             blurb: 'Your 12-module foundation, from market basics to a complete trading plan.',
             priceNGN: 25000,
             enrollUrl: '/courses.html#forex101',
-            freeCount: 3,
+            freeCount: 2,
             lessons: [
                 { id: 'module-01', n: '01', title: 'Introduction to Forex', blurb: 'What forex is, how it works, and why it matters', video: '/media/lessons/module-01.mp4', free: true,
                   summary: "Forex is the global marketplace where currencies are traded in pairs — the largest, most liquid market on earth, with over $7 trillion changing hands daily. You profit from changes in the exchange rate, and with the right education and risk management you can trade it from anywhere, including right here in Africa.",
@@ -28,7 +28,7 @@ BFX.learn = (function () {
                 { id: 'module-02', n: '02', title: 'Currency Pairs & Quotes', blurb: 'Understanding majors, minors, and exotics', video: '/media/lessons/module-02.mp4', free: true,
                   summary: "Every pair has a base currency and a quote currency; the price tells you how much of the quote it takes to buy one unit of the base. Pairs split into majors, minors and exotics, and every quote has a bid, an ask and a spread — with movement measured in pips.",
                   keyPoints: ["First currency = base, second = quote (e.g. EUR/USD)", "Majors (all involve the US Dollar) are the most liquid with the tightest spreads", "Minors/crosses have no Dollar; exotics carry higher risk and cost", "Bid = the price you sell at, Ask = the price you buy at; the gap is the spread", "A pip is the standard unit for measuring profit, loss and risk"] },
-                { id: 'module-03', n: '03', title: 'Market Structure 101', blurb: 'How price moves and market phases', video: '/media/lessons/module-03.mp4', free: true,
+                { id: 'module-03', n: '03', title: 'Market Structure 101', blurb: 'How price moves and market phases', video: '/media/lessons/module-03.mp4', free: false,
                   summary: "Price moves in waves of highs and lows, and reading those swings tells you who is in control. A market is trending up, trending down, or ranging — and a 'break of structure' is an early clue the trend may be reversing.",
                   keyPoints: ["Price moves in waves, not straight lines", "Uptrend = higher highs and higher lows (buyers in control)", "Downtrend = lower highs and lower lows (sellers in control)", "Range = sideways between clear support and resistance", "A break of structure warns the trend may be ending or reversing", "Read structure first, then trade with it — never against it"] },
                 { id: 'module-04', n: '04', title: 'Market Sessions & Volatility', blurb: 'Trading the right sessions at the right time', video: '/media/lessons/module-04.mp4', free: false,
