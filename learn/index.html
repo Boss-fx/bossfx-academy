@@ -47,6 +47,11 @@
   .lesson-list{list-style:none}
   .lesson-item{display:flex;align-items:center;gap:14px;padding:14px 4px;border-top:1px solid #1e1e1e}
   .lesson-item:first-child{border-top:none}
+  .l-thumb{position:relative;flex-shrink:0;width:120px;height:68px;border-radius:8px;overflow:hidden;background:#0d1512;border:1px solid #1e2b24}
+  .l-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .lesson-item.locked .l-thumb{opacity:.62}
+  .lesson-item.locked .l-thumb::after{content:"🔒";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:rgba(4,10,7,0.35)}
+  @media(max-width:520px){.l-thumb{width:88px;height:50px}}
   .lesson-check{width:26px;height:26px;border-radius:50%;border:2px solid #334155;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#04120b}
   .lesson-check.done{background:#10b981;border-color:#10b981}
   .lesson-item .l-title{flex:1;color:#e2e8f0;font-size:0.98rem}
@@ -331,8 +336,10 @@
           var action = open
             ? '<a class="l-go" href="lesson.html?course=' + cid + '&lesson=' + ls.id + '">' + (isDone ? 'Review' : 'Start') + ' →</a>'
             : '<a class="l-go l-lock" href="' + c.enrollUrl + '">🔒 Unlock</a>';
+          var thumb = ls.video ? '<span class="l-thumb"><img loading="lazy" src="/media/thumbs/' + ls.id + '.jpg" alt="' + esc(ls.title) + ' preview"></span>' : '';
           return '<li class="lesson-item' + (open ? '' : ' locked') + '">' +
             '<span class="lesson-check ' + (isDone ? 'done' : '') + '">' + (isDone ? '✓' : (open ? '' : '🔒')) + '</span>' +
+            thumb +
             '<span class="l-title"><small>Module ' + ls.n + tag + '</small>' + esc(ls.title) + '</span>' +
             action +
           '</li>';
