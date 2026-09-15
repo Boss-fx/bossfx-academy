@@ -336,7 +336,7 @@
           var action = open
             ? '<a class="l-go" href="lesson.html?course=' + cid + '&lesson=' + ls.id + '">' + (isDone ? 'Review' : 'Start') + ' →</a>'
             : '<a class="l-go l-lock" href="' + c.enrollUrl + '">🔒 Unlock</a>';
-          var thumb = ls.video ? '<span class="l-thumb"><img loading="lazy" src="/media/thumbs/' + ls.id + '.jpg" alt="' + esc(ls.title) + ' preview"></span>' : '';
+          var thumb = '<span class="l-thumb"><img loading="lazy" src="/media/thumbs/' + ls.id + '.jpg" alt="' + esc(ls.title) + ' preview" onerror="this.parentNode.style.display=\'none\'"></span>';
           return '<li class="lesson-item' + (open ? '' : ' locked') + '">' +
             '<span class="lesson-check ' + (isDone ? 'done' : '') + '">' + (isDone ? '✓' : (open ? '' : '🔒')) + '</span>' +
             thumb +
