@@ -7,6 +7,42 @@
 <title>My Learning — BossFx Academy</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3R88HZB');</script>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFQ9P5KFSJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ZFQ9P5KFSJ');
+</script>
+<!-- Microsoft Clarity -->
+<script>
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "wnde2od79f");
+</script>
+<!-- BFX LMS conversion helper: fires GA4 Key Events on student signup -->
+<script>
+  window.bfxTrackSignup = function (method) {
+    try {
+      if (typeof gtag === 'function') {
+        gtag('event', 'sign_up', { method: method || 'email' });
+        // generate_lead = the GA4 "Lead Gen Key Event" that powers Qualified Leads
+        gtag('event', 'generate_lead', { currency: 'USD', value: 5, lead_source: 'lms_signup', method: method || 'email' });
+        gtag('event', 'student_signup', { method: method || 'email' });
+      }
+      (window.dataLayer = window.dataLayer || []).push({ event: 'student_signup', method: method || 'email' });
+    } catch (e) {}
+  };
+</script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:#090909;color:#e2e8f0;font-family:'Inter',-apple-system,sans-serif;line-height:1.6;min-height:100vh}
@@ -252,6 +288,7 @@
         if (res && res.error) throw res.error;
         if (mode === 'signup') {
           BFX.learn.syncBrevo('student_signup', { IS_STUDENT: 'true', SIGNUP_DATE: new Date().toISOString() }, { once: true, email: email, name: els.name.value.trim() });
+          window.bfxTrackSignup('email');
         }
         if (mode === 'signup' && res.data && !res.data.session) {
           setMsg('Account created — check your email to confirm, then log in.', 'ok');
@@ -370,6 +407,7 @@
           var created = user.created_at ? new Date(user.created_at).getTime() : 0;
           if (created && (Date.now() - created) < 5 * 60 * 1000) {
             BFX.learn.syncBrevo('student_signup', { IS_STUDENT: 'true', SIGNUP_DATE: new Date().toISOString() }, { once: true, email: user.email, name: (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || '' });
+            window.bfxTrackSignup('google');
           }
         } catch (e) {}
         // Every visit: refresh LAST_ACTIVE (powers re-engagement) — no sequence

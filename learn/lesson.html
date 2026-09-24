@@ -7,6 +7,28 @@
 <title>Lesson — BossFx Academy</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3R88HZB');</script>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFQ9P5KFSJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ZFQ9P5KFSJ');
+</script>
+<!-- Microsoft Clarity -->
+<script>
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window, document, "clarity", "script", "wnde2od79f");
+</script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:#090909;color:#e2e8f0;font-family:'Inter',-apple-system,sans-serif;line-height:1.65;min-height:100vh}
@@ -150,7 +172,11 @@
         act.innerHTML = '<a class="btn btn-done" id="enrollCta" href="' + info.course.enrollUrl + '">Enroll — ₦' + info.course.priceNGN.toLocaleString() + ' →</a>' +
           '<a class="btn btn-ghost" href="index.html">Back to My Learning</a>';
         var ecta = document.getElementById('enrollCta');
-        if (ecta) ecta.onclick = function () { BFX.learn.syncBrevo('checkout_started', { IS_STUDENT: 'true', CHECKOUT_STARTED: new Date().toISOString() }, { noSeq: true, email: user.email }); };
+        if (ecta) ecta.onclick = function () {
+          BFX.learn.syncBrevo('checkout_started', { IS_STUDENT: 'true', CHECKOUT_STARTED: new Date().toISOString() }, { noSeq: true, email: user.email });
+          try { if (typeof gtag === 'function') gtag('event', 'begin_checkout', { currency: 'NGN', value: (info.course && info.course.priceNGN) || 0, items: [{ item_id: 'forex-101', item_name: 'Forex 101' }] }); } catch (e) {}
+          try { (window.dataLayer = window.dataLayer || []).push({ event: 'begin_checkout', product: 'forex-101' }); } catch (e) {}
+        };
         var pv = document.getElementById('prevLink'), nx = document.getElementById('nextLink');
         pv.classList.add('hide'); nx.classList.add('hide');
         show(view);
@@ -248,9 +274,12 @@
         BFX.learn.markComplete(user.id, courseId, lessonId, target).then(function (res) {
           if (res && res.error) throw res.error;
           isDone = target; paint();
-          // P2: finishing the last free module without enrolling → conversion journey
-          if (target && lessonId === 'module-03' && !enrolled) {
+          // P2: finishing the last FREE module (freeCount-aware) without enrolling → conversion journey
+          var isLastFree = info && info.lesson && info.course && (info.lesson.n === info.course.freeCount);
+          if (target && isLastFree && !enrolled) {
             BFX.learn.syncBrevo('free_completed', { IS_STUDENT: 'true', FREE_COMPLETED_AT: new Date().toISOString() }, { once: true, email: user.email });
+            try { if (typeof gtag === 'function') gtag('event', 'tutorial_complete', { content_type: 'free_modules', lead_source: 'free_completed' }); } catch (e) {}
+            try { (window.dataLayer = window.dataLayer || []).push({ event: 'free_completed' }); } catch (e) {}
           }
           dmsg.textContent = target ? 'Saved to your progress.' : 'Marked incomplete.';
           setTimeout(function(){ dmsg.textContent=''; }, 2500);
