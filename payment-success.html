@@ -1038,19 +1038,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
         }
 
-        // Fire analytics immediately (don't wait for verification)
+        // Fire the lead signal immediately, but DEFER `purchase` until the amount is
+        // verified below (prevents GA4 double-counting revenue). Fallback: if there's
+        // no transaction_id to verify against, fire purchase once here instead.
         if (typeof gtag === 'function') {
-            gtag('event', 'purchase', {
-                transaction_id: tid || ref || '',
-                value: 0,
-                currency: 'NGN',
-                items: [{ item_name: productNames[product] || product || 'unknown' }]
-            });
             gtag('event', 'generate_lead', {
                 currency: 'NGN',
                 value: 0,
                 lead_source: 'payment_complete'
             });
+            if (!tid) {
+                gtag('event', 'purchase', {
+                    transaction_id: ref || '',
+                    value: 0,
+                    currency: 'NGN',
+                    items: [{ item_name: productNames[product] || product || 'unknown' }]
+                });
+            }
         }
 
         window.dataLayer = window.dataLayer || [];
