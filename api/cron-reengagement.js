@@ -39,8 +39,32 @@ module.exports = async function handler(req, res) {
         return res.status(500).json({ error: 'BREVO_API_KEY not set' });
     }
 
+    // --- Supabase keep-alive ---
+    // Free-tier Supabase projects pause after ~7 days of inactivity (which takes
+    // down /learn/ auth + the LMS). This daily cron already runs, so a tiny read
+    // here counts as activity and keeps the project from ever pausing. Best-effort:
+    // never let it break the re-engagement job.
+    let supabaseKeepAlive = 'skipped';
+    try {
+        const sbUrl = process.env.SUPABASE_URL;
+        const sbKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+        if (sbUrl && sbKey) {
+            const r = await fetch(`${sbUrl}/rest/v1/orders?select=id&limit=1`, {
+                headers: { apikey: sbKey, Authorization: `Bearer ${sbKey}` }
+            });
+            supabaseKeepAlive = `http_${r.status}`;
+            console.log(`[cron] Supabase keep-alive: HTTP ${r.status}`);
+        } else {
+            console.warn('[cron] Supabase keep-alive: SUPABASE_URL / key not set');
+        }
+    } catch (err) {
+        supabaseKeepAlive = 'error';
+        console.warn('[cron] Supabase keep-alive failed:', err.message);
+    }
+
     const results = {
         timestamp: new Date().toISOString(),
+        supabase_keep_alive: supabaseKeepAlive,
         drip: { processed: 0, skipped: 0, errors: [] },
         reengagement: { processed: 0, skipped: 0, errors: [] },
         total_contacts_checked: 0
