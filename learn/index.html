@@ -139,6 +139,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div class="or-divider"><span>or</span></div>
       <form id="authForm">
         <div class="field" id="nameField" style="display:none"><input id="fName" type="text" placeholder="Your name" autocomplete="name"></div>
+        <div class="field" id="phoneField" style="display:none"><input id="fPhone" type="tel" inputmode="tel" placeholder="WhatsApp number (e.g. 0803…) — for trade alerts" autocomplete="tel"></div>
         <div class="field"><input id="fEmail" type="email" placeholder="Email address" autocomplete="email" required></div>
         <div class="field"><input id="fPass" type="password" placeholder="Password (min 6 chars)" autocomplete="current-password" required></div>
         <button class="btn" type="submit" id="authBtn" style="width:100%">Log in</button>
@@ -197,6 +198,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       pass: document.getElementById('fPass'),
       name: document.getElementById('fName'),
       nameField: document.getElementById('nameField'),
+      phone: document.getElementById('fPhone'),
+      phoneField: document.getElementById('phoneField'),
       btn: document.getElementById('authBtn'),
       msg: document.getElementById('authMsg'),
       google: document.getElementById('googleBtn'),
@@ -257,6 +260,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       els.sub.textContent = login ? 'Log in to continue your learning.' : 'Track your progress through every module — free.';
       els.btn.textContent = login ? 'Log in' : 'Create account';
       els.nameField.style.display = login ? 'none' : 'block';
+      if (els.phoneField) els.phoneField.style.display = login ? 'none' : 'block';
       els.switch.innerHTML = login
         ? 'New here? <a href="#" id="goSignup">Create a free account →</a>'
         : 'Already have an account? <a href="#" id="goLogin">Log in →</a>';
@@ -276,18 +280,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     // Open the "Create account" tab directly when routed here to sign up
     try { if (/[?&]signup=1/.test(location.search) || location.hash === '#signup') setMode('signup'); } catch (e) {}
 
+    // Normalize a phone number to E.164 (Nigeria-aware); returns '' if not plausible
+    function normalizePhone(raw) {
+      if (!raw) return '';
+      var s = String(raw).replace(/[^\d+]/g, '');
+      if (!s) return '';
+      if (s.charAt(0) === '+') { /* already international */ }
+      else if (s.indexOf('00') === 0) s = '+' + s.slice(2);
+      else if (s.indexOf('234') === 0) s = '+' + s;
+      else if (s.charAt(0) === '0') s = '+234' + s.slice(1);      // 0803… → +234803…
+      else if (s.length === 10) s = '+234' + s;                    // 803… → +234803…
+      else s = '+' + s;
+      return /^\+\d{10,15}$/.test(s) ? s : '';                     // guard against junk
+    }
+
     els.form.addEventListener('submit', function (e) {
       e.preventDefault();
       var email = els.email.value.trim(), pass = els.pass.value;
+      var phone = (els.phone && els.phone.value) ? normalizePhone(els.phone.value) : '';
       if (!email || pass.length < 6) { setMsg('Enter a valid email and a 6+ character password.', 'err'); return; }
       els.btn.disabled = true; els.btn.textContent = mode === 'login' ? 'Logging in…' : 'Creating…';
+      var meta = { full_name: els.name.value.trim() };
+      if (phone) meta.phone = phone;
       var p = mode === 'login'
         ? BFX.auth.signInWithPassword(email, pass)
-        : BFX.auth.signUp(email, pass, { full_name: els.name.value.trim() });
+        : BFX.auth.signUp(email, pass, meta);
       p.then(function (res) {
         if (res && res.error) throw res.error;
         if (mode === 'signup') {
-          BFX.learn.syncBrevo('student_signup', { IS_STUDENT: 'true', SIGNUP_DATE: new Date().toISOString() }, { once: true, email: email, name: els.name.value.trim() });
+          var attrs = { IS_STUDENT: 'true', SIGNUP_DATE: new Date().toISOString() };
+          if (phone) { attrs.SMS = phone; attrs.WHATSAPP = phone; }
+          BFX.learn.syncBrevo('student_signup', attrs, { once: true, email: email, name: els.name.value.trim() });
           window.bfxTrackSignup('email');
         }
         if (mode === 'signup' && res.data && !res.data.session) {
