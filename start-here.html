@@ -461,6 +461,56 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </section>
 
     <!-- Final CTA -->
+    <section class="section" id="student-results">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-tag">Student Results</span>
+                <h2 class="section-title">It Clicks<br><span class="text-gradient">When You Have Structure</span></h2>
+                <p class="section-subtitle">A BossFx student on what changed when forex stopped being guesswork.</p>
+            </div>
+            <div class="testi-grid">
+                <div class="testi-copy">
+                    <blockquote class="testi-quote">"I stopped seeing forex as guesswork. I started seeing it as something that required skill, knowledge and proper risk management."</blockquote>
+                    <p class="testi-attr">— BossFx Academy student <span>· Forex 101</span></p>
+                    <a href="learn/?utm_source=start-here&utm_medium=testimonial&utm_campaign=forex101" class="btn btn-primary">Start free &rarr;</a>
+                </div>
+                <div class="testi-video">
+                    <div class="bfx-video-facade" data-src="/media/testimonials/forex101-student.mp4" role="button" tabindex="0" aria-label="Play student testimonial">
+                        <span class="bfx-play"><svg width="30" height="30" viewBox="0 0 24 24" fill="#04140d"><path d="M8 5v14l11-7z"/></svg></span>
+                        <span class="bfx-cap">Student testimonial &middot; 35s</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>
+          .testi-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;max-width:980px;margin:0 auto}
+          .testi-quote{font-family:'Space Grotesk',sans-serif;font-size:1.55rem;line-height:1.4;color:#f1f5f9;border-left:4px solid var(--green-400);padding-left:22px;margin:0 0 18px}
+          .testi-attr{color:var(--text-muted);font-weight:600;margin:0 0 24px}
+          .testi-attr span{color:var(--green-400)}
+          .testi-video{display:flex;justify-content:center}
+          .bfx-video-facade{position:relative;width:100%;max-width:300px;aspect-ratio:9/16;border-radius:20px;overflow:hidden;border:1px solid var(--border-light);background:radial-gradient(120% 80% at 50% 0,rgba(16,185,129,.20),#0a0f0c);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+          .bfx-video-facade .bfx-play{width:76px;height:76px;border-radius:50%;background:var(--green-400);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(16,185,129,.4);transition:transform .2s}
+          .bfx-video-facade:hover .bfx-play{transform:scale(1.08)}
+          .bfx-video-facade .bfx-cap{color:#eaf2ee;font-weight:600;font-size:.95rem;font-family:'Space Grotesk',sans-serif;text-align:center;padding:0 16px}
+          .bfx-video-facade.playing{background:#000;cursor:default}
+          @media(max-width:820px){.testi-grid{grid-template-columns:1fr;gap:28px}.testi-quote{font-size:1.3rem}}
+        </style>
+        <script>
+          (function(){
+            function wire(el){ if(!el||el.dataset.wired)return; el.dataset.wired='1';
+              el.addEventListener('click',function(){ if(el.classList.contains('playing'))return;
+                var src=el.getAttribute('data-src'); if(!src)return;
+                var v=document.createElement('video'); v.src=src; v.controls=true; v.setAttribute('playsinline',''); v.playsInline=true; v.preload='auto';
+                v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;border:0';
+                v.onerror=function(){ el.classList.remove('playing'); el.innerHTML='<span class="bfx-cap">Testimonial coming soon.</span>'; };
+                el.innerHTML=''; el.appendChild(v); el.classList.add('playing'); var p=v.play(); if(p&&p.catch)p.catch(function(){});
+              });
+            }
+            document.querySelectorAll('.bfx-video-facade').forEach(wire);
+          })();
+        </script>
+    </section>
+
     <section class="section section-dark">
         <div class="container">
             <div class="mission-banner">
