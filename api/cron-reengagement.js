@@ -276,6 +276,22 @@ module.exports = async function handler(req, res) {
         console.error('[cron] Fatal error:', err.message);
     }
 
-    console.log(`[cron] Complete: drip=${results.drip.processed}, reengage=${results.reengagement.processed}`);
+    // --- Telegram: daily channel post (best-effort; never breaks the cron) ---
+    try {
+        const tgram = require('../lib/telegram');
+        const tgContent = require('../lib/telegram-content');
+        if (tgram.isConfigured() && tgram.channelId()) {
+            const post = tgContent.dailyPost();
+            const r = await tgram.sendMessage(tgram.channelId(), post.text, { reply_markup: post.reply_markup });
+            results.telegram = (r && r.ok) ? 'posted' : 'failed';
+        } else {
+            results.telegram = 'skipped';
+        }
+    } catch (e) {
+        results.telegram = 'error';
+        console.warn('[cron] Telegram daily post failed:', e.message);
+    }
+
+    console.log(`[cron] Complete: drip=${results.drip.processed}, reengage=${results.reengagement.processed}, telegram=${results.telegram}`);
     return res.status(200).json(results);
 };
