@@ -166,38 +166,108 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             gap: 16px;
             margin-bottom: 40px;
         }
+        .modules-hint {
+            text-align: center;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            margin: -8px 0 22px;
+        }
+        .modules-hint b { color: var(--green-400); }
         .module-item {
-            background: rgba(16, 185, 129, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
             display: flex;
-            gap: 14px;
-            align-items: flex-start;
-            transition: all 0.2s;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
         }
         .module-item:hover {
-            border-color: var(--border-light);
-            background: rgba(16, 185, 129, 0.06);
+            transform: translateY(-3px);
+            border-color: var(--green-500);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
         }
+        .module-item:focus-visible {
+            outline: 2px solid var(--green-400);
+            outline-offset: 2px;
+        }
+        .mod-thumb {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: #0d1512;
+            overflow: hidden;
+        }
+        .mod-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.25s;
+        }
+        .module-item:hover .mod-thumb img { transform: scale(1.04); }
         .mod-num {
+            position: absolute;
+            top: 8px;
+            left: 8px;
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            color: var(--green-500);
-            background: rgba(16, 185, 129, 0.1);
-            padding: 5px 9px;
+            color: #fff;
+            background: rgba(4, 10, 7, 0.6);
+            padding: 3px 8px;
             border-radius: 6px;
-            flex-shrink: 0;
+        }
+        .mod-free {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #04120c;
+            background: var(--green-400);
+            padding: 3px 8px;
+            border-radius: 100px;
+        }
+        .module-item.locked .mod-thumb img { opacity: 0.5; }
+        .module-item.locked .mod-thumb::after {
+            content: "🔒";
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            background: rgba(4, 10, 7, 0.4);
+        }
+        .mod-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .mod-play svg { width: 44px; height: 44px; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5)); }
+        .module-item.free:hover .mod-play { opacity: 1; }
+        .mod-info {
+            padding: 14px 16px 18px;
         }
         .mod-info strong {
             display: block;
             font-size: 0.95rem;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
+            line-height: 1.3;
         }
         .mod-info span {
             font-size: 0.82rem;
             color: var(--text-secondary);
+            line-height: 1.4;
         }
         .flagship-cta {
             text-align: center;
@@ -442,19 +512,56 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="fs-item"><span class="fs-num">0</span><span class="fs-label">Prerequisites</span></div>
                     </div>
                 </div>
+                <p class="modules-hint">👆 Tap any module to open it inside <b>My Learning</b> — Modules&nbsp;1&nbsp;&amp;&nbsp;2 are <b>free</b>, no payment needed.</p>
                 <div class="modules-grid">
-                    <div class="module-item"><span class="mod-num">01</span><div class="mod-info"><strong>Introduction to Forex</strong><span>What forex is, how it works, and why it matters</span></div></div>
-                    <div class="module-item"><span class="mod-num">02</span><div class="mod-info"><strong>Currency Pairs & Quotes</strong><span>Understanding majors, minors, and exotics</span></div></div>
-                    <div class="module-item"><span class="mod-num">03</span><div class="mod-info"><strong>Market Structure 101</strong><span>How price moves and market phases</span></div></div>
-                    <div class="module-item"><span class="mod-num">04</span><div class="mod-info"><strong>Market Sessions & Volatility</strong><span>Trading the right sessions at the right time</span></div></div>
-                    <div class="module-item"><span class="mod-num">05</span><div class="mod-info"><strong>Risk Management</strong><span>Protect your capital — the #1 rule</span></div></div>
-                    <div class="module-item"><span class="mod-num">06</span><div class="mod-info"><strong>Trading Psychology</strong><span>Master your mindset and emotions</span></div></div>
-                    <div class="module-item"><span class="mod-num">07</span><div class="mod-info"><strong>Technical Analysis Foundations</strong><span>Reading charts like a professional</span></div></div>
-                    <div class="module-item"><span class="mod-num">08</span><div class="mod-info"><strong>Candlestick Patterns</strong><span>Price action and pattern recognition</span></div></div>
-                    <div class="module-item"><span class="mod-num">09</span><div class="mod-info"><strong>Support & Resistance</strong><span>Key levels and zones that matter</span></div></div>
-                    <div class="module-item"><span class="mod-num">10</span><div class="mod-info"><strong>Trading Strategies</strong><span>Fibonacci, moving averages, and intraday setups</span></div></div>
-                    <div class="module-item"><span class="mod-num">11</span><div class="mod-info"><strong>Building Your Trading Plan</strong><span>Your personal roadmap to execution</span></div></div>
-                    <div class="module-item"><span class="mod-num">12</span><div class="mod-info"><strong>Live Trading & Journaling</strong><span>Execute, track, and improve every trade</span></div></div>
+                    <a class="module-item free" href="learn/lesson.html?course=forex-101&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 01: Introduction to Forex — free, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-01.jpg" alt="Introduction to Forex preview"><span class="mod-num">01</span><span class="mod-free">FREE</span><span class="mod-play"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="rgba(16,185,129,0.92)"/><path d="M10 8l6 4-6 4z" fill="#04120c"/></svg></span></span>
+                        <span class="mod-info"><strong>Introduction to Forex</strong><span>What forex is, how it works, and why it matters</span></span>
+                    </a>
+                    <a class="module-item free" href="learn/lesson.html?course=forex-101&amp;lesson=module-02&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 02: Currency Pairs and Quotes — free, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-02.jpg" alt="Currency Pairs and Quotes preview"><span class="mod-num">02</span><span class="mod-free">FREE</span><span class="mod-play"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="rgba(16,185,129,0.92)"/><path d="M10 8l6 4-6 4z" fill="#04120c"/></svg></span></span>
+                        <span class="mod-info"><strong>Currency Pairs &amp; Quotes</strong><span>Understanding majors, minors, and exotics</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-03&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 03: Market Structure 101 — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-03.jpg" alt="Market Structure 101 preview"><span class="mod-num">03</span></span>
+                        <span class="mod-info"><strong>Market Structure 101</strong><span>How price moves and market phases</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-04&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 04: Market Sessions and Volatility — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-04.jpg" alt="Market Sessions and Volatility preview"><span class="mod-num">04</span></span>
+                        <span class="mod-info"><strong>Market Sessions &amp; Volatility</strong><span>Trading the right sessions at the right time</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-05&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 05: Risk Management — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-05.jpg" alt="Risk Management preview"><span class="mod-num">05</span></span>
+                        <span class="mod-info"><strong>Risk Management</strong><span>Protect your capital — the #1 rule</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-06&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 06: Trading Psychology — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-06.jpg" alt="Trading Psychology preview"><span class="mod-num">06</span></span>
+                        <span class="mod-info"><strong>Trading Psychology</strong><span>Master your mindset and emotions</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-07&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 07: Technical Analysis Foundations — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-07.jpg" alt="Technical Analysis Foundations preview"><span class="mod-num">07</span></span>
+                        <span class="mod-info"><strong>Technical Analysis Foundations</strong><span>Reading charts like a professional</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-08&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 08: Candlestick Patterns — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-08.jpg" alt="Candlestick Patterns preview"><span class="mod-num">08</span></span>
+                        <span class="mod-info"><strong>Candlestick Patterns</strong><span>Price action and pattern recognition</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-09&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 09: Support and Resistance — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-09.jpg" alt="Support and Resistance preview"><span class="mod-num">09</span></span>
+                        <span class="mod-info"><strong>Support &amp; Resistance</strong><span>Key levels and zones that matter</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-10&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 10: Trading Strategies — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-10.jpg" alt="Trading Strategies preview"><span class="mod-num">10</span></span>
+                        <span class="mod-info"><strong>Trading Strategies</strong><span>Fibonacci, moving averages, and intraday setups</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-11&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 11: Building Your Trading Plan — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-11.jpg" alt="Building Your Trading Plan preview"><span class="mod-num">11</span></span>
+                        <span class="mod-info"><strong>Building Your Trading Plan</strong><span>Your personal roadmap to execution</span></span>
+                    </a>
+                    <a class="module-item locked" href="learn/lesson.html?course=forex-101&amp;lesson=module-12&amp;utm_source=courses&amp;utm_medium=module&amp;utm_campaign=forex101" aria-label="Module 12: Live Trading and Journaling — unlock with Forex 101, opens in My Learning">
+                        <span class="mod-thumb"><img loading="lazy" src="/media/thumbs/module-12.jpg" alt="Live Trading and Journaling preview"><span class="mod-num">12</span></span>
+                        <span class="mod-info"><strong>Live Trading &amp; Journaling</strong><span>Execute, track, and improve every trade</span></span>
+                    </a>
                 </div>
                 <div class="flagship-cta">
                     <div class="urgency-banner" style="margin-bottom: 20px;">
