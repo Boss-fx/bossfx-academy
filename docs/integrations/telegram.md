@@ -47,15 +47,17 @@ Channel → Administrators → Add Admin → your bot → enable **Post Messages
 
 ### 4. Register the webhook (one-time)
 ```bash
-curl "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://www.bossfxcademy.com/api/telegram-webhook&secret_token=<TELEGRAM_WEBHOOK_SECRET>"
+curl "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://bossfxcademy.com/api/telegram-webhook&secret_token=<TELEGRAM_WEBHOOK_SECRET>"
 ```
 Check it: `https://api.telegram.org/bot<TOKEN>/getWebhookInfo`.
 
+> ⚠️ **Use the apex host `bossfxcademy.com`, NOT `www.`** — `www.` issues a 308 redirect, and Telegram does **not** follow redirects on webhook delivery, so a `www.` webhook silently drops every update (commands, `/start`, new-member welcome). If `getWebhookInfo` shows a `www.` url, re-run `setWebhook` with the apex url above.
+
 ### 5. Test
 - Send `/free` to the bot (or in the channel) → it should reply with the free-course button.
-- On-demand post:
+- On-demand post (apex host + `-L`; `www.` 308-redirects):
 ```bash
-curl -X POST https://www.bossfxcademy.com/api/telegram-webhook \
+curl -fsSL -X POST https://bossfxcademy.com/api/telegram-webhook \
   -H "Authorization: Bearer <TELEGRAM_WEBHOOK_SECRET>" \
   -H "Content-Type: application/json" \
   -d '{"type":"daily"}'
@@ -111,7 +113,7 @@ Run it by hand anytime: **GitHub → Actions → "Telegram session briefs" → R
 ### B. Trade signal cards (you push them)
 You stay the analyst — the bot is the broadcaster. Fire a formatted signal card (auto R:R + risk disclaimer) anytime:
 ```bash
-curl -X POST https://www.bossfxcademy.com/api/telegram-webhook \
+curl -fsSL -X POST https://bossfxcademy.com/api/telegram-webhook \
   -H "Authorization: Bearer <TELEGRAM_WEBHOOK_SECRET>" \
   -H "Content-Type: application/json" \
   -d '{"type":"signal","pair":"XAUUSD","direction":"buy","entry":3220,"sl":3210,"tp":3250,"reason":"Bounce off 4H demand + bullish session bias","session":"London"}'
