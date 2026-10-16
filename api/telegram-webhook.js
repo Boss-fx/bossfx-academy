@@ -93,6 +93,23 @@ async function adminPost(req, res) {
         case 'daily':   msg = C.dailyPost(); break;
         case 'promo':   msg = C.promoStep(Number(body.step) || 0); break;
         case 'welcome': msg = C.welcome(body.name || ''); break;
+        case 'session': {
+            // Scheduled market brief — pull live data from our own market-data API.
+            const which = body.which === 'ny' ? 'ny' : 'london';
+            let data = null;
+            try {
+                const mr = await fetch(`${tg.SITE}/api/market-data?type=all`);
+                if (mr.ok) data = await mr.json();
+            } catch (e) { console.warn('[telegram] market-data fetch failed:', e.message); }
+            msg = C.sessionBrief(which, data);
+            break;
+        }
+        case 'signal':
+            if (!body.pair || !body.direction || body.entry == null || body.sl == null || body.tp == null) {
+                return res.status(400).json({ error: 'pair, direction, entry, sl, tp required' });
+            }
+            msg = C.signalCard(body);
+            break;
         case 'crosspost':
             if (!body.title || !body.url) return res.status(400).json({ error: 'title and url required' });
             msg = C.crossPost({ title: body.title, url: body.url, kind: body.kind || 'video' });
