@@ -15,8 +15,7 @@
 |---|---|
 | `lib/telegram.js` | Bot API client (send, pin, keyboard, UTM links) |
 | `lib/telegram-content.js` | **All copy** — welcome, commands, daily tips, promo, cross-post |
-| `api/telegram-webhook.js` | Incoming updates (welcome, commands, buttons) |
-| `api/telegram-post.js` | Protected on-demand poster / cross-post |
+| `api/telegram-webhook.js` | Webhook (welcome, commands, buttons) **and** protected on-demand poster / cross-post |
 | `api/cron-reengagement.js` | Appends the daily channel post |
 
 > To change wording, edit **`lib/telegram-content.js`** only.
@@ -54,7 +53,7 @@ Check it: `https://api.telegram.org/bot<TOKEN>/getWebhookInfo`.
 - Send `/free` to the bot (or in the channel) → it should reply with the free-course button.
 - On-demand post:
 ```bash
-curl -X POST https://www.bossfxcademy.com/api/telegram-post \
+curl -X POST https://www.bossfxcademy.com/api/telegram-webhook \
   -H "Authorization: Bearer <TELEGRAM_WEBHOOK_SECRET>" \
   -H "Content-Type: application/json" \
   -d '{"type":"daily"}'
@@ -63,7 +62,7 @@ curl -X POST https://www.bossfxcademy.com/api/telegram-post \
 ---
 
 ## Cross-posting new content
-When you publish a video/blog, POST to `/api/telegram-post`:
+When you publish a video/blog, POST to `/api/telegram-webhook`:
 ```json
 { "type": "crosspost", "title": "Sunday Market Prep", "url": "https://youtu.be/…", "kind": "video", "pin": false }
 ```
