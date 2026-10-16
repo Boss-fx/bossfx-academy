@@ -42,7 +42,8 @@ jobs:
           fi
       - name: Post session brief
         run: |
-          curl -fsS -X POST "https://www.bossfxcademy.com/api/telegram-webhook" \
+          # Apex host (www. 308-redirects); -L follows any redirect, -f fails on 4xx/5xx.
+          curl -fsSL -X POST "https://bossfxcademy.com/api/telegram-webhook" \
             -H "Authorization: Bearer ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}" \
             -H "Content-Type: application/json" \
             -d "{\"type\":\"session\",\"which\":\"${{ steps.pick.outputs.which }}\"}"

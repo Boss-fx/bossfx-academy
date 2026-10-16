@@ -36,7 +36,8 @@ jobs:
             url="https://www.bossfxcademy.com/blog/${base}?utm_source=telegram&utm_medium=channel&utm_campaign=blog"
             payload=$(jq -cn --arg t "$title" --arg u "$url" '{type:"crosspost", title:$t, url:$u, kind:"blog"}')
             echo "Cross-posting: $title"
-            curl -fsS -X POST "https://www.bossfxcademy.com/api/telegram-webhook" \
+            # Apex host (www. 308-redirects); -L follows any redirect.
+            curl -fsSL -X POST "https://bossfxcademy.com/api/telegram-webhook" \
               -H "Authorization: Bearer ${SECRET}" \
               -H "Content-Type: application/json" \
               -d "$payload"
