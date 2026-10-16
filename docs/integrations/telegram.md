@@ -92,6 +92,45 @@ Run **`supabase/telegram-subscribers-schema.sql`** once in the Supabase SQL Edit
 
 > **Note:** `/start` only enrols people who DM the bot directly. Channel members aren't in private chat with the bot, so nudge them to message it (e.g. a channel post with a "Message the bot" button) to feed the DM funnel.
 
+---
+
+## Phase 3 — Market content automation (shipped)
+
+Three channel-content automations, all driven by **free GitHub Actions** (no Vercel cron used, so it sidesteps the Hobby once-a-day limit).
+
+### A. Twice-daily session briefs
+`.github/workflows/telegram-sessions.yml` fires on a schedule, hits the admin endpoint with `{type:"session", which}`, which pulls **live data from `/api/market-data?type=all`** (prices, sentiment, high-impact calendar) and posts a branded brief.
+
+| Time (UTC) | WAT | Brief |
+|---|---|---|
+| 07:00 Mon–Fri | 08:00 | London / European session open |
+| 13:00 Mon–Fri | 14:00 | London–New York overlap |
+
+Run it by hand anytime: **GitHub → Actions → "Telegram session briefs" → Run workflow** (pick london/ny). To change wording/instruments edit `sessionBrief()` / `BRIEF_MOVERS` in `lib/telegram-content.js`; to change times edit the `cron:` lines.
+
+### B. Trade signal cards (you push them)
+You stay the analyst — the bot is the broadcaster. Fire a formatted signal card (auto R:R + risk disclaimer) anytime:
+```bash
+curl -X POST https://www.bossfxcademy.com/api/telegram-webhook \
+  -H "Authorization: Bearer <TELEGRAM_WEBHOOK_SECRET>" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"signal","pair":"XAUUSD","direction":"buy","entry":3220,"sl":3210,"tp":3250,"reason":"Bounce off 4H demand + bullish session bias","session":"London"}'
+```
+`direction` = `buy`|`sell`. R:R is computed from entry/sl/tp. Card wording lives in `signalCard()`.
+
+### C. Auto blog cross-post
+`.github/workflows/telegram-blog.yml` runs when a new `blog/*.html` is pushed to `main`, extracts its `<title>`, and posts a cross-post card with a UTM-tagged link. Zero manual steps.
+
+### One-time setup for A–C
+Add the webhook secret as a **GitHub Actions repo secret** so the workflows can authenticate:
+**GitHub → repo → Settings → Secrets and variables → Actions → New repository secret**
+- Name: `TELEGRAM_WEBHOOK_SECRET`
+- Value: same string as the Vercel env var `TELEGRAM_WEBHOOK_SECRET`
+
+> Note: `/api/market-data` is fetched over the **apex** host (`bossfxcademy.com`); `www.` 308-redirects, so the bot uses the apex to get JSON directly.
+
+---
+
 ## Common issues
 | Symptom | Fix |
 |---|---|

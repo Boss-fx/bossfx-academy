@@ -1,0 +1,43 @@
+# ================================================================
+# Telegram blog cross-post — auto-announce new blog posts to the channel.
+# Fires when a new blog/*.html file is ADDED on main, extracts its <title>,
+# and pushes a cross-post card (with a UTM-tagged link) to the channel.
+#
+# Uses the same repo secret as the session workflow: TELEGRAM_WEBHOOK_SECRET.
+# ================================================================
+name: Telegram blog cross-post
+
+on:
+  push:
+    branches: [main]
+    paths: ['blog/*.html']
+
+jobs:
+  crosspost:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Cross-post newly added blog posts
+        env:
+          SECRET: ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}
+        run: |
+          set -e
+          added=$(git diff --name-only --diff-filter=A "${{ github.event.before }}" "${{ github.sha }}" -- 'blog/*.html' || true)
+          if [ -z "$added" ]; then echo "No newly added blog posts — nothing to cross-post."; exit 0; fi
+          echo "$added" | while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            base=$(basename "$f")
+            [ "$base" = "_template.html" ] && continue
+            # Pull the <title>, strip any " | BossFx…" / " – BossFx…" suffix.
+            title=$(sed -n 's/.*<title>\(.*\)<\/title>.*/\1/p' "$f" | head -1 | sed -E 's/ *[|–—-] *BossFx.*$//')
+            [ -z "$title" ] && title="New on the BossFx blog"
+            url="https://www.bossfxcademy.com/blog/${base}?utm_source=telegram&utm_medium=channel&utm_campaign=blog"
+            payload=$(jq -cn --arg t "$title" --arg u "$url" '{type:"crosspost", title:$t, url:$u, kind:"blog"}')
+            echo "Cross-posting: $title"
+            curl -fsS -X POST "https://www.bossfxcademy.com/api/telegram-webhook" \
+              -H "Authorization: Bearer ${SECRET}" \
+              -H "Content-Type: application/json" \
+              -d "$payload"
+          done

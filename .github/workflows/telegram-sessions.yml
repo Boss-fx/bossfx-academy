@@ -1,0 +1,48 @@
+# ================================================================
+# Telegram session briefs — twice-daily market posts to the channel.
+# Free scheduler (GitHub Actions) that hits the protected admin endpoint,
+# which pulls live data from /api/market-data and posts a session brief.
+#
+# Times are UTC (forex trades Mon–Fri):
+#   07:00 UTC  → London / European session open  (08:00 WAT)
+#   13:00 UTC  → London–New York overlap          (14:00 WAT)
+#
+# One-time setup: add repo secret TELEGRAM_WEBHOOK_SECRET
+#   GitHub → repo → Settings → Secrets and variables → Actions → New secret
+#   (same value as the Vercel env var TELEGRAM_WEBHOOK_SECRET).
+# Trigger manually anytime: Actions tab → this workflow → Run workflow.
+# ================================================================
+name: Telegram session briefs
+
+on:
+  schedule:
+    - cron: '0 7 * * 1-5'    # London / European session open
+    - cron: '0 13 * * 1-5'   # London–New York overlap
+  workflow_dispatch:
+    inputs:
+      which:
+        description: 'Which session brief to send'
+        type: choice
+        options: [london, ny]
+        default: london
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pick session from trigger
+        id: pick
+        run: |
+          if [ "${{ github.event.schedule }}" = "0 13 * * 1-5" ]; then
+            echo "which=ny" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" = "0 7 * * 1-5" ]; then
+            echo "which=london" >> "$GITHUB_OUTPUT"
+          else
+            echo "which=${{ github.event.inputs.which || 'london' }}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Post session brief
+        run: |
+          curl -fsS -X POST "https://www.bossfxcademy.com/api/telegram-webhook" \
+            -H "Authorization: Bearer ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"type\":\"session\",\"which\":\"${{ steps.pick.outputs.which }}\"}"
