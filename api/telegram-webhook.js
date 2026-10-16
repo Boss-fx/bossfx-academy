@@ -15,6 +15,7 @@
 
 const tg = require('../lib/telegram');
 const C = require('../lib/telegram-content');
+const store = require('../lib/telegram-store');
 
 module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -46,9 +47,23 @@ module.exports = async function handler(req, res) {
             return res.status(200).json({ ok: true });
         }
         if (update.message && typeof update.message.text === 'string' && update.message.text.startsWith('/')) {
+            const chat = update.message.chat;
             const cmd = update.message.text.slice(1).split(/[@\s]/)[0].toLowerCase();
+            const isPrivate = chat.type === 'private';
+            // DM funnel: /start in a private chat enrols the person in the drip.
+            if (isPrivate && cmd === 'start') {
+                await store.upsertStart({ id: chat.id, first_name: chat.first_name, username: chat.username });
+                const w = C.welcome(chat.first_name || '');
+                await tg.sendMessage(chat.id, w.text, { reply_markup: w.reply_markup });
+                return res.status(200).json({ ok: true, enrolled: true });
+            }
+            if (isPrivate && cmd === 'stop') {
+                await store.markStopped(chat.id);
+                await tg.sendMessage(chat.id, C.STOPPED.text);
+                return res.status(200).json({ ok: true, stopped: true });
+            }
             const resp = (C.COMMANDS[cmd] || C.COMMANDS.help)();
-            await tg.sendMessage(update.message.chat.id, resp.text, { reply_markup: resp.reply_markup });
+            await tg.sendMessage(chat.id, resp.text, { reply_markup: resp.reply_markup });
             return res.status(200).json({ ok: true });
         }
         if (update.callback_query) {
