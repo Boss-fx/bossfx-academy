@@ -292,6 +292,36 @@ module.exports = async function handler(req, res) {
         console.warn('[cron] Telegram daily post failed:', e.message);
     }
 
-    console.log(`[cron] Complete: drip=${results.drip.processed}, reengage=${results.reengagement.processed}, telegram=${results.telegram}`);
+    // --- Telegram DM funnel: advance each subscriber's free→paid drip ---
+    // Subscribers who sent /start to the bot get PROMO steps at these delays
+    // (hours after they joined). Best-effort; never breaks the cron.
+    const TG_DM_DELAYS = [24, 72]; // step 0 at +24h, step 1 at +72h
+    results.telegram_dm = { sent: 0, errors: [] };
+    try {
+        const tgram = require('../lib/telegram');
+        const tgContent = require('../lib/telegram-content');
+        const tgStore = require('../lib/telegram-store');
+        if (tgram.isConfigured()) {
+            const due = await tgStore.dueSubscribers(TG_DM_DELAYS);
+            for (const sub of due) {
+                const msg = tgContent.promoStep(sub.step);
+                if (!msg) { await tgStore.advance(sub.chat_id, sub.step, true); continue; }
+                const r = await tgram.sendMessage(sub.chat_id, msg.text, { reply_markup: msg.reply_markup });
+                if (r && r.ok) {
+                    const nextStep = sub.step + 1;
+                    await tgStore.advance(sub.chat_id, nextStep, nextStep >= tgContent.PROMO_LEN);
+                    results.telegram_dm.sent++;
+                } else if (r && r.error_code === 403) {
+                    // User blocked the bot — stop messaging them.
+                    await tgStore.markStopped(sub.chat_id);
+                }
+            }
+        }
+    } catch (e) {
+        results.telegram_dm.errors.push(e.message);
+        console.warn('[cron] Telegram DM drip failed:', e.message);
+    }
+
+    console.log(`[cron] Complete: drip=${results.drip.processed}, reengage=${results.reengagement.processed}, telegram=${results.telegram}, tg_dm=${results.telegram_dm.sent}`);
     return res.status(200).json(results);
 };
