@@ -4,18 +4,19 @@
 # post). Stateless: picks the post by date so it rotates through the
 # whole catalogue with no stored counter.
 #
-# Schedule (UTC → WAT +1): Mon/Wed/Fri/Sun at 17:00 UTC (18:00 WAT),
-# an evening slot for the Nigerian audience. Edit the cron lines to
-# change cadence. Uses the TELEGRAM_WEBHOOK_SECRET repo secret.
+# Schedule (UTC → WAT +1): Mon/Tue/Thu/Fri at 17:00 UTC (18:00 WAT),
+# an evening slot for the Nigerian audience (weekends are left for the
+# mindset posts). Edit the cron lines to change cadence.
+# Uses the TELEGRAM_WEBHOOK_SECRET repo secret.
 # ================================================================
 name: Telegram blog rotation
 
 on:
   schedule:
     - cron: '0 17 * * 1'   # Monday
-    - cron: '0 17 * * 3'   # Wednesday
+    - cron: '0 17 * * 2'   # Tuesday
+    - cron: '0 17 * * 4'   # Thursday
     - cron: '0 17 * * 5'   # Friday
-    - cron: '0 17 * * 0'   # Sunday
   workflow_dispatch:
     inputs:
       index:

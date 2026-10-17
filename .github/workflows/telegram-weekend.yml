@@ -1,0 +1,25 @@
+# ================================================================
+# Telegram weekend mindset — markets are closed Sat/Sun, so instead of
+# signals/briefs the channel gets a "mindset recharge" to harden the
+# winning psychology. Rotates through weekendPost() in telegram-content.js.
+#
+# Sat & Sun at 10:00 UTC (11:00 WAT). Uses the TELEGRAM_WEBHOOK_SECRET secret.
+# ================================================================
+name: Telegram weekend mindset
+
+on:
+  schedule:
+    - cron: '0 10 * * 6'   # Saturday
+    - cron: '0 10 * * 0'   # Sunday
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post the weekend mindset message
+        run: |
+          curl -fsSL -X POST "https://bossfxcademy.com/api/telegram-webhook" \
+            -H "Authorization: Bearer ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{"type":"weekend"}'

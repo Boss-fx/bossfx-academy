@@ -110,6 +110,7 @@ async function adminPost(req, res) {
             }
             msg = C.signalCard(body);
             break;
+        case 'weekend': msg = C.weekendPost(); break;
         case 'crosspost':
             if (!body.title || !body.url) return res.status(400).json({ error: 'title and url required' });
             msg = C.crossPost({ title: body.title, url: body.url, kind: body.kind || 'video' });
@@ -122,7 +123,10 @@ async function adminPost(req, res) {
             return res.status(400).json({ error: 'type must be daily|promo|welcome|crosspost|custom' });
     }
     if (!msg) return res.status(400).json({ error: 'nothing to send' });
-    const r = await tg.sendMessage(chat, msg.text, { reply_markup: msg.reply_markup, preview: body.preview });
+    // A signal (or any post) with a chart image → send the photo with the text as caption.
+    const r = msg.photo
+        ? await tg.sendPhoto(chat, msg.photo, msg.text, { reply_markup: msg.reply_markup })
+        : await tg.sendMessage(chat, msg.text, { reply_markup: msg.reply_markup, preview: body.preview });
     if (r.ok && body.pin && r.result && r.result.message_id) await tg.pinChatMessage(chat, r.result.message_id);
     return res.status(r.ok ? 200 : 502).json({ ok: r.ok, message_id: r.result && r.result.message_id, pinned: !!(r.ok && body.pin) });
 }
