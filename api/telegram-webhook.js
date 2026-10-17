@@ -111,6 +111,12 @@ async function adminPost(req, res) {
             msg = C.signalCard(body);
             break;
         case 'weekend': msg = C.weekendPost(); break;
+        case 'levels': {
+            const levels = require('../lib/market-levels');
+            const data = await levels.getLevels(body.symbol || 'XAU/USD');
+            msg = C.levelsCard(data);
+            break;
+        }
         case 'crosspost':
             if (!body.title || !body.url) return res.status(400).json({ error: 'title and url required' });
             msg = C.crossPost({ title: body.title, url: body.url, kind: body.kind || 'video', photo: body.photo });

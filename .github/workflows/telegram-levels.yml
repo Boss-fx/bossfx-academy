@@ -1,0 +1,27 @@
+# ================================================================
+# Telegram Key Levels — the auto layer under the founder's manual signals.
+# Posts the reference levels the BossFx method reads BEFORE each session:
+# prior-day High/Low + Asia-session High/Low/Mid (computed from TwelveData
+# in lib/market-levels.js). Not signals — the founder's signal cards follow.
+#
+# 30 min before each session brief: 06:30 & 12:30 UTC Mon–Fri.
+# Uses the TELEGRAM_WEBHOOK_SECRET repo secret.
+# ================================================================
+name: Telegram key levels
+
+on:
+  schedule:
+    - cron: '30 6 * * 1-5'    # before the London / European session
+    - cron: '30 12 * * 1-5'   # before the London–New York overlap
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post Key Levels to Watch
+        run: |
+          curl -fsSL -X POST "https://bossfxcademy.com/api/telegram-webhook" \
+            -H "Authorization: Bearer ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{"type":"levels","symbol":"XAU/USD"}'
