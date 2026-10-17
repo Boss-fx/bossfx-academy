@@ -33,8 +33,9 @@ jobs:
             # UTF-8-safe title: inner <title>, minus the " — BossFx Academy" suffix.
             title=$(perl -CSD -ne 'if(/<title>(.*?)<\/title>/s){ $t=$1; $t=~s/[\s|\p{Pd}]*BossFx\s+Academy\s*$//; $t=~s/^\s+|\s+$//g; print $t; last }' "$f")
             [ -z "$title" ] && title="New on the BossFx blog"
-            url="https://www.bossfxcademy.com/blog/${base}?utm_source=telegram&utm_medium=channel&utm_campaign=blog"
-            payload=$(jq -cn --arg t "$title" --arg u "$url" '{type:"crosspost", title:$t, url:$u, kind:"blog"}')
+            img=$(perl -CSD -ne 'if(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/){print $1; last}' "$f")
+            url="https://bossfxcademy.com/blog/${base}?utm_source=telegram&utm_medium=channel&utm_campaign=blog"
+            payload=$(jq -cn --arg t "$title" --arg u "$url" --arg p "$img" '{type:"crosspost", title:$t, url:$u, kind:"blog"} + (if $p=="" then {} else {photo:$p} end)')
             echo "Cross-posting: $title"
             # Apex host (www. 308-redirects); -L follows any redirect.
             curl -fsSL -X POST "https://bossfxcademy.com/api/telegram-webhook" \

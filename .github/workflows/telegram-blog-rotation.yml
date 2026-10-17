@@ -54,9 +54,11 @@ jobs:
           # (\p{Pd} = any Unicode dash, so em/en-dash and hyphen all strip cleanly).
           title=$(perl -CSD -ne 'if(/<title>(.*?)<\/title>/s){ $t=$1; $t=~s/[\s|\p{Pd}]*BossFx\s+Academy\s*$//; $t=~s/^\s+|\s+$//g; print $t; last }' "$f")
           [ -z "$title" ] && title="From the BossFx blog"
+          # Per-post hero image (the og:image), sent with the post as a photo card.
+          img=$(perl -CSD -ne 'if(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/){print $1; last}' "$f")
           url="https://bossfxcademy.com/blog/${base}?utm_source=telegram&utm_medium=channel&utm_campaign=blog_rotation"
-          payload=$(jq -cn --arg t "$title" --arg u "$url" '{type:"crosspost", title:$t, url:$u, kind:"blog"}')
-          echo "Rotation idx=$idx of $count → $title"
+          payload=$(jq -cn --arg t "$title" --arg u "$url" --arg p "$img" '{type:"crosspost", title:$t, url:$u, kind:"blog"} + (if $p=="" then {} else {photo:$p} end)')
+          echo "Rotation idx=$idx of $count → $title (img: ${img:-none})"
           curl -fsSL -X POST "https://bossfxcademy.com/api/telegram-webhook" \
             -H "Authorization: Bearer ${SECRET}" \
             -H "Content-Type: application/json" \

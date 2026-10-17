@@ -113,7 +113,7 @@ async function adminPost(req, res) {
         case 'weekend': msg = C.weekendPost(); break;
         case 'crosspost':
             if (!body.title || !body.url) return res.status(400).json({ error: 'title and url required' });
-            msg = C.crossPost({ title: body.title, url: body.url, kind: body.kind || 'video' });
+            msg = C.crossPost({ title: body.title, url: body.url, kind: body.kind || 'video', photo: body.photo });
             break;
         case 'custom':
             if (!body.text) return res.status(400).json({ error: 'text required' });

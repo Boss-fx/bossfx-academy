@@ -281,3 +281,26 @@
         display: none !important;
     }
 }
+
+/* Per-post hero image (sits between the header and the article body) */
+.blog-hero {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+.blog-hero img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 16px;
+    display: block;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.4);
+}
+@media (max-width: 768px) {
+    .blog-hero {
+        padding: 0 16px;
+    }
+    .blog-hero img {
+        border-radius: 12px;
+    }
+}
