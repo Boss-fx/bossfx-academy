@@ -30,8 +30,8 @@ jobs:
             [ -z "$f" ] && continue
             base=$(basename "$f")
             [ "$base" = "_template.html" ] && continue
-            # Pull the <title>, strip any " | BossFx…" / " – BossFx…" suffix.
-            title=$(sed -n 's/.*<title>\(.*\)<\/title>.*/\1/p' "$f" | head -1 | sed -E 's/ *[|–—-] *BossFx.*$//')
+            # UTF-8-safe title: inner <title>, minus the " — BossFx Academy" suffix.
+            title=$(perl -CSD -ne 'if(/<title>(.*?)<\/title>/s){ $t=$1; $t=~s/[\s|\p{Pd}]*BossFx\s+Academy\s*$//; $t=~s/^\s+|\s+$//g; print $t; last }' "$f")
             [ -z "$title" ] && title="New on the BossFx blog"
             url="https://www.bossfxcademy.com/blog/${base}?utm_source=telegram&utm_medium=channel&utm_campaign=blog"
             payload=$(jq -cn --arg t "$title" --arg u "$url" '{type:"crosspost", title:$t, url:$u, kind:"blog"}')

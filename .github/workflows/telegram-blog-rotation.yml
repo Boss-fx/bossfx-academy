@@ -1,0 +1,62 @@
+# ================================================================
+# Telegram blog rotation — drips the EXISTING blog library to the
+# channel ~4×/week (vs telegram-blog.yml which only fires on a NEW
+# post). Stateless: picks the post by date so it rotates through the
+# whole catalogue with no stored counter.
+#
+# Schedule (UTC → WAT +1): Mon/Wed/Fri/Sun at 17:00 UTC (18:00 WAT),
+# an evening slot for the Nigerian audience. Edit the cron lines to
+# change cadence. Uses the TELEGRAM_WEBHOOK_SECRET repo secret.
+# ================================================================
+name: Telegram blog rotation
+
+on:
+  schedule:
+    - cron: '0 17 * * 1'   # Monday
+    - cron: '0 17 * * 3'   # Wednesday
+    - cron: '0 17 * * 5'   # Friday
+    - cron: '0 17 * * 0'   # Sunday
+  workflow_dispatch:
+    inputs:
+      index:
+        description: 'Force a specific blog index (blank = auto by date)'
+        required: false
+        default: ''
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cross-post the next blog in rotation
+        env:
+          SECRET: ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}
+          FORCE_INDEX: ${{ github.event.inputs.index }}
+        run: |
+          set -e
+          # Ordered list of real blog posts (exclude the template). Newline list,
+          # no bash arrays — portable and avoids mapfile.
+          list=$(ls blog/*.html | grep -v '/_template.html' | sort)
+          count=$(printf '%s\n' "$list" | grep -c .)
+          if [ "$count" -eq 0 ]; then echo "No blog posts found"; exit 0; fi
+          if [ -n "$FORCE_INDEX" ]; then
+            idx=$(( FORCE_INDEX % count ))
+          else
+            # Days since epoch — each run day is distinct, so this rotates
+            # through the whole catalogue over ~6 weeks with no repeats close together.
+            epoch_day=$(( $(date -u +%s) / 86400 ))
+            idx=$(( epoch_day % count ))
+          fi
+          f=$(printf '%s\n' "$list" | sed -n "$(( idx + 1 ))p")
+          base=$(basename "$f")
+          # UTF-8-safe title: inner <title>, minus the " — BossFx Academy" suffix
+          # (\p{Pd} = any Unicode dash, so em/en-dash and hyphen all strip cleanly).
+          title=$(perl -CSD -ne 'if(/<title>(.*?)<\/title>/s){ $t=$1; $t=~s/[\s|\p{Pd}]*BossFx\s+Academy\s*$//; $t=~s/^\s+|\s+$//g; print $t; last }' "$f")
+          [ -z "$title" ] && title="From the BossFx blog"
+          url="https://bossfxcademy.com/blog/${base}?utm_source=telegram&utm_medium=channel&utm_campaign=blog_rotation"
+          payload=$(jq -cn --arg t "$title" --arg u "$url" '{type:"crosspost", title:$t, url:$u, kind:"blog"}')
+          echo "Rotation idx=$idx of $count → $title"
+          curl -fsSL -X POST "https://bossfxcademy.com/api/telegram-webhook" \
+            -H "Authorization: Bearer ${SECRET}" \
+            -H "Content-Type: application/json" \
+            -d "$payload"

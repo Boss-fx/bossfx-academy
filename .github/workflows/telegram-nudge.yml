@@ -1,0 +1,21 @@
+# ================================================================
+# Telegram channel nudge — posts a "message the bot" CTA to the
+# channel so members start a DM with the bot (feeds the DM funnel).
+# Manual only: Actions → "Telegram channel nudge" → Run workflow.
+# Re-run it every few weeks to keep feeding the funnel.
+# ================================================================
+name: Telegram channel nudge
+
+on:
+  workflow_dispatch:
+
+jobs:
+  nudge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post the "message the bot" nudge
+        run: |
+          curl -fsSL -X POST "https://bossfxcademy.com/api/telegram-webhook" \
+            -H "Authorization: Bearer ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{"type":"custom","text":"🎯 <b>Want your free Forex 101 — step by step?</b>\n\nMessage our bot and it walks you straight into Module 1. Free, no card, no fuss. Build the foundation the right way.","button":{"text":"💬 Start with the bot →","url":"https://t.me/BossFxAcademyBot?start=channel"}}'
