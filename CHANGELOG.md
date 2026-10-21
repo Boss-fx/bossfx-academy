@@ -15,6 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and [Sem
 ### Added
 - **Founder approval** — 30-min DM preview of every scheduled post with Post now / Skip; reply to add a "BossFx note"
 - **Founder DM commands** — `/signal` (plain-text template, optional chart photo, preview before posting), `/review`, `/today`, `/whoami`
+- **Chart snapshots** — branded PNG charts (candles + prior-day/Asia levels, signal position box) attached to Key Levels, Daily Review and photo-less `/signal` cards
 - **Daily Review** post after the overlap — how gold behaved at the Asia / prior-day levels, majors recap, one BossFx-method lesson
 - **Professional Trading Journal** (`resources/journals/trading-journal.html`) — free lead magnet, ninth resource in the magnet grid
   - Full trade CRUD with live R-multiple maths derived from prices, so it is symbol-agnostic (no pip tables or contract sizes): `R = (exit − entry) ÷ (entry − stop)`, inverted for shorts; falls back to `P/L ÷ risk` when prices are absent

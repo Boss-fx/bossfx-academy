@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@getbrevo/brevo": "^2.0.0-beta.4",
+    "@resvg/resvg-js": "^2.6.2",
     "@supabase/supabase-js": "^2.106.1",
     "dotenv": "^17.4.2"
   },

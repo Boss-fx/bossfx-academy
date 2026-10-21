@@ -79,7 +79,8 @@
   ],
   "functions": {
     "api/**/*.js": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": "assets/fonts/chart/**"
     }
   },
   "crons": [

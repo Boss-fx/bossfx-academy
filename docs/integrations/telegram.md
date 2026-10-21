@@ -153,6 +153,14 @@ London–NY overlap brief at 8 PM, after the window had closed). The timed posts
 Edit times in `SCHEDULE` (`lib/telegram-jobs.js`). Session-brief text ("opens 1 PM WAT") is computed, so it
 stays correct after the clocks change.
 
+### Chart snapshots (auto)
+Key Levels, the Daily Review and any `/signal` sent **without** a photo get a branded PNG chart
+(`lib/chart-image.js`): last 60 hourly candles from the same TwelveData call, prior-day H/L (blue),
+Asia H/M/L (amber) + shaded Asia window, current price, and for signals an entry/SL/TP position box.
+Rendered with `@resvg/resvg-js` + bundled Inter fonts (`assets/fonts/chart`, OFL). Supply/demand
+zones are NOT drawn (that's the founder's judgement) — attach your own chart for those.
+The preview upload's Telegram `file_id` is reused for the channel post. `TG_CHARTS=off` disables.
+
 ### Founder approval (default when `TELEGRAM_FOUNDER_ID` is set)
 - **30 min before** each post the bot DMs you a preview with **✅ Post now / ⏭ Skip**.
 - **Reply to the preview** with text → it's added to the post as "🎯 BossFx note".
