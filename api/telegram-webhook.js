@@ -25,7 +25,13 @@ module.exports = async function handler(req, res) {
     // ---- Mode 2: authenticated admin post / cross-post ----
     const auth = (req.headers['authorization'] || '').replace('Bearer ', '');
     if (auth) {
-        if (!secret || auth !== secret) return res.status(401).json({ error: 'Unauthorized' });
+        // The scheduler may use its own key (TELEGRAM_CRON_SECRET) — it can ONLY trigger a tick,
+        // so the main webhook secret never has to be copied into Supabase.
+        const cronKey = process.env.TELEGRAM_CRON_SECRET;
+        const isTick = (req.body || {}).type === 'tick';
+        const okMain = secret && auth === secret;
+        const okCron = cronKey && isTick && auth === cronKey;
+        if (!okMain && !okCron) return res.status(401).json({ error: 'Unauthorized' });
         if (!tg.isConfigured() || !tg.channelId()) return res.status(500).json({ error: 'Telegram not configured' });
         // Scheduler heartbeat (Supabase pg_cron, every 5 min) — posts whatever is due, on time.
         if ((req.body || {}).type === 'tick') {
