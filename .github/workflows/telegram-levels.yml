@@ -10,9 +10,8 @@
 name: Telegram key levels
 
 on:
-  schedule:
-    - cron: '30 6 * * 1-5'    # before the London / European session
-    - cron: '30 12 * * 1-5'   # before the London–New York overlap
+  # Schedule moved to Supabase pg_cron → lib/telegram-jobs.js (GitHub cron ran 5–7 h late).
+  # This workflow is now a MANUAL fallback: Actions → Run workflow.
   workflow_dispatch:
 
 jobs:

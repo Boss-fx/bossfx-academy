@@ -8,9 +8,8 @@
 name: Telegram weekend mindset
 
 on:
-  schedule:
-    - cron: '0 10 * * 6'   # Saturday
-    - cron: '0 10 * * 0'   # Sunday
+  # Schedule moved to Supabase pg_cron → lib/telegram-jobs.js (GitHub cron ran 5–7 h late).
+  # This workflow is now a MANUAL fallback: Actions → Run workflow.
   workflow_dispatch:
 
 jobs:

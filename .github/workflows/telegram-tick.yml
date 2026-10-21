@@ -1,0 +1,24 @@
+# ================================================================
+# Telegram tick — BACKUP heartbeat for the scheduled channel posts.
+# The primary scheduler is Supabase pg_cron (supabase/telegram-jobs-schema.sql),
+# which fires on the minute. GitHub cron can run hours late, so this is only a
+# safety net: each tick is idempotent (every post is claimed once) and a slot is
+# never posted more than 60 min late. Uses the TELEGRAM_WEBHOOK_SECRET secret.
+# ================================================================
+name: Telegram tick (backup)
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tick the bot scheduler
+        run: |
+          curl -fsSL -X POST "https://bossfxcademy.com/api/telegram-webhook" \
+            -H "Authorization: Bearer ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{"type":"tick"}'

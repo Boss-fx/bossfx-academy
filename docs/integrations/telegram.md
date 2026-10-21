@@ -98,7 +98,7 @@ Run **`supabase/telegram-subscribers-schema.sql`** once in the Supabase SQL Edit
 
 ## Phase 3 — Market content automation (shipped)
 
-Three channel-content automations, all driven by **free GitHub Actions** (no Vercel cron used, so it sidesteps the Hobby once-a-day limit).
+Three channel-content automations, originally driven by **free GitHub Actions** (timed posts moved to pg_cron in Phase 4 — see below) (no Vercel cron used, so it sidesteps the Hobby once-a-day limit).
 
 ### A. Twice-daily session briefs
 `.github/workflows/telegram-sessions.yml` fires on a schedule, hits the admin endpoint with `{type:"session", which}`, which pulls **live data from `/api/market-data?type=all`** (prices, sentiment, high-impact calendar) and posts a branded brief.
@@ -130,6 +130,67 @@ Add the webhook secret as a **GitHub Actions repo secret** so the workflows can 
 - Value: same string as the Vercel env var `TELEGRAM_WEBHOOK_SECRET`
 
 > Note: `/api/market-data` is fetched over the **apex** host (`bossfxcademy.com`); `www.` 308-redirects, so the bot uses the apex to get JSON directly.
+
+---
+
+## Phase 4 — On-time scheduler + founder controls (shipped)
+
+**Problem it fixes:** GitHub Actions cron ran **5–7 hours late** (London brief landing at 3 PM WAT, the
+London–NY overlap brief at 8 PM, after the window had closed). The timed posts now run from
+**Supabase `pg_cron`**, which fires on the minute and calls the bot every 5 minutes (`{type:"tick"}`).
+`lib/telegram-jobs.js` decides what's due and records every post in `telegram_jobs` (no double-posts).
+
+### Schedule (market clocks → follows UK/US daylight saving automatically)
+| Post | Market time | WAT until 25 Oct | WAT 25 Oct–1 Nov | WAT from 1 Nov |
+|---|---|---|---|---|
+| Key Levels (London) | 07:30 London | 07:30 | 08:30 | 08:30 |
+| London Open brief | 08:00 London | 08:00 | 09:00 | 09:00 |
+| Key Levels (NY) | 07:00 New York | 12:00 | 12:00 | 13:00 |
+| London–NY Overlap brief | 07:30 New York (30 min before NY opens) | 12:30 | 12:30 | 13:30 |
+| **Daily Review** (new) | 12:30 New York (after the overlap) | 17:30 | 17:30 | 18:30 |
+| Weekend mindset | 11:00 Lagos, Sat & Sun | 11:00 | 11:00 | 11:00 |
+
+Edit times in `SCHEDULE` (`lib/telegram-jobs.js`). Session-brief text ("opens 1 PM WAT") is computed, so it
+stays correct after the clocks change.
+
+### Founder approval (default when `TELEGRAM_FOUNDER_ID` is set)
+- **30 min before** each post the bot DMs you a preview with **✅ Post now / ⏭ Skip**.
+- **Reply to the preview** with text → it's added to the post as "🎯 BossFx note".
+- No tap by post time → `TG_APPROVAL_FALLBACK=post` (default) posts it on time; `=skip` drops it.
+  A post is never sent more than 60 min late.
+- `TG_APPROVAL=off` → posts go straight to the channel, no previews.
+
+### Founder commands (DM the bot; only your chat id can use them)
+| Command | What it does |
+|---|---|
+| `/signal` | Posts your trade card (template below). Send as a **photo caption** to attach the chart. Always previews first — posts only on ✅. |
+| `/review your thoughts…` | Adds your words to today's Daily Review if it hasn't gone out yet; otherwise previews a standalone review card. |
+| `/today` | Today's posting schedule in WAT. |
+| `/help` | Founder help + signal template. |
+| `/whoami` | (anyone) shows your chat id — used to set `TELEGRAM_FOUNDER_ID`. |
+
+```
+/signal sell XAUUSD
+entry 4390
+sl 4402
+tp 4345
+tp2 4305
+session NY Overlap
+bias HTF bearish, lower highs from 4,400
+zone 2H supply 4,383–4,400
+invalid 2H close above 4,402
+why Swept Asia high, rejected supply
+```
+Only direction, pair, entry, sl, tp are required. `gold` works as a pair name. R:R is computed.
+
+### One-time setup
+1. **Vercel env:** `TELEGRAM_FOUNDER_ID` = your chat id (DM the bot `/whoami`). Optional: `TG_APPROVAL_FALLBACK=skip`. Redeploy.
+2. **Supabase → SQL Editor:** run `supabase/telegram-jobs-schema.sql` (paste your `TELEGRAM_WEBHOOK_SECRET` into it first).
+3. Check after 5 min: `select * from net._http_response order by created desc limit 3;` should show status 200.
+
+The old GitHub workflows (`telegram-sessions`, `telegram-levels`, `telegram-weekend`) no longer run on a
+schedule — they're kept as **manual** "Run workflow" fallbacks. `telegram-tick.yml` is a backup heartbeat
+(safe to overlap with pg_cron: every post is claimed once).
 
 ---
 
