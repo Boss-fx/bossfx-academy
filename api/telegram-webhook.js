@@ -16,6 +16,7 @@
 const tg = require('../lib/telegram');
 const C = require('../lib/telegram-content');
 const store = require('../lib/telegram-store');
+const jobs = require('../lib/telegram-jobs');
 
 module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -26,6 +27,11 @@ module.exports = async function handler(req, res) {
     if (auth) {
         if (!secret || auth !== secret) return res.status(401).json({ error: 'Unauthorized' });
         if (!tg.isConfigured() || !tg.channelId()) return res.status(500).json({ error: 'Telegram not configured' });
+        // Scheduler heartbeat (Supabase pg_cron, every 5 min) — posts whatever is due, on time.
+        if ((req.body || {}).type === 'tick') {
+            const done = await jobs.tick({ dry: !!req.body.dry });
+            return res.status(200).json({ ok: true, done });
+        }
         return adminPost(req, res);
     }
 
@@ -37,6 +43,16 @@ module.exports = async function handler(req, res) {
 
     const update = req.body || {};
     try {
+        // Founder controls in the bot DM: /signal, /review, /today, reply-to-preview notes.
+        if (update.message && update.message.chat && update.message.chat.type === 'private' &&
+            await jobs.founderMessage(update.message)) {
+            return res.status(200).json({ ok: true, founder: true });
+        }
+        // Approve / skip buttons on founder previews.
+        if (update.callback_query && await jobs.founderCallback(update.callback_query)) {
+            if (update.callback_query.data === 'noop') await tg.answerCallbackQuery(update.callback_query.id);
+            return res.status(200).json({ ok: true, founder: true });
+        }
         const nm = update.message && update.message.new_chat_members;
         if (Array.isArray(nm) && nm.length) {
             for (const m of nm) {
@@ -56,6 +72,10 @@ module.exports = async function handler(req, res) {
                 const w = C.welcome(chat.first_name || '');
                 await tg.sendMessage(chat.id, w.text, { reply_markup: w.reply_markup });
                 return res.status(200).json({ ok: true, enrolled: true });
+            }
+            if (isPrivate && cmd === 'whoami') {
+                await tg.sendMessage(chat.id, `Your Telegram chat id: <code>${chat.id}</code>\nSet it as <b>TELEGRAM_FOUNDER_ID</b> in Vercel to unlock founder controls.`);
+                return res.status(200).json({ ok: true });
             }
             if (isPrivate && cmd === 'stop') {
                 await store.markStopped(chat.id);
@@ -111,6 +131,13 @@ async function adminPost(req, res) {
             msg = C.signalCard(body);
             break;
         case 'weekend': msg = C.weekendPost(); break;
+        case 'review': {
+            const levels = require('../lib/market-levels');
+            let data = null;
+            try { const mr = await fetch(`${tg.SITE}/api/market-data?type=all`); if (mr.ok) data = await mr.json(); } catch (e) {}
+            msg = C.dailyReview(await levels.getLevels('XAU/USD'), data);
+            break;
+        }
         case 'levels': {
             const levels = require('../lib/market-levels');
             const data = await levels.getLevels(body.symbol || 'XAU/USD');
@@ -126,7 +153,7 @@ async function adminPost(req, res) {
             msg = { text: body.text, reply_markup: body.button ? tg.keyboard([[{ text: body.button.text, url: body.button.url }]]) : undefined };
             break;
         default:
-            return res.status(400).json({ error: 'type must be daily|promo|welcome|crosspost|custom' });
+            return res.status(400).json({ error: 'type must be daily|promo|welcome|session|signal|weekend|levels|review|crosspost|custom|tick' });
     }
     if (!msg) return res.status(400).json({ error: 'nothing to send' });
     // A signal (or any post) with a chart image → send the photo with the text as caption.
