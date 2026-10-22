@@ -25,6 +25,15 @@ module.exports = async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+    // --- Free bootcamp registration (WhatsApp-first; email optional) ---
+    // Lives here to stay under the Vercel Hobby function limit.
+    const src = String((req.body || {}).source || '');
+    if (src.startsWith('bootcamp')) {
+        const out = await require('../lib/bootcamp').register(req.body || {});
+        if (out.status !== 200 || !(req.body.email || '').includes('@')) return res.status(out.status).json(out.json);
+        // Has an email → fall through so Brevo gets the contact too (webinar list).
+    }
+
     // --- Environment validation ---
     const apiKey = process.env.BREVO_API_KEY;
     const envInfo = {
@@ -225,8 +234,8 @@ function mapSourceToList(source) {
     if (!source) return 'general';
     var s = source.toLowerCase();
 
-    // Webinar registrations
-    if (s.includes('webinar')) return 'webinar';
+    // Webinar + free bootcamp registrations
+    if (s.includes('webinar') || s.includes('bootcamp')) return 'webinar';
 
     // 30-Day Discipline Challenge
     if (s.includes('challenge') || s.includes('discipline')) return 'challenge';
