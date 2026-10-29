@@ -125,8 +125,44 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             box-shadow: 0 20px 60px rgba(0,0,0,0.35);
             overflow: hidden;
         }
-        .chart-shell { height: 640px; width: 100%; }
-        @media (max-width: 640px) { .chart-shell { height: 520px; } }
+        .chart-shell { height: clamp(540px, 86vh, 1040px); width: 100%; }
+        @media (max-width: 640px) { .chart-shell { height: 80vh; min-height: 460px; } }
+        .chart-toolbar {
+            max-width: 1180px;
+            margin: 0 auto 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .chart-toolbar-label { color: var(--gray-400); font-size: 0.85rem; font-weight: 600; }
+        .chart-fs-btn {
+            background: rgba(16,185,129,0.12);
+            border: 1px solid rgba(16,185,129,0.3);
+            color: var(--green-400);
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 9px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .chart-fs-btn:hover { background: var(--green-400); color: #04120c; }
+        /* Full-page expand (works in every browser/context) */
+        .chart-wrap.chart-expanded {
+            position: fixed; inset: 0; z-index: 99999;
+            width: 100vw; height: 100vh; max-width: none;
+            margin: 0; border-radius: 0; padding: 6px; background: #0a0f0c;
+        }
+        .chart-wrap.chart-expanded .chart-shell { height: calc(100vh - 12px); }
+        body.chart-noscroll { overflow: hidden; }
+        .chart-fs-exit {
+            display: none; position: fixed; top: 14px; right: 14px; z-index: 100001;
+            background: var(--green-400); color: #04120c; font-weight: 700; border: none;
+            padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+        }
+        body.chart-noscroll .chart-fs-exit { display: block; }
         .charts-sub {
             max-width: 1180px;
             margin: 24px auto 0;
@@ -240,7 +276,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
 
             <!-- Advanced interactive chart -->
-            <div class="chart-wrap">
+            <div class="chart-toolbar">
+                <span class="chart-toolbar-label">Gold (XAU/USD) · 4H · West Africa Time — scroll to zoom, drag to pan</span>
+                <button type="button" id="chartFsBtn" class="chart-fs-btn">⛶ Full screen</button>
+            </div>
+            <button type="button" id="chartFsExit" class="chart-fs-exit">⤢ Exit full screen (Esc)</button>
+            <div class="chart-wrap" id="chartFsTarget">
                 <div class="tradingview-widget-container chart-shell">
                     <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
                     <div class="tradingview-widget-copyright">
@@ -416,5 +457,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <script src="page-nav.js" defer></script>
+
+    <!-- Chart full-page expand -->
+    <script>
+    (function () {
+        var btn = document.getElementById('chartFsBtn');
+        var exitBtn = document.getElementById('chartFsExit');
+        var target = document.getElementById('chartFsTarget');
+        if (!btn || !target) return;
+        function expand() {
+            target.classList.add('chart-expanded');
+            document.body.classList.add('chart-noscroll');
+            // Native fullscreen too, where the browser allows it (hides browser chrome).
+            var req = target.requestFullscreen || target.webkitRequestFullscreen;
+            if (req) { try { req.call(target); } catch (e) {} }
+        }
+        function collapse() {
+            target.classList.remove('chart-expanded');
+            document.body.classList.remove('chart-noscroll');
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                var ex = document.exitFullscreen || document.webkitExitFullscreen;
+                if (ex) { try { ex.call(document); } catch (e) {} }
+            }
+        }
+        btn.addEventListener('click', expand);
+        if (exitBtn) exitBtn.addEventListener('click', collapse);
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && target.classList.contains('chart-expanded')) collapse();
+        });
+    })();
+    </script>
 </body>
 </html>
