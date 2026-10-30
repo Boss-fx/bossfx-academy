@@ -21,6 +21,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Geist+Mono:wght@400;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/testimonials.css">
 <style>
 :root{--bg:#0B0B0B;--panel:#141414;--line:#262626;--text:#F2F2F2;--muted:#9AA09C;--green:#00B450;--red:#F02828;--amber:#F5B400}
 *{box-sizing:border-box}
@@ -101,6 +102,20 @@ button[disabled]{opacity:.6;cursor:wait}
     <div class="err" id="err" role="alert"></div>
   </form>
 
+  <!-- Social proof + warm-up nudges (visible to everyone) -->
+  <div class="proof" style="margin:28px 0 0;text-align:center">
+    <div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--amber);margin-bottom:14px">★★★★★ REAL STUDENTS · REAL WORDS</div>
+    <div style="display:flex;justify-content:center">
+      <div class="bfx-video-facade" style="background-image:url('/media/testimonials/forex101-traders.jpg');background-size:cover;background-position:center;max-width:240px" data-src="/media/testimonials/forex101-traders.mp4" role="button" tabindex="0" aria-label="Play trader testimonials">
+        <span class="bfx-play"><svg width="24" height="24" viewBox="0 0 24 24" fill="#04170C"><path d="M8 5v14l11-7z"/></svg></span>
+        <span class="bfx-cap">Tap to hear BossFx traders</span>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:14px;margin:20px 0 10px">Can't wait for Day 1? Get a head start 👇</p>
+    <a class="btn2 g" href="/learn/?utm_source=bootcamp&utm_medium=warmup&utm_campaign=oshodi_nov26">🎓 Start Forex 101 — Module 1 free</a>
+    <a class="btn2" href="https://t.me/BossFxAcademyBot?start=bootcamp" target="_blank" rel="noopener">💬 Join the BossFx community on Telegram</a>
+  </div>
+
   <section class="done" id="done" aria-live="polite">
     <div class="card">
       <h2>You're in! 🎉</h2>
@@ -153,5 +168,6 @@ button[disabled]{opacity:.6;cursor:wait}
   document.getElementById('share').addEventListener('click', function () { dl('bootcamp_share'); });
 })();
 </script>
+<script src="/testimonials.js" defer></script>
 </body>
 </html>

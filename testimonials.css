@@ -1,0 +1,82 @@
+/* ================================================================
+   Shared BossFx video testimonial facade (click-to-play, poster-capable).
+   Self-contained — link on any page that shows trader testimonials.
+   Add a poster with inline style="background-image:url('….jpg')".
+   ================================================================ */
+.bfx-video-facade {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 9 / 16;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: radial-gradient(120% 80% at 50% 0, rgba(16, 185, 129, 0.20), #0a0f0c);
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0 auto;
+}
+.bfx-video-facade::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(4, 10, 8, 0.15) 0%, rgba(4, 10, 8, 0.45) 100%);
+    pointer-events: none;
+}
+.bfx-video-facade .bfx-play {
+    position: relative;
+    z-index: 1;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #16d67a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+    transition: transform 0.2s;
+}
+.bfx-video-facade:hover .bfx-play { transform: scale(1.08); }
+.bfx-video-facade .bfx-cap {
+    position: relative;
+    z-index: 1;
+    color: #eaf2ee;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: 'Space Grotesk', sans-serif;
+    text-align: center;
+    padding: 0 16px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+.bfx-video-facade.playing { background: #000; cursor: default; }
+.bfx-video-facade.playing::after { display: none; }
+
+/* Simple centered testimonial section + wall */
+.bfx-testi { text-align: center; }
+.bfx-testi .bfx-testi-eyebrow {
+    display: inline-block;
+    color: #16d67a;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.bfx-testi h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; margin: 0 0 8px; }
+.bfx-testi p.bfx-testi-sub { color: #94a3b8; font-size: 0.98rem; margin: 0 auto 24px; max-width: 540px; }
+.bfx-testi-wall {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+.bfx-testi-wall .bfx-video-facade { max-width: none; }
+.bfx-testi-wall .bfx-play { width: 50px; height: 50px; }
+@media (max-width: 680px) { .bfx-testi-wall { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
