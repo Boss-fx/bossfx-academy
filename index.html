@@ -263,7 +263,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     var p = v.play(); if(p && p.catch) p.catch(function(){});
                 });
             }
-            document.querySelectorAll('.bfx-video-facade').forEach(wire);
+            function initFacades(){ document.querySelectorAll('.bfx-video-facade').forEach(wire); }
+            if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', initFacades);
+            else initFacades();
         })();
     </script>
 

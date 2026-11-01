@@ -168,6 +168,6 @@ button[disabled]{opacity:.6;cursor:wait}
   document.getElementById('share').addEventListener('click', function () { dl('bootcamp_share'); });
 })();
 </script>
-<script src="/testimonials.js" defer></script>
+<script>(function(){function w(el){if(!el||el.dataset.wired)return;el.dataset.wired='1';el.addEventListener('click',function(){if(el.classList.contains('playing'))return;var s=el.getAttribute('data-src');if(!s)return;var v=document.createElement('video');v.src=s;v.controls=true;v.setAttribute('playsinline','');v.playsInline=true;v.preload='auto';v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;border:0';el.innerHTML='';el.appendChild(v);el.classList.add('playing');var p=v.play();if(p&&p.catch)p.catch(function(){});});}function i(){document.querySelectorAll('.bfx-video-facade').forEach(w);}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',i);else i();})();</script>
 </body>
 </html>
