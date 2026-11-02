@@ -59,6 +59,115 @@ BFX.learn = (function () {
                   summary: "Put it all together: check the higher-timeframe trend, wait for price at a key level, take the signal, set entry/stop/target at 1:2, size to 1% risk, then let the trade run your plan. A trade isn't finished until it's journaled — that's what builds a real edge.",
                   keyPoints: ["Top-down: trend first, then a level, then a signal", "No level, no trade — wait for your setup", "Enter with stop and target set (1:2), risking only 1%", "Once you're in, do nothing — follow the plan, don't fear-manage", "Journal every trade: pair, reason, screenshot and how you felt", "Your journal turns random trades into a repeatable edge"] }
             ]
+        },
+
+        // ---- Next-level courses (launching 2027) ----
+        // `status:'upcoming'` → not yet for sale: the free intro module is a
+        // readable teaser, the rest stay locked behind the waitlist (no video
+        // yet). Drop a `video` path/ID into a module and it goes live instantly.
+        'advanced-price-action': {
+            title: 'Advanced Price Action — Trade Like the Institutions',
+            blurb: 'Read raw price the way the banks do — order blocks, liquidity, fair value gaps and live chart mark-ups.',
+            priceNGN: 45000,
+            status: 'upcoming', launch: 'Q1 2027', waitlistSource: 'waitlist_advanced_price_action',
+            enrollUrl: '/courses.html#advanced-price-action',
+            freeCount: 1,
+            lessons: [
+                { id: 'module-01', n: '01', title: 'Beyond Indicators: Reading Raw Price', blurb: 'Why price itself beats every lagging indicator', video: '', free: true,
+                  summary: "Indicators lag because they're built from past price. Advanced price action skips the middle-man and reads what price itself is telling you — where big money entered, where the crowd got trapped, and where price is drawn next. This module resets how you see a chart.",
+                  keyPoints: ["Every indicator is just a formula on past price — price action reads the source", "Institutions can't hide: their size leaves a footprint on the chart", "You're learning to read intent, not to predict with certainty", "Clean charts beat cluttered ones — strip indicators, see structure", "This course builds on Forex 101 — master structure and risk first"] },
+                { id: 'module-02', n: '02', title: 'The Anatomy of an Institutional Move', blurb: 'Accumulation, expansion and distribution', video: '', free: false,
+                  summary: "Big players don't buy all at once — they accumulate quietly, push price, then distribute into the crowd. Learn the three phases of an institutional move and the candle signatures that mark each one, so you stop reacting late and start reading the move as it builds.",
+                  keyPoints: ["Price moves in three phases: accumulation, expansion, distribution", "Displacement (momentum) candles mark where big money stepped in", "Slow, overlapping candles = accumulation; wide, one-sided = intent", "The crowd buys the top of expansion — you want the origin", "Mark the move's origin; that's the level price tends to return to"] },
+                { id: 'module-03', n: '03', title: 'Order Blocks & Institutional Footprints', blurb: 'The exact zones where banks load positions', video: '', free: false,
+                  summary: "An order block is the last opposing candle before a strong move — the footprint of where institutions loaded their positions. Price often returns to that zone to fill remaining orders, giving you a precise, repeatable entry with tight risk.",
+                  keyPoints: ["An order block = the last down-candle before a strong up-move (and vice-versa)", "It marks unfilled institutional orders price tends to return to", "A valid order block is created by displacement away from it", "Mark the zone (open-to-wick), not a single line", "Enter on the return to the block; stop beyond it — tight risk, big reward"] },
+                { id: 'module-04', n: '04', title: 'Liquidity: Pools, Sweeps & Stop Hunts', blurb: 'Why your stop keeps getting hit — and how to use it', video: '', free: false,
+                  summary: "The market hunts liquidity — the clustered stop-losses sitting above highs and below lows. Big money drives price into those pools to fill large orders, then reverses. Once you see liquidity, the 'random' stop-outs stop looking random.",
+                  keyPoints: ["Liquidity sits where stops cluster: above old highs, below old lows", "A sweep (stop hunt) spikes through a level, then snaps back", "That snap-back is institutions filling against trapped traders", "Don't put your stop where everyone else does — it's a target", "A sweep into an order block is one of the highest-probability setups"] },
+                { id: 'module-05', n: '05', title: 'Fair Value Gaps & Imbalance', blurb: 'The gaps the crowd never sees', video: '', free: false,
+                  summary: "When price moves so fast it leaves a gap between candles, it creates an imbalance — a 'fair value gap' the market often returns to rebalance before continuing. FVGs hand you entries and targets most traders never notice.",
+                  keyPoints: ["An FVG is a 3-candle gap left by a fast, one-sided move (imbalance)", "Price tends to retrace to fill the gap, then continue the move", "An unfilled FVG acts as a magnet and a target", "FVG + order block in the same zone = strong confluence", "Not every gap fills — pair it with structure, never trade it alone"] },
+                { id: 'module-06', n: '06', title: 'Reading the Chart Like the Institutions', blurb: 'The top-down, multi-timeframe read', video: '', free: false,
+                  summary: "Pull it together across timeframes: the higher timeframe tells the story and the draw on liquidity, the lower timeframe times your entry. This is the top-down read that turns isolated concepts into one clear, tradeable bias.",
+                  keyPoints: ["Higher timeframe sets direction and the next liquidity target", "Drop down to find the order block or FVG that times your entry", "Trade toward liquidity, with the higher-timeframe story", "If timeframes disagree, the higher timeframe wins", "One clear narrative per pair — if you can't explain it simply, skip it"] },
+                { id: 'module-07', n: '07', title: 'Live Chart Mark-Ups with BossFx', blurb: 'The whole method applied to real charts', video: '', free: false,
+                  summary: "Watch the entire method applied to live charts, step by step: mark structure, spot the liquidity, find the order block or FVG, and plan the trade before it happens. This is where theory becomes a repeatable routine.",
+                  keyPoints: ["See the exact mark-up routine on real, recent charts", "Structure first, then liquidity, then entry zone — always in that order", "Plan the trade fully before entering: entry, stop, target", "Watch how invalid setups are filtered out, not forced", "Screenshot your own mark-ups and compare to the walkthroughs"] },
+                { id: 'module-08', n: '08', title: 'The Advanced Price Action Playbook', blurb: 'Your written, repeatable A+ setup', video: '', free: false,
+                  summary: "Turn the concepts into a written playbook: the exact conditions for your A+ setup, how you size and manage it, and how you review it. A method you can't write down is a method you can't repeat.",
+                  keyPoints: ["Define your A+ setup in writing: structure + liquidity + entry zone", "Pre-set entry, stop and target before the session — no improvising", "Risk 1% until the method is proven on your own journal", "Backtest 30–50 setups before trading it live", "Review weekly: what you followed, what you forced, what to cut"] }
+            ]
+        },
+
+        'smart-money-concepts': {
+            title: 'Smart Money Concepts — Trade With the Big Players',
+            blurb: 'Understand how institutions engineer price — market-maker models, BOS & CHoCH, premium/discount, and smart-money entries.',
+            priceNGN: 45000,
+            status: 'upcoming', launch: 'Q2 2027', waitlistSource: 'waitlist_smart_money_concepts',
+            enrollUrl: '/courses.html#smart-money-concepts',
+            freeCount: 1,
+            lessons: [
+                { id: 'module-01', n: '01', title: 'How the Big Players Move Price', blurb: 'The game behind the candles', video: '', free: true,
+                  summary: "Retail traders react to price; smart money creates it. This module reframes the market as a game of engineered moves, where institutions fill huge orders by trading against the crowd. Once you see the game, you stop being the exit liquidity.",
+                  keyPoints: ["'Smart money' = banks and institutions big enough to move price", "They need the crowd on the wrong side to fill their size", "Many retail habits (chasing breakouts) exist to be exploited", "SMC is a lens on structure and liquidity — not magic", "Build on Forex 101 structure; SMC refines it, doesn't replace it"] },
+                { id: 'module-02', n: '02', title: 'The Market-Maker Model & Manipulation', blurb: 'Accumulate, trap, expand', video: '', free: false,
+                  summary: "The market-maker model describes the cycle institutions repeat: accumulate a position quietly, manipulate price to trap the crowd, then expand toward their real target. Learn the cycle and you anticipate the fake-out instead of falling for it.",
+                  keyPoints: ["The cycle: accumulation → manipulation → distribution/expansion", "Manipulation is the fake move that traps breakout traders", "The real move usually comes AFTER the trap, the opposite way", "The 'Judas swing': an early false push before the true move", "Patience through the manipulation is the whole edge"] },
+                { id: 'module-03', n: '03', title: 'Break of Structure & Change of Character', blurb: 'Telling continuation from reversal', video: '', free: false,
+                  summary: "BOS confirms a trend is continuing; CHoCH is the first warning it's turning. Telling them apart — and knowing which swing points actually matter — is how you stay with smart money instead of fighting it.",
+                  keyPoints: ["Break of Structure (BOS) = continuation: a new high/low in trend", "Change of Character (CHoCH) = the first break against the trend", "CHoCH is an early reversal signal; BOS is a continuation signal", "Mark only meaningful swing highs/lows, not every wiggle", "Wait for confirmation — one break isn't always the turn"] },
+                { id: 'module-04', n: '04', title: 'Premium vs Discount Zones', blurb: 'Buy cheap, sell expensive — like the banks', video: '', free: false,
+                  summary: "Smart money buys cheap and sells expensive. Split any range in half: the upper half is 'premium' (look to sell), the lower half is 'discount' (look to buy). Entering from the right side of the range is half the battle.",
+                  keyPoints: ["Draw the dealing range from a key swing low to swing high", "Above the 50% = premium (sell zone); below = discount (buy zone)", "Buy in discount, sell in premium — never chase the middle", "The 'equilibrium' (50%) is a decision point, not an entry", "Combine premium/discount with an order block for precision"] },
+                { id: 'module-05', n: '05', title: 'Mapping Liquidity & the Draw on Liquidity', blurb: 'Where price is really headed', video: '', free: false,
+                  summary: "Every move has a destination: the next pool of liquidity. Buy-side liquidity sits above highs, sell-side below lows. Identify where the liquidity rests and you've found where price is most likely to be drawn next.",
+                  keyPoints: ["Buy-side liquidity = stops above highs; sell-side = stops below lows", "Price is 'drawn' toward the nearest meaningful liquidity", "Equal highs/lows are magnets — they get swept", "Ask 'where's the liquidity?' before every trade", "Target the opposing liquidity as your take-profit"] },
+                { id: 'module-06', n: '06', title: 'Entries That Follow the Smart Money', blurb: 'The full SMC entry sequence', video: '', free: false,
+                  summary: "Bring the model to an entry: higher-timeframe bias, a liquidity sweep, a change of character, then an order block or FVG entry inside discount or premium. This is the SMC entry sequence, step by step.",
+                  keyPoints: ["Start with HTF bias and the draw on liquidity", "Wait for a liquidity sweep against the crowd", "Confirm with a CHoCH on the lower timeframe", "Enter at the order block / FVG inside premium or discount", "Stop beyond the sweep; target opposing liquidity (1:3+ common)"] },
+                { id: 'module-07', n: '07', title: 'The Smart Money Trade Narrative', blurb: 'Case studies that train your eye', video: '', free: false,
+                  summary: "Walk through complete trades as stories: what the institutions were likely doing, where the trap was set, and how the setup resolved. Case studies train your eye to build the narrative yourself, live.",
+                  keyPoints: ["Every A+ trade has a one-sentence narrative — learn to tell it", "Case studies connect sweep → CHoCH → entry → target", "Hindsight is a teacher: review how each move actually paid out", "Spot the trap first; the entry follows naturally", "If you can't narrate the trade, you don't have the trade"] },
+                { id: 'module-08', n: '08', title: 'Your Smart Money Trading System', blurb: 'A tested checklist you can trust', video: '', free: false,
+                  summary: "Assemble a personal SMC system: your timeframes, your checklist, your risk rules and your review loop — then backtest it until it's yours. A system you've tested is a system you can trust under pressure.",
+                  keyPoints: ["Write a fixed checklist: bias, sweep, CHoCH, zone, risk", "Pick 2–3 pairs and 2 timeframes — depth over breadth", "Risk 1% and demand 1:2+ before any entry", "Backtest 50+ setups and log them before going live", "Review weekly; cut the setups that don't fit the model"] }
+            ]
+        },
+
+        'trading-psychology': {
+            title: 'Trading Psychology Deep Dive — Master the Mental Game',
+            blurb: 'The mindset that decides who survives — beat fear, greed and revenge, build discipline, and journal like a pro.',
+            priceNGN: 35000,
+            status: 'upcoming', launch: 'Q3 2027', waitlistSource: 'waitlist_trading_psychology',
+            enrollUrl: '/courses.html#trading-psychology',
+            freeCount: 1,
+            lessons: [
+                { id: 'module-01', n: '01', title: 'The Mental Game That Decides Everything', blurb: 'Why mindset, not strategy, is the edge', video: '', free: true,
+                  summary: "Two traders can follow the same strategy and get opposite results — the difference is between the ears. This module makes the case that psychology, not strategy, is the real edge, and sets up the work of building a professional mindset.",
+                  keyPoints: ["The same system wins or loses depending on who's trading it", "Discipline, patience and emotional control are trainable skills", "Your biggest opponent in the market is yourself", "An edge means nothing if you can't execute it calmly", "Mindset work compounds — small habits, big results over time"] },
+                { id: 'module-02', n: '02', title: 'Fear, Greed & Revenge Trading', blurb: 'The three account-killers and their tells', video: '', free: false,
+                  summary: "The three account-killers each have a tell and a trigger. Fear makes you cut winners and skip valid trades; greed makes you over-risk and overstay; revenge makes you force trades to 'win back' a loss. Naming them is the first step to defusing them.",
+                  keyPoints: ["Fear: skipping valid setups, cutting winners, panic-moving stops", "Greed: over-leveraging, no exit plan, chasing 'one more' trade", "Revenge: forcing trades right after a loss to get even", "Emotions aren't the enemy — acting on them unplanned is", "A pre-set plan is what stops emotion from trading your account"] },
+                { id: 'module-03', n: '03', title: 'Building Unshakeable Discipline', blurb: 'Discipline is a system, not willpower', video: '', free: false,
+                  summary: "Discipline isn't willpower — it's systems. When your rules are written, your risk is small, and your process is a routine, doing the right thing stops requiring heroic self-control. This module builds the scaffolding that makes discipline the default.",
+                  keyPoints: ["Discipline is a system, not a feeling — remove the live decision", "Written rules beat good intentions every time", "Small, fixed risk makes it easy to follow the plan", "Habits and checklists carry you when motivation dips", "One rule at a time — stack small wins into consistency"] },
+                { id: 'module-04', n: '04', title: 'The Routines & Rules of Elite Traders', blurb: 'Win with boring consistency', video: '', free: false,
+                  summary: "Professionals win with boring consistency: the same pre-market prep, the same session routine, the same post-market review. Learn to build a daily structure that keeps you calm, focused and out of low-quality trades.",
+                  keyPoints: ["Pre-market: bias, levels, news and a clear plan before you trade", "During: follow the checklist, trade only your setups", "Post-market: journal and score how well you followed the plan", "Fixed session hours protect you from boredom trades", "Rules about when NOT to trade matter as much as entries"] },
+                { id: 'module-05', n: '05', title: 'Handling Losses, Drawdown & Tilt', blurb: 'Respond like a pro, not a gambler', video: '', free: false,
+                  summary: "Losses are a cost of doing business and drawdown is unavoidable. What separates pros is how they respond — stepping away before tilt, protecting capital, and treating a losing streak as data, not a verdict on their worth.",
+                  keyPoints: ["A loss is a business expense, not a personal failure", "Drawdowns are normal — plan for them before they happen", "Tilt is the real danger; step away after back-to-back losses", "Reduce size when you're off; scale up only when consistent", "Judge yourself on process followed, not on any single result"] },
+                { id: 'module-06', n: '06', title: 'Confidence, Patience & Emotional Detachment', blurb: 'The calm that lets you execute', video: '', free: false,
+                  summary: "Confidence comes from a tested plan and a track record, not a hot streak. Patience is waiting for your setup and nothing less. Detachment is caring about the process, not one trade's outcome — the mindset that lets you execute cleanly.",
+                  keyPoints: ["Real confidence is built from backtesting and journaled results", "Patience: no setup, no trade — cash is a position", "Detach from any single trade's outcome; think in large samples", "Think in probabilities — any one trade can lose, and that's fine", "Trust the edge over 100 trades, not the feeling on trade #1"] },
+                { id: 'module-07', n: '07', title: 'Journaling for a Pro Mindset', blurb: 'Where random trades become an edge', video: '', free: false,
+                  summary: "Your journal is where random trades become a repeatable edge. Logging not just the numbers but your emotions and decisions reveals the patterns — the setups that work and the behaviours that cost you — that no strategy video can show you.",
+                  keyPoints: ["Log every trade: pair, setup, screenshot, result — and how you felt", "Review weekly for patterns in both results and behaviour", "Your journal exposes your real edge and your real leaks", "Separate good decisions from good outcomes (and bad from bad)", "The journal, reviewed honestly, is the best coach you'll have"] },
+                { id: 'module-08', n: '08', title: 'Your 30-Day Mental Edge Plan', blurb: 'Turn mindset into daily practice', video: '', free: false,
+                  summary: "Finish with an action plan: daily mindset habits, pre- and post-session routines, and a simple scoring system to build discipline over 30 days. Psychology improves by practice, not by reading — this is the practice.",
+                  keyPoints: ["Six daily rules, scored each session, tracked for 30 days", "Build the pre-market and post-market routine into a habit", "Rate discipline daily — not profit — to train the right behaviour", "Pair it with the 30-Day Discipline Tracker from the free resources", "Small, consistent reps compound into a professional mindset"] }
+            ]
         }
     };
 

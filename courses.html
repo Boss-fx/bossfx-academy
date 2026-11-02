@@ -383,6 +383,59 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
         .coming-spacer { flex: 1; }
 
+        /* Course ladder — full curriculum for the upcoming (2027) courses */
+        .ladder { display: flex; flex-direction: column; gap: 22px; }
+        .ladder-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 30px 30px 32px;
+            position: relative;
+            scroll-margin-top: 90px;
+        }
+        .ladder-head {
+            display: flex; flex-wrap: wrap; align-items: flex-start;
+            justify-content: space-between; gap: 12px;
+        }
+        .ladder-head h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; margin: 0; }
+        .ladder-head p { color: var(--text-secondary); font-size: 0.92rem; margin: 8px 0 0; max-width: 640px; }
+        .ladder-badge {
+            flex: none; font-size: 0.66rem; font-weight: 800; letter-spacing: 1px;
+            text-transform: uppercase; color: #a5b4fc; background: rgba(99, 102, 241, 0.14);
+            border: 1px solid rgba(129, 140, 248, 0.4); padding: 6px 12px; border-radius: 100px;
+        }
+        .ladder-mods {
+            list-style: none; margin: 22px 0 0; padding: 0;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 26px;
+        }
+        .ladder-mods li { display: flex; gap: 12px; align-items: flex-start; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4; }
+        .ladder-mods .mn {
+            flex: none; width: 26px; height: 26px; border-radius: 7px; background: rgba(16, 214, 122, 0.12);
+            color: #16d67a; font-weight: 800; font-size: 0.76rem; display: flex; align-items: center;
+            justify-content: center; font-family: 'Space Grotesk', sans-serif; margin-top: 1px;
+        }
+        .ladder-mods strong { color: var(--text-primary); font-weight: 600; }
+        .ladder-mods .mfree {
+            display: inline-block; margin-left: 6px; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px;
+            text-transform: uppercase; color: #16d67a; border: 1px solid rgba(16, 214, 122, 0.4);
+            border-radius: 5px; padding: 1px 6px; vertical-align: middle;
+        }
+        .ladder-cta {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+            margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--border-color);
+        }
+        .ladder-cta .btn-preview {
+            display: inline-flex; align-items: center; gap: 8px; background: #16d67a; color: #04140d;
+            font-weight: 700; border-radius: 10px; padding: 12px 20px; text-decoration: none;
+            font-size: 0.92rem; white-space: nowrap;
+        }
+        .ladder-cta .btn-preview:hover { background: #34d399; }
+        .ladder-cta .coming-wait { flex: 1; min-width: 240px; margin: 0; }
+        @media (max-width: 720px) {
+            .ladder-mods { grid-template-columns: 1fr; }
+            .ladder-cta .btn-preview { width: 100%; justify-content: center; }
+        }
+
         /* FAQ */
         .faq-list {
             max-width: 760px;
@@ -649,66 +702,91 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="section-header center">
                 <span class="section-tag">Coming Soon</span>
                 <h2 class="section-title">More Courses<br><span class="text-gradient">On the Way</span></h2>
-                <p class="section-subtitle">The next courses in the BossFx ladder — for traders ready for the next level. Join a waitlist and be first in (early-bird pricing for the list).</p>
+                <p class="section-subtitle">The next rungs of the BossFx ladder — full curriculum below. <strong style="color:var(--text-primary)">Module 1 of each is a free preview</strong>; join a waitlist for early-bird pricing when it drops.</p>
             </div>
-            <div class="coming-grid">
-                <div class="coming-card">
-                    <div class="lock-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <div class="ladder">
+
+                <div class="ladder-card" id="advanced-price-action">
+                    <div class="ladder-head">
+                        <div>
+                            <h3>Advanced Price Action</h3>
+                            <p>Read the chart like the institutions do — beyond indicators, into raw price. Order blocks, liquidity, fair value gaps and live mark-ups with BossFx.</p>
+                        </div>
+                        <span class="ladder-badge">Coming Q1 2027</span>
                     </div>
-                    <h3>Advanced Price Action</h3>
-                    <p>Read the chart like the institutions do — beyond indicators, into raw price.</p>
-                    <ul class="coming-curric">
-                        <li>Order blocks &amp; institutional footprints</li>
-                        <li>Liquidity pools, sweeps &amp; stop hunts</li>
-                        <li>Fair value gaps &amp; imbalance</li>
-                        <li>Live chart mark-ups with BossFx</li>
+                    <ul class="ladder-mods">
+                        <li><span class="mn">01</span><span><strong>Beyond Indicators: Reading Raw Price</strong> <span class="mfree">Free preview</span></span></li>
+                        <li><span class="mn">02</span><span><strong>The Anatomy of an Institutional Move</strong></span></li>
+                        <li><span class="mn">03</span><span><strong>Order Blocks &amp; Institutional Footprints</strong></span></li>
+                        <li><span class="mn">04</span><span><strong>Liquidity: Pools, Sweeps &amp; Stop Hunts</strong></span></li>
+                        <li><span class="mn">05</span><span><strong>Fair Value Gaps &amp; Imbalance</strong></span></li>
+                        <li><span class="mn">06</span><span><strong>Reading the Chart Like the Institutions</strong></span></li>
+                        <li><span class="mn">07</span><span><strong>Live Chart Mark-Ups with BossFx</strong></span></li>
+                        <li><span class="mn">08</span><span><strong>The Advanced Price Action Playbook</strong></span></li>
                     </ul>
-                    <div class="coming-spacer"></div>
-                    <form class="coming-wait" data-source="waitlist_advanced_price_action" data-course="Advanced Price Action">
-                        <input type="email" placeholder="Email me when it drops" required>
-                        <button type="submit">Notify me</button>
-                    </form>
-                    <span class="coming-badge">Coming Q1 2027</span>
-                </div>
-                <div class="coming-card">
-                    <div class="lock-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <div class="ladder-cta">
+                        <a class="btn-preview" href="/learn/lesson.html?course=advanced-price-action&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=preview&amp;utm_campaign=advanced_price_action">▶ Preview Module 1 free</a>
+                        <form class="coming-wait" data-source="waitlist_advanced_price_action" data-course="Advanced Price Action">
+                            <input type="email" placeholder="Email me when it drops" required>
+                            <button type="submit">Notify me</button>
+                        </form>
                     </div>
-                    <h3>Smart Money Concepts</h3>
-                    <p>Understand how the big players move price — and learn to trade alongside them.</p>
-                    <ul class="coming-curric">
-                        <li>Market-maker models &amp; manipulation</li>
-                        <li>Break of structure &amp; change of character</li>
-                        <li>Premium vs discount zones</li>
-                        <li>Entries that follow the smart money</li>
-                    </ul>
-                    <div class="coming-spacer"></div>
-                    <form class="coming-wait" data-source="waitlist_smart_money_concepts" data-course="Smart Money Concepts">
-                        <input type="email" placeholder="Email me when it drops" required>
-                        <button type="submit">Notify me</button>
-                    </form>
-                    <span class="coming-badge">Coming Q2 2027</span>
                 </div>
-                <div class="coming-card">
-                    <div class="lock-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+
+                <div class="ladder-card" id="smart-money-concepts">
+                    <div class="ladder-head">
+                        <div>
+                            <h3>Smart Money Concepts</h3>
+                            <p>Understand how the big players move price — and learn to trade alongside them. Market-maker models, BOS &amp; CHoCH, premium/discount and smart-money entries.</p>
+                        </div>
+                        <span class="ladder-badge">Coming Q2 2027</span>
                     </div>
-                    <h3>Trading Psychology Deep Dive</h3>
-                    <p>The mental game that decides who survives — and who blows the account.</p>
-                    <ul class="coming-curric">
-                        <li>Beating fear, greed &amp; revenge trading</li>
-                        <li>Building unshakeable discipline</li>
-                        <li>Routines &amp; rules of elite traders</li>
-                        <li>Journaling for a pro mindset</li>
+                    <ul class="ladder-mods">
+                        <li><span class="mn">01</span><span><strong>How the Big Players Move Price</strong> <span class="mfree">Free preview</span></span></li>
+                        <li><span class="mn">02</span><span><strong>The Market-Maker Model &amp; Manipulation</strong></span></li>
+                        <li><span class="mn">03</span><span><strong>Break of Structure &amp; Change of Character</strong></span></li>
+                        <li><span class="mn">04</span><span><strong>Premium vs Discount Zones</strong></span></li>
+                        <li><span class="mn">05</span><span><strong>Mapping Liquidity &amp; the Draw on Liquidity</strong></span></li>
+                        <li><span class="mn">06</span><span><strong>Entries That Follow the Smart Money</strong></span></li>
+                        <li><span class="mn">07</span><span><strong>The Smart Money Trade Narrative</strong></span></li>
+                        <li><span class="mn">08</span><span><strong>Your Smart Money Trading System</strong></span></li>
                     </ul>
-                    <div class="coming-spacer"></div>
-                    <form class="coming-wait" data-source="waitlist_trading_psychology" data-course="Trading Psychology Deep Dive">
-                        <input type="email" placeholder="Email me when it drops" required>
-                        <button type="submit">Notify me</button>
-                    </form>
-                    <span class="coming-badge">Coming Q3 2027</span>
+                    <div class="ladder-cta">
+                        <a class="btn-preview" href="/learn/lesson.html?course=smart-money-concepts&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=preview&amp;utm_campaign=smart_money_concepts">▶ Preview Module 1 free</a>
+                        <form class="coming-wait" data-source="waitlist_smart_money_concepts" data-course="Smart Money Concepts">
+                            <input type="email" placeholder="Email me when it drops" required>
+                            <button type="submit">Notify me</button>
+                        </form>
+                    </div>
                 </div>
+
+                <div class="ladder-card" id="trading-psychology">
+                    <div class="ladder-head">
+                        <div>
+                            <h3>Trading Psychology Deep Dive</h3>
+                            <p>The mental game that decides who survives — and who blows the account. Beat fear, greed and revenge, build discipline, and journal like a pro.</p>
+                        </div>
+                        <span class="ladder-badge">Coming Q3 2027</span>
+                    </div>
+                    <ul class="ladder-mods">
+                        <li><span class="mn">01</span><span><strong>The Mental Game That Decides Everything</strong> <span class="mfree">Free preview</span></span></li>
+                        <li><span class="mn">02</span><span><strong>Fear, Greed &amp; Revenge Trading</strong></span></li>
+                        <li><span class="mn">03</span><span><strong>Building Unshakeable Discipline</strong></span></li>
+                        <li><span class="mn">04</span><span><strong>The Routines &amp; Rules of Elite Traders</strong></span></li>
+                        <li><span class="mn">05</span><span><strong>Handling Losses, Drawdown &amp; Tilt</strong></span></li>
+                        <li><span class="mn">06</span><span><strong>Confidence, Patience &amp; Emotional Detachment</strong></span></li>
+                        <li><span class="mn">07</span><span><strong>Journaling for a Pro Mindset</strong></span></li>
+                        <li><span class="mn">08</span><span><strong>Your 30-Day Mental Edge Plan</strong></span></li>
+                    </ul>
+                    <div class="ladder-cta">
+                        <a class="btn-preview" href="/learn/lesson.html?course=trading-psychology&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=preview&amp;utm_campaign=trading_psychology">▶ Preview Module 1 free</a>
+                        <form class="coming-wait" data-source="waitlist_trading_psychology" data-course="Trading Psychology Deep Dive">
+                            <input type="email" placeholder="Email me when it drops" required>
+                            <button type="submit">Notify me</button>
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>

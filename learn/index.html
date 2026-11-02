@@ -101,6 +101,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .enroll-banner strong{display:block;color:#fff;font-size:1rem;margin-bottom:2px}
   .enroll-banner span{color:#94a3b8;font-size:0.86rem}
   .enroll-banner .btn{white-space:nowrap}
+  .enroll-banner.upcoming{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(16,185,129,0.08));border-color:rgba(129,140,248,0.4)}
+  .course-badge{display:inline-block;vertical-align:middle;margin-left:8px;font-family:'Inter',sans-serif;font-size:0.62rem;font-weight:800;letter-spacing:0.5px;text-transform:uppercase;color:#c7d2fe;background:rgba(99,102,241,0.18);border:1px solid rgba(129,140,248,0.45);border-radius:999px;padding:4px 10px}
   .welcome-video{display:flex;gap:20px;align-items:center;background:#151515;border:1px solid #262626;border-radius:16px;padding:20px;margin:18px 0 4px}
   .welcome-video .wv-copy strong{display:block;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin-bottom:4px}
   .welcome-video .wv-copy span{color:#94a3b8;font-size:0.9rem;line-height:1.5}
@@ -384,40 +386,63 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       });
     };
 
+    // Renders every course in the catalog. Live courses show enroll/progress;
+    // 'upcoming' courses (launching 2027) show a free-preview intro + a
+    // waitlist CTA instead of a buy button.
     function renderCourse(user) {
-      var cid = 'forex-101', c = BFX.learn.course(cid);
-      Promise.all([BFX.learn.getProgress(cid), BFX.learn.isEnrolled(cid)]).then(function (r) {
-        var done = r[0], enrolled = r[1];
-        var total = c.lessons.length, doneCount = 0;
-        var rows = c.lessons.map(function (ls) {
-          var open = BFX.learn.canAccess(ls, enrolled);
-          var isDone = open && !!done[ls.id]; if (isDone) doneCount++;
-          var tag = ls.free ? '<em class="l-free">Free</em>' : '';
-          var action = open
-            ? '<a class="l-go" href="lesson.html?course=' + cid + '&lesson=' + ls.id + '">' + (isDone ? 'Review' : 'Start') + ' →</a>'
-            : '<a class="l-go l-lock" href="' + c.enrollUrl + '">🔒 Unlock</a>';
-          var thumb = '<span class="l-thumb"><img loading="lazy" src="/media/thumbs/' + ls.id + '.jpg" alt="' + esc(ls.title) + ' preview" onerror="this.parentNode.style.display=\'none\'"></span>';
-          return '<li class="lesson-item' + (open ? '' : ' locked') + '">' +
-            '<span class="lesson-check ' + (isDone ? 'done' : '') + '">' + (isDone ? '✓' : (open ? '' : '🔒')) + '</span>' +
-            thumb +
-            '<span class="l-title"><small>Module ' + ls.n + tag + '</small>' + esc(ls.title) + '</span>' +
-            action +
-          '</li>';
-        }).join('');
-        var pct = total ? Math.round(doneCount / total * 100) : 0;
-        var banner = enrolled ? '' :
-          '<div class="enroll-banner">' +
-          '<div><strong>Unlock the full course</strong><span>Modules 1–' + c.freeCount + ' are free. Get all 12 modules, lifetime access & the community.</span></div>' +
-          '<a class="btn" href="' + c.enrollUrl + '">Enroll — ₦' + c.priceNGN.toLocaleString() + ' →</a></div>';
-        els.courses.innerHTML =
-          '<div class="course-card"><h2>' + esc(c.title) + '</h2><p class="muted">' + esc(c.blurb) + '</p>' +
-          '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
-          '<p class="progress-label">' + doneCount + ' of ' + total + ' modules complete · ' + pct + '%' +
-          (enrolled ? ' · <span style="color:#34d399">Full access ✓</span>' : ' · Free preview') + '</p>' +
-          banner +
-          '<ul class="lesson-list">' + rows + '</ul></div>';
-      }).catch(function () {
-        els.courses.innerHTML = '<div class="course-card"><p class="muted">Couldn\'t load your progress. Refresh to try again.</p></div>';
+      var ids = Object.keys(BFX.learn.COURSES);
+      els.courses.innerHTML = '';
+      ids.forEach(function (cid) {
+        var c = BFX.learn.course(cid);
+        var upcoming = (c.status || 'live') === 'upcoming';
+        var card = document.createElement('div');
+        card.className = 'course-card';
+        card.innerHTML = '<p class="muted">Loading…</p>';
+        els.courses.appendChild(card);
+        Promise.all([
+          BFX.learn.getProgress(cid),
+          upcoming ? Promise.resolve(false) : BFX.learn.isEnrolled(cid)
+        ]).then(function (r) {
+          var done = r[0], enrolled = r[1];
+          var total = c.lessons.length, doneCount = 0;
+          var rows = c.lessons.map(function (ls) {
+            var open = BFX.learn.canAccess(ls, enrolled);
+            var isDone = open && !!done[ls.id]; if (isDone) doneCount++;
+            var tag = ls.free ? '<em class="l-free">Free</em>' : '';
+            var action = open
+              ? '<a class="l-go" href="lesson.html?course=' + cid + '&lesson=' + ls.id + '">' + (isDone ? 'Review' : 'Start') + ' →</a>'
+              : '<a class="l-go l-lock"' + (upcoming ? ' data-wl="1"' : '') + ' href="' + c.enrollUrl + '">🔒 ' + (upcoming ? 'Coming soon' : 'Unlock') + '</a>';
+            var thumb = '<span class="l-thumb"><img loading="lazy" src="/media/thumbs/' + ls.id + '.jpg" alt="' + esc(ls.title) + ' preview" onerror="this.parentNode.style.display=\'none\'"></span>';
+            return '<li class="lesson-item' + (open ? '' : ' locked') + '">' +
+              '<span class="lesson-check ' + (isDone ? 'done' : '') + '">' + (isDone ? '✓' : (open ? '' : '🔒')) + '</span>' +
+              thumb +
+              '<span class="l-title"><small>Module ' + ls.n + tag + '</small>' + esc(ls.title) + '</span>' +
+              action +
+            '</li>';
+          }).join('');
+          var pct = total ? Math.round(doneCount / total * 100) : 0;
+          var badge = upcoming ? '<span class="course-badge">Launching ' + esc(c.launch) + '</span>' : '';
+          var banner;
+          if (upcoming) {
+            banner = '<div class="enroll-banner upcoming">' +
+              '<div><strong>Launching ' + esc(c.launch) + '</strong><span>Module 1 is a free preview. Join the waitlist for early-bird pricing when the full course drops.</span></div>' +
+              '<a class="btn" data-wl="1" href="' + c.enrollUrl + '">See curriculum & join waitlist →</a></div>';
+          } else if (!enrolled) {
+            banner = '<div class="enroll-banner">' +
+              '<div><strong>Unlock the full course</strong><span>Modules 1–' + c.freeCount + ' are free. Get all ' + total + ' modules, lifetime access & the community.</span></div>' +
+              '<a class="btn" href="' + c.enrollUrl + '">Enroll — ₦' + c.priceNGN.toLocaleString() + ' →</a></div>';
+          } else { banner = ''; }
+          var statusLabel = upcoming ? ' · <span style="color:#a5b4fc">Free preview</span>'
+            : (enrolled ? ' · <span style="color:#34d399">Full access ✓</span>' : ' · Free preview');
+          card.innerHTML =
+            '<h2>' + esc(c.title) + badge + '</h2><p class="muted">' + esc(c.blurb) + '</p>' +
+            '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+            '<p class="progress-label">' + doneCount + ' of ' + total + ' modules complete · ' + pct + '%' + statusLabel + '</p>' +
+            banner +
+            '<ul class="lesson-list">' + rows + '</ul>';
+        }).catch(function () {
+          card.innerHTML = '<p class="muted">Couldn\'t load this course. Refresh to try again.</p>';
+        });
       });
     }
 
@@ -447,7 +472,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     // clicks any enroll / unlock link, so the cron can recover abandonments.
     document.addEventListener('click', function (e) {
       var a = e.target && e.target.closest ? e.target.closest('a[href*="forex101"], a.l-lock, .enroll-banner a') : null;
-      if (a) BFX.learn.syncBrevo('checkout_started', { IS_STUDENT: 'true', CHECKOUT_STARTED: new Date().toISOString() }, { noSeq: true });
+      if (a && !a.getAttribute('data-wl')) BFX.learn.syncBrevo('checkout_started', { IS_STUDENT: 'true', CHECKOUT_STARTED: new Date().toISOString() }, { noSeq: true });
     });
 
     // A reset-password link returns with type=recovery — wait for the recovery

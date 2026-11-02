@@ -164,19 +164,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       BFX.learn.syncBrevo('progress', { IS_STUDENT: 'true', LAST_ACTIVE: new Date().toISOString(), LAST_LESSON: 'Module ' + info.lesson.n + ' — ' + info.lesson.title }, { noSeq: true, email: user.email });
 
       // Paywall: a non-free module you haven't purchased shows an upsell.
+      // 'upcoming' courses (launching 2027) point to the waitlist, not checkout.
       if (!BFX.learn.canAccess(info.lesson, enrolled)) {
-        document.getElementById('video').innerHTML =
-          '<div class="video-ph"><strong>🔒 This module is part of the full course</strong>' +
-          'Modules 1–' + info.course.freeCount + ' are free. Unlock all 12 modules, lifetime access and the community.</div>';
+        var upcoming = (info.course.status || 'live') === 'upcoming';
+        var total = info.course.lessons.length;
+        document.getElementById('video').innerHTML = upcoming
+          ? '<div class="video-ph"><strong>🚀 Launching ' + info.course.launch + '</strong>' +
+            'Module 1 is a free preview. Join the waitlist for early-bird pricing when the full ' + total + '-module course drops.</div>'
+          : '<div class="video-ph"><strong>🔒 This module is part of the full course</strong>' +
+            'Modules 1–' + info.course.freeCount + ' are free. Unlock all ' + total + ' modules, lifetime access and the community.</div>';
         var act = document.querySelector('.actions');
-        act.innerHTML = '<a class="btn btn-done" id="enrollCta" href="' + info.course.enrollUrl + '">Enroll — ₦' + info.course.priceNGN.toLocaleString() + ' →</a>' +
-          '<a class="btn btn-ghost" href="index.html">Back to My Learning</a>';
-        var ecta = document.getElementById('enrollCta');
-        if (ecta) ecta.onclick = function () {
-          BFX.learn.syncBrevo('checkout_started', { IS_STUDENT: 'true', CHECKOUT_STARTED: new Date().toISOString() }, { noSeq: true, email: user.email });
-          try { if (typeof gtag === 'function') gtag('event', 'begin_checkout', { currency: 'NGN', value: (info.course && info.course.priceNGN) || 0, items: [{ item_id: 'forex-101', item_name: 'Forex 101' }] }); } catch (e) {}
-          try { (window.dataLayer = window.dataLayer || []).push({ event: 'begin_checkout', product: 'forex-101' }); } catch (e) {}
-        };
+        if (upcoming) {
+          act.innerHTML = '<a class="btn btn-done" href="' + info.course.enrollUrl + '">See curriculum & join waitlist →</a>' +
+            '<a class="btn btn-ghost" href="index.html">Back to My Learning</a>';
+        } else {
+          act.innerHTML = '<a class="btn btn-done" id="enrollCta" href="' + info.course.enrollUrl + '">Enroll — ₦' + info.course.priceNGN.toLocaleString() + ' →</a>' +
+            '<a class="btn btn-ghost" href="index.html">Back to My Learning</a>';
+          var ecta = document.getElementById('enrollCta');
+          if (ecta) ecta.onclick = function () {
+            BFX.learn.syncBrevo('checkout_started', { IS_STUDENT: 'true', CHECKOUT_STARTED: new Date().toISOString() }, { noSeq: true, email: user.email });
+            try { if (typeof gtag === 'function') gtag('event', 'begin_checkout', { currency: 'NGN', value: (info.course && info.course.priceNGN) || 0, items: [{ item_id: courseId, item_name: info.course.title }] }); } catch (e) {}
+            try { (window.dataLayer = window.dataLayer || []).push({ event: 'begin_checkout', product: courseId }); } catch (e) {}
+          };
+        }
         var pv = document.getElementById('prevLink'), nx = document.getElementById('nextLink');
         pv.classList.add('hide'); nx.classList.add('hide');
         show(view);
