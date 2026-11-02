@@ -16,6 +16,17 @@
             if (c.lessons[i].id === id) { c.lessons[i].body = paras; return; }
         }
     }
+    // EX: deepen the summary + add a Nigerian-relatable illustration.
+    function EX(cid, id, summary, illus) {
+        var c = C[cid]; if (!c) return;
+        for (var i = 0; i < c.lessons.length; i++) {
+            if (c.lessons[i].id === id) {
+                if (summary) c.lessons[i].summary = summary;
+                if (illus) c.lessons[i].illustration = illus;
+                return;
+            }
+        }
+    }
 
     // ---------- Advanced Price Action ----------
     B('advanced-price-action', 'module-01', [
@@ -166,4 +177,83 @@
         "Wrap your pre-market and post-market routines around these rules so they become automatic, and track your score every day for 30 days. Watching your discipline score climb — even on days you lose money — rewires your brain to value process over outcome, which is the single most important mindset shift in all of trading. Pair this with the free 30-Day Discipline Tracker in the BossFx resources to make it effortless.",
         "Here's the promise, and it's a realistic one: small, consistent reps compound. Thirty days of scoring your discipline won't make you perfect, but it will make you measurably calmer, more patient and more consistent than the trader you are today. Do the reps. The mental edge you build here is the one thing no market, broker or losing streak can ever take from you."
     ]);
+
+    // ===== Deeper summaries + Nigerian-relatable illustrations =====
+    // ---- Advanced Price Action ----
+    EX('advanced-price-action', 'module-01',
+        "Indicators are built from past price, so they always tell you what already happened — never what's happening now. Advanced price action trains you to read price itself: where big money entered, where the crowd got trapped, and where price is likely drawn next. This first module resets how you look at a chart, stripping away the clutter so you see the real story institutions leave behind.",
+        "Think of it like fuel prices. Checking last week's pump price to budget for today is useless — the price has already moved, and you'll plan wrong. Looking at the queue and the tanker arriving right now tells you the real story. Indicators are last week's price list; price action is the live market in front of you.");
+    EX('advanced-price-action', 'module-02',
+        "No big player buys everything at once — they'd move the price against themselves. Instead every large move runs through three phases: quiet accumulation, a strong expansion, then distribution into the excited crowd. Learn to read the candle 'signatures' of each phase and you stop buying tops and start spotting moves as they build.",
+        "Picture a big tomato wholesaler at Mile 12. He doesn't announce himself — he quietly buys up basket after basket while prices are still low (accumulation). Only when he's loaded does the price jump (expansion), and by the time the small traders rush in to buy, he's already selling to them at the top (distribution).");
+    EX('advanced-price-action', 'module-03',
+        "An order block is the last opposing candle before a strong move — the exact footprint of where institutions loaded their positions. Because they rarely fill all their orders at once, price often returns to that zone to complete them, and reacts sharply. That gives you a precise, repeatable place to enter with tight risk instead of guessing.",
+        "It's like the stall at Balogun where a big wholesaler cleared out all the ankara before a price rise. Everyone remembers that spot. When fresh stock lands there again, buyers rush back to that same stall — because that's where the real demand showed up. Price returns to its order block the same way.");
+    EX('advanced-price-action', 'module-04',
+        "The market constantly hunts liquidity — the stop-losses clustered just above highs and below lows. Big players drive price into those pools to fill their orders, trigger the stops, then reverse. Once you can see liquidity, the 'bad luck' of being stopped out right before the move turns into one of your best setups.",
+        "Think of a danfo park. Passengers — the stops — gather at the obvious spot. The conductor shouts and 'sweeps' them all into the bus, and only then does the danfo zoom off in its real direction. Putting your stop where everyone else does is like standing at that park: you're exactly who gets loaded up and left behind.");
+    EX('advanced-price-action', 'module-05',
+        "When price moves so fast it leaves a gap between candles, it creates an imbalance — a fair value gap the market tends to return and fill before continuing. Spotting these gaps hands you entries and targets most traders never notice. Stacked with an order block or a liquidity sweep, an FVG becomes part of a high-probability plan.",
+        "Remember when fuel suddenly vanishes and the queue 'gaps' overnight? That emptiness doesn't last — supply rushes back to fill it before things normalise. A fair value gap on the chart is the same: price sprinted and left a gap behind, and it usually comes back to 'fill the queue' before carrying on.");
+    EX('advanced-price-action', 'module-06',
+        "Institutions never read one timeframe in isolation, and neither should you. The higher timeframe tells you the story and where price is being drawn; the lower timeframe tells you exactly when to enter. This module gives you the top-down routine that turns scattered signals into one clear, tradeable bias.",
+        "It's like travelling from Lagos to Ibadan. First you check the whole expressway — which way it's flowing, where the traffic is heading (higher timeframe). Only then do you watch for your specific exit and turn (lower timeframe). Nobody plans the whole journey by staring only at the next speed bump.");
+    EX('advanced-price-action', 'module-07',
+        "Theory means nothing until you can apply it live, so this module walks the entire mark-up routine on real charts: structure first, then liquidity, then the entry zone, then the plan. Just as important, you'll see setups get rejected — because filtering out the 'almost' trades is where discipline is built.",
+        "Watch a master tailor before he cuts expensive aso-ebi: he measures, marks, checks again, and only then touches the scissors. He never rushes the cut. Your chart mark-up is the same — measure the structure, mark the zones, confirm, and only then 'cut' the trade.");
+    EX('advanced-price-action', 'module-08',
+        "Everything you've learned only pays off when it becomes repeatable — and repeatable means written down. In this module you build your personal playbook: the exact conditions for your A+ setup, how you size and manage it, and how you review it. A method in your head gets overridden by emotion; a method on paper gets followed.",
+        "It's your mama's jollof recipe. The reason it tastes the same every single time isn't luck — it's a fixed recipe: this much rice, this much pepper, this long on low heat. Trading without a written playbook is cooking by mood; with one, you get the same result every time.");
+
+    // ---- Smart Money Concepts ----
+    EX('smart-money-concepts', 'module-01',
+        "Retail traders react to price; smart money creates it. The institutions big enough to move the market need the crowd on the wrong side to fill their huge orders, which is why so many popular retail habits exist to be exploited. This module hands you the lens to stop being the crowd — and stop being someone else's exit.",
+        "Think about the dollar rate. The small Mallam on the street doesn't set it — the big banks and BDC players do, and everyone else just reacts to their moves. In the market you're the small trader unless you learn to read what the 'ogas' are doing. Smart Money Concepts is how you start following the big players instead of feeding them.");
+    EX('smart-money-concepts', 'module-02',
+        "The market-maker model is the cycle institutions repeat endlessly: accumulate quietly, manipulate price to trap the crowd, then expand toward the real target. The stage that catches everyone is manipulation — the deliberate fake move. Learn the cycle and you'll wait for the trap to spring instead of falling into it.",
+        "You've seen a sharp trader suddenly drop his price and grumble that 'market is bad' — just to panic you into selling your goods cheap, which he quietly buys up. Minutes later the price is back up and he's smiling. That fake drop is manipulation; the real move always comes after the trick.");
+    EX('smart-money-concepts', 'module-03',
+        "Break of structure (BOS) confirms a trend is continuing; change of character (CHoCH) is the first warning it's turning. Telling them apart — and knowing which swing points actually matter — is how you stay on the right side of smart money instead of buying tops and selling bottoms.",
+        "It's like reading a danfo heading to Oshodi. As long as it keeps passing the usual stops, it's still going to Oshodi (BOS — continuation). But the moment the conductor turns back at a junction he never passes, you know the route has changed (CHoCH — reversal). You watch the signs, not your hope.");
+    EX('smart-money-concepts', 'module-04',
+        "Smart money lives by the oldest rule in business: buy cheap, sell expensive. Split any range in half — the upper half is 'premium' (where you look to sell), the lower half is 'discount' (where you look to buy). Entering from the right side of the range fixes one of the biggest beginner mistakes: chasing.",
+        "Any smart Lagos trader buys tomatoes cheap at dawn at Mile 12 (discount) and sells them expensive in the estate later (premium). Nobody with sense buys at the estate price hoping to sell higher. Yet that's exactly what traders do when they buy a market that's already run up — paying premium, hoping for more.");
+    EX('smart-money-concepts', 'module-05',
+        "Every move has a destination, and that destination is almost always liquidity — the orders resting above old highs and below old lows. Identify where that liquidity sits and you've found where price is most likely being pulled next. This turns a 'random' chart into a map with a clear direction and target.",
+        "Notice how a crowd instantly forms wherever there's free rice-sharing or a giveaway? The action goes where the people — and the money — are gathered. Price behaves the same: it travels toward the pools of liquidity where all the orders are waiting. Find the crowd, and you know where price is headed.");
+    EX('smart-money-concepts', 'module-06',
+        "Now it all comes together into one repeatable entry sequence: higher-timeframe bias, a liquidity sweep, a change of character, then an entry at an order block or fair value gap in the right zone, with your stop beyond the sweep. Each step filters out weaker trades, so what's left is patient and high-probability.",
+        "It's like buying from a hawker as the bus is about to leave. You don't grab the first price he shouts — that's the trap. You wait: the bus revs, he panics and drops the real price (the sweep and the shift), and that's your moment to buy cheap. Patience through the fake-out is the whole game.");
+    EX('smart-money-concepts', 'module-07',
+        "The best smart money traders don't see candles — they see stories. This module trains you to narrate a trade: what the institutions were doing, where the trap was set, and how it resolved. If you can tell the story in one sentence, you understand the trade; if you can't, you only have a guess.",
+        "It's like giving gist about what happened at the market: 'he pretended market was bad to scare the sellers, grabbed all the cheap goods, then the price shot up.' That's a clear story, with a who and a why. A real trade has the same clarity — 'they swept the sellers' stops, then drove price up.'");
+    EX('smart-money-concepts', 'module-08',
+        "A pile of concepts isn't a system, and a system you haven't tested is just a hope. This final module turns everything into your personal SMC system: a fixed checklist, clear risk rules, and a weekly review loop you can trust when real money and real emotions are on the line.",
+        "Think of a serious shop owner. They don't trade on vibes — they have a plan: what to stock, their margins, their records, their review of what sold. Your SMC checklist is that business plan for the market. Run it the same way every day and the market becomes a business, not a gamble.");
+
+    // ---- Trading Psychology Deep Dive ----
+    EX('trading-psychology', 'module-01',
+        "Hand two traders the same strategy and one grows the account while the other blows it — the difference is between the ears. Discipline, patience and emotional control decide who survives, and the good news is they're trainable skills, not fixed traits. This course builds the trader who can actually execute a good plan calmly.",
+        "Two okada riders, same bike, same road — one gets you there safely, the other is reckless and crashes. The machine isn't the difference; the rider is. In trading, your strategy is the bike and you are the rider. Master yourself and you've already beaten most of the field.");
+    EX('trading-psychology', 'module-02',
+        "Three emotions destroy more accounts than any bad strategy: fear, greed and revenge. Each has a tell and a trigger, and the damage comes not from feeling them but from acting on them without a plan. Learn to recognise them early and a written plan becomes the circuit-breaker between feeling and action.",
+        "Fear is selling off everything the moment the market flickers, certain the worst is coming. Greed is dumping your whole savings into one 'hot' coin because a friend doubled his. Revenge is borrowing money to 'win back' a loss — and digging the hole deeper. Name the feeling, and the plan can overrule it.");
+    EX('trading-psychology', 'module-03',
+        "Discipline isn't willpower — willpower runs out exactly when you're tired, stressed, or staring at a loss. Real discipline is systems: written rules, risk small enough that no loss hurts, and a process you simply execute. Build the scaffolding and doing the right thing stops requiring heroic effort.",
+        "Think of ajo or esusu — the contribution club. You pay your share every week whether you feel like it or not, because the system runs on schedule, not on mood. That's discipline: you don't decide each day; you follow the system you already set, and the results compound.");
+    EX('trading-psychology', 'module-04',
+        "Consistently profitable traders have an almost boring secret: the same pre-market prep, the same session routine, the same review, every day. This module helps you build that daily structure — including clear rules for when NOT to trade — so you stay calm, focused and out of low-quality setups.",
+        "Watch a successful bukka owner. Same prep every morning, same opening time, same record-keeping, same portions. It looks boring — but that boring consistency is exactly why she's quietly richer than the flashy trader next door who opens on vibes. Routine is what turns skill into money.");
+    EX('trading-psychology', 'module-05',
+        "Losses are a cost of doing business, as normal as rent — even great strategies lose often. What separates professionals from gamblers is the response: reframing a good trade with a bad outcome, planning for drawdown in advance, and stepping away before tilt turns one bad day into a blown account.",
+        "Every Balogun trader has slow days — nobody panics and sells the whole shop because sales were weak this morning. Tilt is different: it's like chasing a bus that has already left, running faster and faster until you fall. The pro simply lets that bus go and waits for the next one.");
+    EX('trading-psychology', 'module-06',
+        "Confidence, patience and emotional detachment quietly power every consistent trader — but only when they come from the right place. Real confidence is built on a tested plan and a track record, patience means waiting for your setup and nothing less, and detachment means caring about the process, not any single trade.",
+        "A farmer plants his yam and waits for harvest. He doesn't dig it up every morning to 'check' — that would kill the crop. He trusts the process and the season. Patience in trading is the same: plant the setup, let it work, and don't uproot it out of fear. Cash in hand is also a position.");
+    EX('trading-psychology', 'module-07',
+        "If this course gives you one habit that changes everything, it's journaling. Your journal reveals the truth about your own behaviour that no strategy video can — your real edge and your real leaks. Logging not just the numbers but your emotions is what turns random trades into a repeatable edge.",
+        "A smart market woman keeps her 'market book': every sale, every cost, even which days are slow. That book tells her which goods actually profit and which just look busy. Your trading journal is that book — kept honestly, it quietly becomes the best, cheapest coach you'll ever have.");
+    EX('trading-psychology', 'module-08',
+        "Psychology improves by practice, not by reading — so this final module is an action plan, not more theory. Over 30 days you'll score yourself daily on a handful of simple rules, training your brain to value process over profit. Small, consistent reps compound into a calm, disciplined, professional mindset.",
+        "It's like a 30-day keep-fit challenge, or the daily discipline of Ramadan or Lent: the power isn't in one big effort, it's in showing up every single day. Tick your rules daily for 30 days and the discipline stops being something you force — it becomes who you are at the chart.");
 })();
