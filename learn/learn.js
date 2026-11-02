@@ -72,7 +72,7 @@ BFX.learn = (function () {
             enrollUrl: '/courses.html#advanced-price-action',
             freeCount: 1,
             lessons: [
-                { id: 'module-01', n: '01', title: 'Beyond Indicators: Reading Raw Price', blurb: 'Why price itself beats every lagging indicator', video: '', free: true,
+                { id: 'module-01', n: '01', title: 'Beyond Indicators: Reading Raw Price', blurb: 'Why price itself beats every lagging indicator', video: '/media/lessons/advanced-price-action/module-01.mp4', poster: '/media/thumbs/advanced-price-action-module-01.jpg', free: true,
                   summary: "Indicators lag because they're built from past price. Advanced price action skips the middle-man and reads what price itself is telling you — where big money entered, where the crowd got trapped, and where price is drawn next. This module resets how you see a chart.",
                   keyPoints: ["Every indicator is just a formula on past price — price action reads the source", "Institutions can't hide: their size leaves a footprint on the chart", "You're learning to read intent, not to predict with certainty", "Clean charts beat cluttered ones — strip indicators, see structure", "This course builds on Forex 101 — master structure and risk first"] },
                 { id: 'module-02', n: '02', title: 'The Anatomy of an Institutional Move', blurb: 'Accumulation, expansion and distribution', video: '', free: false,
@@ -106,7 +106,7 @@ BFX.learn = (function () {
             enrollUrl: '/courses.html#smart-money-concepts',
             freeCount: 1,
             lessons: [
-                { id: 'module-01', n: '01', title: 'How the Big Players Move Price', blurb: 'The game behind the candles', video: '', free: true,
+                { id: 'module-01', n: '01', title: 'How the Big Players Move Price', blurb: 'The game behind the candles', video: '/media/lessons/smart-money-concepts/module-01.mp4', poster: '/media/thumbs/smart-money-concepts-module-01.jpg', free: true,
                   summary: "Retail traders react to price; smart money creates it. This module reframes the market as a game of engineered moves, where institutions fill huge orders by trading against the crowd. Once you see the game, you stop being the exit liquidity.",
                   keyPoints: ["'Smart money' = banks and institutions big enough to move price", "They need the crowd on the wrong side to fill their size", "Many retail habits (chasing breakouts) exist to be exploited", "SMC is a lens on structure and liquidity — not magic", "Build on Forex 101 structure; SMC refines it, doesn't replace it"] },
                 { id: 'module-02', n: '02', title: 'The Market-Maker Model & Manipulation', blurb: 'Accumulate, trap, expand', video: '', free: false,
@@ -140,7 +140,7 @@ BFX.learn = (function () {
             enrollUrl: '/courses.html#trading-psychology',
             freeCount: 1,
             lessons: [
-                { id: 'module-01', n: '01', title: 'The Mental Game That Decides Everything', blurb: 'Why mindset, not strategy, is the edge', video: '', free: true,
+                { id: 'module-01', n: '01', title: 'The Mental Game That Decides Everything', blurb: 'Why mindset, not strategy, is the edge', video: '/media/lessons/trading-psychology/module-01.mp4', poster: '/media/thumbs/trading-psychology-module-01.jpg', free: true,
                   summary: "Two traders can follow the same strategy and get opposite results — the difference is between the ears. This module makes the case that psychology, not strategy, is the real edge, and sets up the work of building a professional mindset.",
                   keyPoints: ["The same system wins or loses depending on who's trading it", "Discipline, patience and emotional control are trainable skills", "Your biggest opponent in the market is yourself", "An edge means nothing if you can't execute it calmly", "Mindset work compounds — small habits, big results over time"] },
                 { id: 'module-02', n: '02', title: 'Fear, Greed & Revenge Trading', blurb: 'The three account-killers and their tells', video: '', free: false,

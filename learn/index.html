@@ -415,7 +415,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             var action = open
               ? '<a class="l-go" href="lesson.html?course=' + cid + '&lesson=' + ls.id + '">' + (isDone ? 'Review' : 'Start') + ' →</a>'
               : '<a class="l-go l-lock"' + (upcoming ? ' data-wl="1"' : '') + ' href="' + c.enrollUrl + '">🔒 ' + (upcoming ? 'Coming soon' : 'Unlock') + '</a>';
-            var thumb = '<span class="l-thumb"><img loading="lazy" src="/media/thumbs/' + ls.id + '.jpg" alt="' + esc(ls.title) + ' preview" onerror="this.parentNode.style.display=\'none\'"></span>';
+            var thumb = '<span class="l-thumb"><img loading="lazy" src="' + (ls.poster || '/media/thumbs/' + ls.id + '.jpg') + '" alt="' + esc(ls.title) + ' preview" onerror="this.parentNode.style.display=\'none\'"></span>';
             return '<li class="lesson-item' + (open ? '' : ' locked') + '">' +
               '<span class="lesson-check ' + (isDone ? 'done' : '') + '">' + (isDone ? '✓' : (open ? '' : '🔒')) + '</span>' +
               thumb +
