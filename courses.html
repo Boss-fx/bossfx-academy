@@ -437,7 +437,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             font-size: 0.92rem; white-space: nowrap;
         }
         .ladder-cta .btn-preview:hover { background: #34d399; }
-        .ladder-cta .ladder-note { color: var(--text-muted); font-size: 0.82rem; }
+        .ladder-cta .btn-enroll {
+            display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #16d67a;
+            border: 1px solid rgba(16, 214, 122, 0.55); font-weight: 700; border-radius: 10px;
+            padding: 12px 20px; font-size: 0.92rem; cursor: pointer; font-family: inherit; white-space: nowrap;
+        }
+        .ladder-cta .btn-enroll:hover { background: rgba(16, 214, 122, 0.12); border-color: #16d67a; }
+        .ladder-cta .ladder-note { color: var(--text-muted); font-size: 0.82rem; flex-basis: 100%; }
         .ladder-cta .coming-wait { flex: 1; min-width: 240px; margin: 0; }
         @media (max-width: 720px) {
             .ladder-mods { grid-template-columns: 1fr; }
@@ -710,7 +716,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="section-header center">
                 <span class="section-tag">Your Learning Path</span>
                 <h2 class="section-title">The Full BossFx<br><span class="text-gradient">Trader's Ladder</span></h2>
-                <p class="section-subtitle">Beyond Forex 101, three more courses take you from beginner to structured trader — and they're <strong style="color:var(--text-primary)">all available now, free to take</strong>. Work through them in order, or jump to the skill you need. Create a free account and start.</p>
+                <p class="section-subtitle">Beyond Forex 101, three more courses take you from beginner to structured trader. <strong style="color:var(--text-primary)">Module 1 of each is free</strong> — start today — then unlock the full course. Work through them in order as a path, or jump to the skill you need. <em style="color:var(--text-muted)">Video walkthroughs are being added module by module.</em></p>
             </div>
             <div class="ladder">
 
@@ -720,10 +726,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <h3 class="lh-title"><span class="ladder-step">2</span>Advanced Price Action</h3>
                             <p>Read the chart like the institutions do — beyond indicators, into raw price. Order blocks, liquidity, fair value gaps and live mark-ups with BossFx.</p>
                         </div>
-                        <span class="ladder-badge">Free · Available now</span>
+                        <span class="ladder-badge">Module 1 free · ₦45,000</span>
                     </div>
                     <ul class="ladder-mods">
-                        <li><span class="mn">01</span><span><strong>Beyond Indicators: Reading Raw Price</strong></span></li>
+                        <li><span class="mn">01</span><span><strong>Beyond Indicators: Reading Raw Price</strong> <span class="mfree">Free</span></span></li>
                         <li><span class="mn">02</span><span><strong>The Anatomy of an Institutional Move</strong></span></li>
                         <li><span class="mn">03</span><span><strong>Order Blocks &amp; Institutional Footprints</strong></span></li>
                         <li><span class="mn">04</span><span><strong>Liquidity: Pools, Sweeps &amp; Stop Hunts</strong></span></li>
@@ -733,8 +739,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <li><span class="mn">08</span><span><strong>The Advanced Price Action Playbook</strong></span></li>
                     </ul>
                     <div class="ladder-cta">
-                        <a class="btn-preview" href="/learn/lesson.html?course=advanced-price-action&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=course&amp;utm_campaign=advanced_price_action">▶ Start this course free →</a>
-                        <span class="ladder-note">8 modules · free · lifetime access · video walkthroughs coming</span>
+                        <a class="btn-preview" href="/learn/lesson.html?course=advanced-price-action&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=course&amp;utm_campaign=advanced_price_action">▶ Start Module 1 free →</a>
+                        <button class="btn-enroll pay-btn" data-product="advanced-price-action" data-amount="4500000" data-name="Advanced Price Action — Trade Like the Institutions">Enroll — ₦45,000</button>
+                        <span class="ladder-note">8 modules · lifetime access · Telegram community · video walkthroughs coming</span>
                     </div>
                 </div>
 
@@ -744,10 +751,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <h3 class="lh-title"><span class="ladder-step">3</span>Smart Money Concepts</h3>
                             <p>Understand how the big players move price — and learn to trade alongside them. Market-maker models, BOS &amp; CHoCH, premium/discount and smart-money entries.</p>
                         </div>
-                        <span class="ladder-badge">Free · Available now</span>
+                        <span class="ladder-badge">Module 1 free · ₦45,000</span>
                     </div>
                     <ul class="ladder-mods">
-                        <li><span class="mn">01</span><span><strong>How the Big Players Move Price</strong></span></li>
+                        <li><span class="mn">01</span><span><strong>How the Big Players Move Price</strong> <span class="mfree">Free</span></span></li>
                         <li><span class="mn">02</span><span><strong>The Market-Maker Model &amp; Manipulation</strong></span></li>
                         <li><span class="mn">03</span><span><strong>Break of Structure &amp; Change of Character</strong></span></li>
                         <li><span class="mn">04</span><span><strong>Premium vs Discount Zones</strong></span></li>
@@ -757,8 +764,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <li><span class="mn">08</span><span><strong>Your Smart Money Trading System</strong></span></li>
                     </ul>
                     <div class="ladder-cta">
-                        <a class="btn-preview" href="/learn/lesson.html?course=smart-money-concepts&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=course&amp;utm_campaign=smart_money_concepts">▶ Start this course free →</a>
-                        <span class="ladder-note">8 modules · free · lifetime access · video walkthroughs coming</span>
+                        <a class="btn-preview" href="/learn/lesson.html?course=smart-money-concepts&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=course&amp;utm_campaign=smart_money_concepts">▶ Start Module 1 free →</a>
+                        <button class="btn-enroll pay-btn" data-product="smart-money-concepts" data-amount="4500000" data-name="Smart Money Concepts — Trade With the Big Players">Enroll — ₦45,000</button>
+                        <span class="ladder-note">8 modules · lifetime access · Telegram community · video walkthroughs coming</span>
                     </div>
                 </div>
 
@@ -768,10 +776,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <h3 class="lh-title"><span class="ladder-step">4</span>Trading Psychology Deep Dive</h3>
                             <p>The mental game that decides who survives — and who blows the account. Beat fear, greed and revenge, build discipline, and journal like a pro.</p>
                         </div>
-                        <span class="ladder-badge">Free · Available now</span>
+                        <span class="ladder-badge">Module 1 free · ₦35,000</span>
                     </div>
                     <ul class="ladder-mods">
-                        <li><span class="mn">01</span><span><strong>The Mental Game That Decides Everything</strong></span></li>
+                        <li><span class="mn">01</span><span><strong>The Mental Game That Decides Everything</strong> <span class="mfree">Free</span></span></li>
                         <li><span class="mn">02</span><span><strong>Fear, Greed &amp; Revenge Trading</strong></span></li>
                         <li><span class="mn">03</span><span><strong>Building Unshakeable Discipline</strong></span></li>
                         <li><span class="mn">04</span><span><strong>The Routines &amp; Rules of Elite Traders</strong></span></li>
@@ -781,8 +789,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <li><span class="mn">08</span><span><strong>Your 30-Day Mental Edge Plan</strong></span></li>
                     </ul>
                     <div class="ladder-cta">
-                        <a class="btn-preview" href="/learn/lesson.html?course=trading-psychology&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=course&amp;utm_campaign=trading_psychology">▶ Start this course free →</a>
-                        <span class="ladder-note">8 modules · free · lifetime access · video walkthroughs coming</span>
+                        <a class="btn-preview" href="/learn/lesson.html?course=trading-psychology&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=course&amp;utm_campaign=trading_psychology">▶ Start Module 1 free →</a>
+                        <button class="btn-enroll pay-btn" data-product="trading-psychology" data-amount="3500000" data-name="Trading Psychology Deep Dive — Master the Mental Game">Enroll — ₦35,000</button>
+                        <span class="ladder-note">8 modules · lifetime access · Telegram community · video walkthroughs coming</span>
                     </div>
                 </div>
 
@@ -870,6 +879,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
         </div>
     </footer>
+
+    <!-- Payment modal (shared checkout — wired by script.js, same as index.html) -->
+    <div class="pay-modal-overlay" id="payModal">
+        <div class="pay-modal">
+            <button class="pay-modal-close" id="payModalClose">&times;</button>
+            <h3 id="payModalTitle">Complete Your Enrolment</h3>
+            <p id="payModalProduct">Product name</p>
+            <p id="payModalAmount" class="pay-modal-price"></p>
+            <form id="payModalForm">
+                <input type="text" id="payName" placeholder="Full name" required>
+                <input type="email" id="payEmail" placeholder="Email address" required>
+                <input type="tel" id="payPhone" placeholder="Phone number (optional)">
+                <label class="order-bump" id="orderBump">
+                    <input type="checkbox" id="orderBumpCheck">
+                    <div class="order-bump-content">
+                        <span class="order-bump-tag">SPECIAL OFFER</span>
+                        <strong>Add SMA Pro Trend EA for ₦15,000</strong>
+                        <span class="order-bump-note">Exclusive bundle price (normally ₦49,000)</span>
+                    </div>
+                </label>
+                <div class="pay-modal-total" id="payModalTotal"></div>
+                <button type="submit" class="btn btn-primary btn-lg pay-modal-submit">Proceed to Secure Checkout</button>
+            </form>
+            <p class="pay-modal-secure">Protected by 256-bit SSL encryption. Your card details are never stored on our servers.</p>
+        </div>
+    </div>
+
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
     <script src="config.js"></script>
     <script src="script.js"></script>
     <script src="email-config.js"></script>

@@ -69,9 +69,8 @@ BFX.learn = (function () {
             title: 'Advanced Price Action — Trade Like the Institutions',
             blurb: 'Read raw price the way the banks do — order blocks, liquidity, fair value gaps and live chart mark-ups.',
             priceNGN: 45000,
-            openAccess: true, // launched free to take now — flip to false + wire checkout to monetize
             enrollUrl: '/courses.html#advanced-price-action',
-            freeCount: 8,
+            freeCount: 1,
             lessons: [
                 { id: 'module-01', n: '01', title: 'Beyond Indicators: Reading Raw Price', blurb: 'Why price itself beats every lagging indicator', video: '', free: true,
                   summary: "Indicators lag because they're built from past price. Advanced price action skips the middle-man and reads what price itself is telling you — where big money entered, where the crowd got trapped, and where price is drawn next. This module resets how you see a chart.",
@@ -104,9 +103,8 @@ BFX.learn = (function () {
             title: 'Smart Money Concepts — Trade With the Big Players',
             blurb: 'Understand how institutions engineer price — market-maker models, BOS & CHoCH, premium/discount, and smart-money entries.',
             priceNGN: 45000,
-            openAccess: true, // launched free to take now — flip to false + wire checkout to monetize
             enrollUrl: '/courses.html#smart-money-concepts',
-            freeCount: 8,
+            freeCount: 1,
             lessons: [
                 { id: 'module-01', n: '01', title: 'How the Big Players Move Price', blurb: 'The game behind the candles', video: '', free: true,
                   summary: "Retail traders react to price; smart money creates it. This module reframes the market as a game of engineered moves, where institutions fill huge orders by trading against the crowd. Once you see the game, you stop being the exit liquidity.",
@@ -139,9 +137,8 @@ BFX.learn = (function () {
             title: 'Trading Psychology Deep Dive — Master the Mental Game',
             blurb: 'The mindset that decides who survives — beat fear, greed and revenge, build discipline, and journal like a pro.',
             priceNGN: 35000,
-            openAccess: true, // launched free to take now — flip to false + wire checkout to monetize
             enrollUrl: '/courses.html#trading-psychology',
-            freeCount: 8,
+            freeCount: 1,
             lessons: [
                 { id: 'module-01', n: '01', title: 'The Mental Game That Decides Everything', blurb: 'Why mindset, not strategy, is the edge', video: '', free: true,
                   summary: "Two traders can follow the same strategy and get opposite results — the difference is between the ears. This module makes the case that psychology, not strategy, is the real edge, and sets up the work of building a professional mindset.",
