@@ -401,9 +401,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .ladder-head p { color: var(--text-secondary); font-size: 0.92rem; margin: 8px 0 0; max-width: 640px; }
         .ladder-badge {
             flex: none; font-size: 0.66rem; font-weight: 800; letter-spacing: 1px;
-            text-transform: uppercase; color: #a5b4fc; background: rgba(99, 102, 241, 0.14);
-            border: 1px solid rgba(129, 140, 248, 0.4); padding: 6px 12px; border-radius: 100px;
+            text-transform: uppercase; color: #16d67a; background: rgba(16, 214, 122, 0.14);
+            border: 1px solid rgba(16, 214, 122, 0.4); padding: 6px 12px; border-radius: 100px;
         }
+        .ladder-step {
+            display: inline-flex; align-items: center; justify-content: center; flex: none;
+            width: 30px; height: 30px; border-radius: 9px; background: rgba(16, 214, 122, 0.14);
+            color: #16d67a; font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 0.9rem;
+            margin-right: 12px; vertical-align: middle;
+        }
+        .ladder-head .lh-title { display: flex; align-items: center; }
         .ladder-mods {
             list-style: none; margin: 22px 0 0; padding: 0;
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 26px;
@@ -430,6 +437,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             font-size: 0.92rem; white-space: nowrap;
         }
         .ladder-cta .btn-preview:hover { background: #34d399; }
+        .ladder-cta .ladder-note { color: var(--text-muted); font-size: 0.82rem; }
         .ladder-cta .coming-wait { flex: 1; min-width: 240px; margin: 0; }
         @media (max-width: 720px) {
             .ladder-mods { grid-template-columns: 1fr; }
@@ -700,22 +708,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <section class="section section-dark" id="coming-soon">
         <div class="container">
             <div class="section-header center">
-                <span class="section-tag">Coming Soon</span>
-                <h2 class="section-title">More Courses<br><span class="text-gradient">On the Way</span></h2>
-                <p class="section-subtitle">The next rungs of the BossFx ladder — full curriculum below. <strong style="color:var(--text-primary)">Module 1 of each is a free preview</strong>; join a waitlist for early-bird pricing when it drops.</p>
+                <span class="section-tag">Your Learning Path</span>
+                <h2 class="section-title">The Full BossFx<br><span class="text-gradient">Trader's Ladder</span></h2>
+                <p class="section-subtitle">Beyond Forex 101, three more courses take you from beginner to structured trader — and they're <strong style="color:var(--text-primary)">all available now, free to take</strong>. Work through them in order, or jump to the skill you need. Create a free account and start.</p>
             </div>
             <div class="ladder">
 
                 <div class="ladder-card" id="advanced-price-action">
                     <div class="ladder-head">
                         <div>
-                            <h3>Advanced Price Action</h3>
+                            <h3 class="lh-title"><span class="ladder-step">2</span>Advanced Price Action</h3>
                             <p>Read the chart like the institutions do — beyond indicators, into raw price. Order blocks, liquidity, fair value gaps and live mark-ups with BossFx.</p>
                         </div>
-                        <span class="ladder-badge">Coming Q1 2027</span>
+                        <span class="ladder-badge">Free · Available now</span>
                     </div>
                     <ul class="ladder-mods">
-                        <li><span class="mn">01</span><span><strong>Beyond Indicators: Reading Raw Price</strong> <span class="mfree">Free preview</span></span></li>
+                        <li><span class="mn">01</span><span><strong>Beyond Indicators: Reading Raw Price</strong></span></li>
                         <li><span class="mn">02</span><span><strong>The Anatomy of an Institutional Move</strong></span></li>
                         <li><span class="mn">03</span><span><strong>Order Blocks &amp; Institutional Footprints</strong></span></li>
                         <li><span class="mn">04</span><span><strong>Liquidity: Pools, Sweeps &amp; Stop Hunts</strong></span></li>
@@ -725,24 +733,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <li><span class="mn">08</span><span><strong>The Advanced Price Action Playbook</strong></span></li>
                     </ul>
                     <div class="ladder-cta">
-                        <a class="btn-preview" href="/learn/lesson.html?course=advanced-price-action&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=preview&amp;utm_campaign=advanced_price_action">▶ Preview Module 1 free</a>
-                        <form class="coming-wait" data-source="waitlist_advanced_price_action" data-course="Advanced Price Action">
-                            <input type="email" placeholder="Email me when it drops" required>
-                            <button type="submit">Notify me</button>
-                        </form>
+                        <a class="btn-preview" href="/learn/lesson.html?course=advanced-price-action&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=course&amp;utm_campaign=advanced_price_action">▶ Start this course free →</a>
+                        <span class="ladder-note">8 modules · free · lifetime access · video walkthroughs coming</span>
                     </div>
                 </div>
 
                 <div class="ladder-card" id="smart-money-concepts">
                     <div class="ladder-head">
                         <div>
-                            <h3>Smart Money Concepts</h3>
+                            <h3 class="lh-title"><span class="ladder-step">3</span>Smart Money Concepts</h3>
                             <p>Understand how the big players move price — and learn to trade alongside them. Market-maker models, BOS &amp; CHoCH, premium/discount and smart-money entries.</p>
                         </div>
-                        <span class="ladder-badge">Coming Q2 2027</span>
+                        <span class="ladder-badge">Free · Available now</span>
                     </div>
                     <ul class="ladder-mods">
-                        <li><span class="mn">01</span><span><strong>How the Big Players Move Price</strong> <span class="mfree">Free preview</span></span></li>
+                        <li><span class="mn">01</span><span><strong>How the Big Players Move Price</strong></span></li>
                         <li><span class="mn">02</span><span><strong>The Market-Maker Model &amp; Manipulation</strong></span></li>
                         <li><span class="mn">03</span><span><strong>Break of Structure &amp; Change of Character</strong></span></li>
                         <li><span class="mn">04</span><span><strong>Premium vs Discount Zones</strong></span></li>
@@ -752,24 +757,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <li><span class="mn">08</span><span><strong>Your Smart Money Trading System</strong></span></li>
                     </ul>
                     <div class="ladder-cta">
-                        <a class="btn-preview" href="/learn/lesson.html?course=smart-money-concepts&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=preview&amp;utm_campaign=smart_money_concepts">▶ Preview Module 1 free</a>
-                        <form class="coming-wait" data-source="waitlist_smart_money_concepts" data-course="Smart Money Concepts">
-                            <input type="email" placeholder="Email me when it drops" required>
-                            <button type="submit">Notify me</button>
-                        </form>
+                        <a class="btn-preview" href="/learn/lesson.html?course=smart-money-concepts&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=course&amp;utm_campaign=smart_money_concepts">▶ Start this course free →</a>
+                        <span class="ladder-note">8 modules · free · lifetime access · video walkthroughs coming</span>
                     </div>
                 </div>
 
                 <div class="ladder-card" id="trading-psychology">
                     <div class="ladder-head">
                         <div>
-                            <h3>Trading Psychology Deep Dive</h3>
+                            <h3 class="lh-title"><span class="ladder-step">4</span>Trading Psychology Deep Dive</h3>
                             <p>The mental game that decides who survives — and who blows the account. Beat fear, greed and revenge, build discipline, and journal like a pro.</p>
                         </div>
-                        <span class="ladder-badge">Coming Q3 2027</span>
+                        <span class="ladder-badge">Free · Available now</span>
                     </div>
                     <ul class="ladder-mods">
-                        <li><span class="mn">01</span><span><strong>The Mental Game That Decides Everything</strong> <span class="mfree">Free preview</span></span></li>
+                        <li><span class="mn">01</span><span><strong>The Mental Game That Decides Everything</strong></span></li>
                         <li><span class="mn">02</span><span><strong>Fear, Greed &amp; Revenge Trading</strong></span></li>
                         <li><span class="mn">03</span><span><strong>Building Unshakeable Discipline</strong></span></li>
                         <li><span class="mn">04</span><span><strong>The Routines &amp; Rules of Elite Traders</strong></span></li>
@@ -779,11 +781,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <li><span class="mn">08</span><span><strong>Your 30-Day Mental Edge Plan</strong></span></li>
                     </ul>
                     <div class="ladder-cta">
-                        <a class="btn-preview" href="/learn/lesson.html?course=trading-psychology&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=preview&amp;utm_campaign=trading_psychology">▶ Preview Module 1 free</a>
-                        <form class="coming-wait" data-source="waitlist_trading_psychology" data-course="Trading Psychology Deep Dive">
-                            <input type="email" placeholder="Email me when it drops" required>
-                            <button type="submit">Notify me</button>
-                        </form>
+                        <a class="btn-preview" href="/learn/lesson.html?course=trading-psychology&amp;lesson=module-01&amp;utm_source=courses&amp;utm_medium=course&amp;utm_campaign=trading_psychology">▶ Start this course free →</a>
+                        <span class="ladder-note">8 modules · free · lifetime access · video walkthroughs coming</span>
                     </div>
                 </div>
 

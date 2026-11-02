@@ -63,6 +63,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .keypts{list-style:none;display:flex;flex-direction:column;gap:9px}
   .keypts li{position:relative;padding-left:26px;color:#e2e8f0;font-size:0.96rem}
   .keypts li::before{content:'✓';position:absolute;left:0;top:0;color:#10b981;font-weight:800}
+  .lesson-body p{color:#cbd5e1;font-size:1rem;line-height:1.72;margin:0 0 15px}
+  .lesson-body p:last-child{margin-bottom:0}
   .notes-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .note-hint{font-size:0.85rem;margin:4px 0 10px}
   .note-state{font-size:0.78rem;color:#34d399}
@@ -99,6 +101,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <p id="sumText" class="sum"></p>
         <div class="kp-h">Key takeaways</div>
         <ul id="keyList" class="keypts"></ul>
+      </div>
+      <div class="card hide" id="bodyCard">
+        <h2 class="card-h">📖 The lesson</h2>
+        <div id="bodyText" class="lesson-body"></div>
       </div>
       <div class="card">
         <div class="notes-head">
@@ -137,6 +143,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script>window.BFX_NO_CHAT_WIDGET = true;</script>
   <script src="../chatbot.js"></script>
   <script src="learn.js"></script>
+  <script src="lessons-ext.js"></script>
   <script>
   (function () {
     var qs = new URLSearchParams(location.search);
@@ -164,8 +171,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       BFX.learn.syncBrevo('progress', { IS_STUDENT: 'true', LAST_ACTIVE: new Date().toISOString(), LAST_LESSON: 'Module ' + info.lesson.n + ' — ' + info.lesson.title }, { noSeq: true, email: user.email });
 
       // Paywall: a non-free module you haven't purchased shows an upsell.
-      // 'upcoming' courses (launching 2027) point to the waitlist, not checkout.
-      if (!BFX.learn.canAccess(info.lesson, enrolled)) {
+      // `openAccess` courses (launched free to take now) unlock every module.
+      var hasAccess = enrolled || !!(info.course && info.course.openAccess);
+      if (!BFX.learn.canAccess(info.lesson, hasAccess)) {
         var upcoming = (info.course.status || 'live') === 'upcoming';
         var total = info.course.lessons.length;
         document.getElementById('video').innerHTML = upcoming
@@ -202,16 +210,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         } else {
           v.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + info.lesson.video + '" title="Lesson video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
         }
+      } else if (info.lesson.body && info.lesson.body.length) {
+        v.innerHTML = '<div class="video-ph"><strong>📖 Read the full lesson below</strong>A complete written lesson is ready for you below — a video walkthrough is on the way. Study it, make notes, then mark the module complete.</div>';
       } else {
         v.innerHTML = '<div class="video-ph"><strong>🎬 Lesson video coming soon</strong>Video for this module hasn\'t been uploaded yet. Your progress still tracks — mark it complete once you\'ve studied the module.</div>';
       }
 
-      // ---- Study: summary, key takeaways, notes/journal, Mirror ----
+      // ---- Study: summary, key takeaways, written lesson, notes/journal, Mirror ----
       (function study() {
         var sum = document.getElementById('sumText');
         if (sum) sum.textContent = info.lesson.summary || '';
         var kl = document.getElementById('keyList');
         if (kl) { kl.innerHTML = ''; (info.lesson.keyPoints || []).forEach(function (k) { var li = document.createElement('li'); li.textContent = k; kl.appendChild(li); }); }
+        var bt = document.getElementById('bodyText'), bc = document.getElementById('bodyCard');
+        if (bt && bc && info.lesson.body && info.lesson.body.length) {
+          bt.innerHTML = '';
+          info.lesson.body.forEach(function (para) { var p = document.createElement('p'); p.textContent = para; bt.appendChild(p); });
+          bc.classList.remove('hide');
+        }
 
         var ta = document.getElementById('notes'), st = document.getElementById('noteState');
         var nKey = 'bfx_notes_' + courseId + '_' + lessonId + '_' + (user.email || 'anon');
