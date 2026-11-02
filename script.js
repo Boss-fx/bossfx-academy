@@ -1126,7 +1126,7 @@ BFX.proofToast = (function() {
         { icon: '🎯', text: '<strong>Emmanuel K.</strong> passed FTMO Phase 1 using BossFx strategies', time: '22 minutes ago' },
         { icon: '📚', text: '<strong>A trader from Lagos</strong> started Group Mentorship', time: '28 minutes ago' },
         { icon: '✅', text: '<strong>Victor U.</strong> earned the Consistency Badge', time: '35 minutes ago' },
-        { icon: '🔥', text: '<strong>89 traders</strong> registered for this week\'s webinar', time: '1 hour ago' },
+        { icon: '🔥', text: '<strong>41 traders</strong> registered for this week\'s webinar', time: '1 hour ago' },
         { icon: '💰', text: '<strong>David M.</strong> received his first funded account payout', time: '2 hours ago' }
     ];
 
@@ -1151,7 +1151,7 @@ BFX.proofToast = (function() {
         showing = true;
         toast.classList.add('show');
         BFX.analytics.track('social_proof_shown', { message_index: index });
-        setTimeout(hide, 5000);
+        setTimeout(hide, 7000);
         index++;
     }
 
@@ -1162,14 +1162,20 @@ BFX.proofToast = (function() {
     }
 
     function start() {
-        var firstDelay = 8000 + Math.random() * 7000;
+        // Space the toasts out so they feel like real, occasional activity
+        // rather than a constant stream: ~25s before the first, then a fresh
+        // 70–130s gap after each one hides.
+        function scheduleNext() {
+            var gap = 70000 + Math.random() * 60000;
+            setTimeout(function() {
+                show();
+                setTimeout(scheduleNext, 7200); // queue the next after this one hides
+            }, gap);
+        }
         setTimeout(function() {
             show();
-            setInterval(function() {
-                var delay = 15000 + Math.random() * 20000;
-                setTimeout(show, delay);
-            }, 35000);
-        }, firstDelay);
+            setTimeout(scheduleNext, 7200);
+        }, 25000 + Math.random() * 10000);
     }
 
     if (document.querySelector('.hero, .page-hero')) start();
