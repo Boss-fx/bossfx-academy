@@ -376,7 +376,7 @@ BFX.extraEvents = (function () {
         if (!link) return;
         var href = (link.getAttribute('href') || '').toLowerCase();
         // Detect broker-related links
-        if (/deriv\.|exness\.|icmarkets\.|fpmarkets\.|xm\.|fbs\.|octafx\.|hotforex\.|fxtm\.|pepperstone\.|oanda\.|broker/i.test(href)) {
+        if (/exness\.|icmarkets\.|fpmarkets\.|xm\.|fbs\.|octafx\.|hotforex\.|fxtm\.|pepperstone\.|oanda\.|broker/i.test(href)) {
             track('broker_signup_click', {
                 broker_url: link.href,
                 broker_text: (link.textContent || '').trim().substring(0, 50),

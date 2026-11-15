@@ -196,7 +196,7 @@ BFX.tracking = (function() {
             else if (href.indexOf('tiktok.com') > -1) linkType = 'tiktok';
             else if (href.indexOf('mql5.com') > -1) linkType = 'mql5';
             else if (href.indexOf('facebook.com') > -1) linkType = 'facebook';
-            else if (href.indexOf('deriv.') > -1) linkType = 'broker_referral';
+            else if (href.indexOf('exness.') > -1 || href.indexOf('icmarkets.') > -1 || href.indexOf('fpmarkets.') > -1) linkType = 'broker_referral';
 
             // Determine click location
             var location = 'body';
