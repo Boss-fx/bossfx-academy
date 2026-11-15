@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  syntax:
+    name: JS & JSON syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check JS syntax (Node scripts)
+        run: |
+          find api lib -name '*.js' | while read f; do
+            node --check "$f" || exit 1
+          done
+
+      - name: Check JSON syntax
+        run: |
+          find . -name '*.json' -not -path './node_modules/*' -not -path './.vercel/*' | while read f; do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || exit 1
+          done
+
+  html-validate:
+    name: HTML well-formedness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check HTML files parse without errors
+        run: |
+          npm install -g htmlhint@1.1.4
+          htmlhint --config - "**/*.html" <<'EOF'
+          {
+            "tagname-lowercase": true,
+            "attr-lowercase": false,
+            "attr-value-double-quotes": false,
+            "doctype-first": true,
+            "tag-pair": true,
+            "spec-char-escape": false,
+            "id-unique": true,
+            "src-not-empty": true,
+            "title-require": true
+          }
+          EOF
+
+  api-test:
+    name: API endpoint smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Require all API handlers
+        run: |
+          for f in api/*.js; do
+            echo "Requiring $f..."
+            node -e "require('./$f')" || exit 1
+          done

@@ -207,17 +207,34 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
       var v = document.getElementById('video');
       if (info.lesson.portrait) v.classList.add('portrait');
-      if (info.lesson.video) {
-        // `video` may be a YouTube ID, a self-hosted path (/media/….mp4), or a full video URL
-        if (/\.(mp4|webm|mov)(\?|$)/i.test(info.lesson.video) || /^https?:\/\//i.test(info.lesson.video)) {
-          v.innerHTML = '<video src="' + info.lesson.video + '" poster="' + (info.lesson.poster || '/media/thumbs/' + info.lesson.id + '.jpg') + '" controls playsinline preload="metadata"></video>';
+
+      function renderVideo(videoUrl, posterUrl) {
+        if (videoUrl) {
+          if (/\.(mp4|webm|mov)(\?|$)/i.test(videoUrl) || /^https?:\/\//i.test(videoUrl)) {
+            v.innerHTML = '<video src="' + videoUrl + '" poster="' + (posterUrl || '/media/thumbs/' + info.lesson.id + '.jpg') + '" controls playsinline preload="metadata"></video>';
+          } else {
+            v.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + videoUrl + '" title="Lesson video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+          }
+        } else if (info.lesson.body && info.lesson.body.length) {
+          v.innerHTML = '<div class="video-ph"><strong>📖 Read the full lesson below</strong>A complete written lesson is ready for you below — a video walkthrough is on the way. Study it, make notes, then mark the module complete.</div>';
         } else {
-          v.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + info.lesson.video + '" title="Lesson video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+          v.innerHTML = '<div class="video-ph"><strong>🎬 Lesson video coming soon</strong>Video for this module hasn\'t been uploaded yet. Your progress still tracks — mark it complete once you\'ve studied the module.</div>';
         }
-      } else if (info.lesson.body && info.lesson.body.length) {
-        v.innerHTML = '<div class="video-ph"><strong>📖 Read the full lesson below</strong>A complete written lesson is ready for you below — a video walkthrough is on the way. Study it, make notes, then mark the module complete.</div>';
+      }
+
+      if (info.lesson.video) {
+        renderVideo(info.lesson.video, info.lesson.poster);
+      } else if (!info.lesson.free) {
+        BFX.auth.getAccessToken().then(function (token) {
+          if (!token) { renderVideo(''); return; }
+          fetch('/api/lesson-content?course=' + encodeURIComponent(courseId) + '&lesson=' + encodeURIComponent(lessonId), {
+            headers: { 'Authorization': 'Bearer ' + token }
+          }).then(function (r) { return r.json(); })
+            .then(function (d) { renderVideo(d.content && d.content.video || '', d.content && d.content.poster || ''); })
+            .catch(function () { renderVideo(''); });
+        });
       } else {
-        v.innerHTML = '<div class="video-ph"><strong>🎬 Lesson video coming soon</strong>Video for this module hasn\'t been uploaded yet. Your progress still tracks — mark it complete once you\'ve studied the module.</div>';
+        renderVideo('');
       }
 
       // ---- Study: summary, key takeaways, written lesson, notes/journal, Mirror ----
