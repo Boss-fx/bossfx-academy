@@ -6,7 +6,7 @@
 const { getProduct, getProductByAmount } = require('../lib/products');
 const { generateAccessToken, getProductFiles } = require('../lib/files');
 const { fulfillOrder } = require('../lib/fulfillment');
-const { generateToken: generateLegacyToken } = require('./download-forex101');
+const { generateToken: generateLegacyToken } = require('./download');
 const { applyRateLimit } = require('../lib/rate-limit');
 const { setCors } = require('../lib/cors');
 

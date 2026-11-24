@@ -1996,7 +1996,7 @@
             { path: '/api/health', method: 'GET', purpose: 'Diagnostic health check', critical: false },
             { path: '/api/market-data', method: 'GET', purpose: 'Market data for chatbot', critical: false },
             { path: '/api/cron-reengagement', method: 'GET', purpose: 'Daily drip + re-engagement', critical: false },
-            { path: '/api/download-forex101', method: 'GET', purpose: 'Legacy download (tech debt)', critical: false },
+            { path: '/api/download?legacy=forex101', method: 'GET', purpose: 'Legacy Forex 101 (merged into /api/download)', critical: false },
             { path: '/api/vip-access', method: 'GET', purpose: 'VIP portal data', critical: false }
         ];
         html += BFX.card('API Endpoint Monitor',

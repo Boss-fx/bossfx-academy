@@ -655,7 +655,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             verifyingEl.style.display = 'none';
             downloadCard.style.display = 'block';
             contentSection.style.display = 'block';
-            downloadBtn.href = '/api/download-forex101?token=' + encodeURIComponent(token);
+            downloadBtn.href = '/api/download?legacy=forex101&token=' + encodeURIComponent(token);
             downloadBtn.setAttribute('download', '');
 
             if (customerName) {

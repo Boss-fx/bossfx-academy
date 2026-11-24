@@ -5,6 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { verifyAccessToken, getProductFiles, getSignedDownloadUrl, recordDownload } = require('../lib/files');
 const { getOrderByFlwId } = require('../lib/orders');
 const { applyRateLimit } = require('../lib/rate-limit');
@@ -17,6 +18,12 @@ module.exports = async function handler(req, res) {
     }
 
     if (applyRateLimit(req, res, { windowMs: 60000, max: 20 })) return;
+
+    // Legacy Forex 101 direct-link flow (HMAC token), folded in from the retired
+    // /api/download-forex101 endpoint to stay within Vercel's function limit.
+    if (req.query.legacy === 'forex101') {
+        return serveForex101Legacy(req, res);
+    }
 
     const { token, file } = req.query;
 
@@ -178,3 +185,65 @@ function serveLegacyFile(req, res, payload, ip, ua) {
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
     return res.status(200).send(fileBuffer);
 }
+
+// ================================================================
+// Legacy Forex 101 direct download — folded in from the retired
+// /api/download-forex101 function (one fewer serverless function).
+// HMAC-signed, 72h tokens. generateToken is reused by verify-payment
+// and lib/email, so it stays exported with the same name.
+// ================================================================
+const LEGACY_SECRET = process.env.DOWNLOAD_SECRET || process.env.FLUTTERWAVE_SECRET_KEY || 'bfx-download-fallback-key';
+const LEGACY_TOKEN_EXPIRY_HOURS = 72;
+
+function generateToken(email, product = 'forex-101') {
+    const payload = { email: email || 'customer', product, exp: Date.now() + (LEGACY_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000) };
+    const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
+    const sig = crypto.createHmac('sha256', LEGACY_SECRET).update(data).digest('base64url');
+    return `${data}.${sig}`;
+}
+
+function verifyLegacyToken(token) {
+    if (!token || !token.includes('.')) return null;
+    const [data, sig] = token.split('.');
+    const expectedSig = crypto.createHmac('sha256', LEGACY_SECRET).update(data).digest('base64url');
+    if (sig !== expectedSig) return null;
+    try {
+        const payload = JSON.parse(Buffer.from(data, 'base64url').toString());
+        if (payload.exp < Date.now()) return null;
+        return payload;
+    } catch {
+        return null;
+    }
+}
+
+function serveForex101Legacy(req, res) {
+    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+    const { token, generate, email } = req.query;
+
+    if (generate === 'true' && email) {
+        if (req.headers['x-internal-key'] !== LEGACY_SECRET) return res.status(403).json({ error: 'Unauthorized' });
+        return res.status(200).json({ token: generateToken(email) });
+    }
+    if (!token) {
+        return res.status(400).json({ error: 'Missing download token', message: 'This download link has expired or is invalid. Please check your email for the correct link, or contact support at hello@bossfxcademy.com' });
+    }
+    const payload = verifyLegacyToken(token);
+    if (!payload) {
+        return res.status(403).json({ error: 'Invalid or expired token', message: 'This download link has expired. Please contact support at hello@bossfxcademy.com for a new download link.' });
+    }
+    const filePath = path.join(process.cwd(), 'downloads', 'Forex_101_Beginner_Starter_Pack.pdf');
+    if (!fs.existsSync(filePath)) {
+        console.error('[Download] Forex 101 PDF not found at:', filePath);
+        return res.status(500).json({ error: 'File not found. Please contact support.' });
+    }
+    const fileBuffer = fs.readFileSync(filePath);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="Forex_101_Beginner_Starter_Pack_BossFx.pdf"');
+    res.setHeader('Content-Length', fileBuffer.length);
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    return res.status(200).send(fileBuffer);
+}
+
+module.exports.generateToken = generateToken;
+module.exports.verifyLegacyToken = verifyLegacyToken;
