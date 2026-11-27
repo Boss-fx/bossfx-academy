@@ -83,13 +83,20 @@ jobs:
   audit:
     name: Dependency audit (informational)
     runs-on: ubuntu-latest
-    # Non-blocking: known advisories are all in the dev-only live-server toolchain,
-    # which never ships to production. This job surfaces prod risk without gating deploys.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=high
+      - name: Audit dependencies (report-only, never blocks)
+        # Known advisories are all in the dev-only live-server toolchain, which
+        # never ships to production. `|| true` keeps this job green so it surfaces
+        # risk in the logs without ever gating a deploy. Review the output and, if
+        # a production dependency appears, raise the gate.
+        run: |
+          echo "::group::Production dependency audit (high+)"
+          npm audit --omit=dev --audit-level=high || true
+          echo "::endgroup::"
+          echo "::group::Full audit (incl. dev tooling — informational)"
+          npm audit || true
+          echo "::endgroup::"
