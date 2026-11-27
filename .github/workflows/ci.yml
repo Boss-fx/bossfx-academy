@@ -68,3 +68,28 @@ jobs:
             echo "Requiring $f..."
             node -e "require('./$f')" || exit 1
           done
+
+  links:
+    name: Internal link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check internal links resolve
+        run: node scripts/check-links.js
+
+  audit:
+    name: Dependency audit (informational)
+    runs-on: ubuntu-latest
+    # Non-blocking: known advisories are all in the dev-only live-server toolchain,
+    # which never ships to production. This job surfaces prod risk without gating deploys.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
