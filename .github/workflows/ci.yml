@@ -68,3 +68,35 @@ jobs:
             echo "Requiring $f..."
             node -e "require('./$f')" || exit 1
           done
+
+  links:
+    name: Internal link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check internal links resolve
+        run: node scripts/check-links.js
+
+  audit:
+    name: Dependency audit (informational)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Audit dependencies (report-only, never blocks)
+        # Known advisories are all in the dev-only live-server toolchain, which
+        # never ships to production. `|| true` keeps this job green so it surfaces
+        # risk in the logs without ever gating a deploy. Review the output and, if
+        # a production dependency appears, raise the gate.
+        run: |
+          echo "::group::Production dependency audit (high+)"
+          npm audit --omit=dev --audit-level=high || true
+          echo "::endgroup::"
+          echo "::group::Full audit (incl. dev tooling — informational)"
+          npm audit || true
+          echo "::endgroup::"

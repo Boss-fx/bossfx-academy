@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "live-server --port=3000",
-    "build": "echo 'Static site — no build step required'"
+    "build": "echo 'Static site — no build step required'",
+    "check:links": "node scripts/check-links.js"
   },
   "dependencies": {
     "@getbrevo/brevo": "^2.0.0-beta.4",
